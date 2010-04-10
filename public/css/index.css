@@ -1,0 +1,32 @@
+
+body > header h1 {
+	padding-left: 30px;
+	font-size: 201px;
+	margin: 10px 0 100px 0;
+	font-weight: normal;
+	float: none;
+	clear: both;
+}
+
+body > header {
+	background: none;
+	height: auto;
+	width: 720px;
+	margin: auto;
+	margin-bottom: 50px;
+}
+
+#links {
+	position: absolute;
+	margin: -20px 0 0 0;
+	padding-left: 30px;
+	width: 720px;
+}
+
+section > h3 {
+	font-size: 1em;
+}
+#tweets, #songs {
+	width: 50%;
+	float: left;
+}

@@ -1,18 +1,41 @@
-<!doctype html>
 <html>
   <head>
+	<link rel="stylesheet" type="text/css" href="/css/typography.css">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
+	<% if @path == 'index' %>
+		<link rel="stylesheet" type="text/css" href="/css/index.css">
+	<% end %>
+	
     <link rel="alternate" type="application/atom+xml" title="<%= title %> - feed" href="/index.xml" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
     <title><%= title %></title>
+	<script type="text/javascript">
+		var disqus_developer = 1; 
+	</script>
   </head>
   <body>
-    <section>
-      <%= yield %> 
-    </section>
-    <footer>
-      powered by <a href="http://cloudhead.io/toto">toto</a>
-    </footer>
+	<header>
+		<div class="piece">
+			<h1><a href="/">harblog</a></h1>
+			<section id="links">
+				<a href="/about">the man</a>
+				<a href="/code">his code</a>
+				<a href="/archives">archives</a>
+				<p> | </p>
+				<a href="mailto:harry@skylightlabs.ca">email</a>
+				<a href="http://twitter.com/harrybrundage">twitter</a>
+				<a href="http://github.com/hornairs">github</a>
+			</section>
+		</div>
+	</header>
+	<div id="container" class="piece">
+    	<section>
+	      <%= yield %> 
+	    </section>
+	    <footer>
+	      powered by <a href="http://cloudhead.io/toto">toto</a>
+	    </footer>
+	</div>
   </body>
 </html>
 
