@@ -41,6 +41,9 @@ header, footer, section, article {
 	float: left;
 	padding-left: 15px;
 }
+#articles {
+	clear: both;
+}
 .date {
   font-style: italic;
   float: right;

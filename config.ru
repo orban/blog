@@ -1,7 +1,5 @@
-
 require 'toto'
 require 'blog.rb'
-require 'twitter'
 
 # Rack config
 use Rack::Static, :urls => ['/css', '/js', '/images', '/favicon.ico'], :root => 'public'
@@ -27,7 +25,7 @@ toto = Toto::Server.new do
   set :disqus,    "harrisonbrundage"                            # disqus id, or false
   # set :summary,   :max => 150, :delim => /~/                # length of article summary and delimiter
   set :ext,       'md'                                     # file extension for articles
-  # set :cache,      28800                                    # cache duration, in seconds
+  set :cache,      1800                                    # cache duration, in seconds
   set :github, {:user => "hornairs", :repos => ["scurvy", "kcpms", "rbacanable", "jester", "ecse321"], :ext => ''} # Github username and list of repos
 
   set :date, lambda {|now| now.strftime("%B #{now.day.ordinal} %Y") }
