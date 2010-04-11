@@ -1,4 +1,4 @@
 builder   --source=http://gemcutter.org
 rdiscount --source=http://gemcutter.org
 toto      --source=http://gemcutter.org --version=">= 0.2.8"
-rack-redirect
+rack-rewrite --version=">= 0.2.1"
