@@ -1,5 +1,6 @@
 require 'toto'
 require 'blog.rb'
+require 'rack-rewrite'
 
 # Rack config
 use Rack::Static, :urls => ['/css', '/js', '/images', '/favicon.ico'], :root => 'public'
@@ -7,6 +8,10 @@ use Rack::CommonLogger
 
 if ENV['RACK_ENV'] == 'development'
   use Rack::ShowExceptions
+else
+  r301 %r{.*}, 'http://harrybrundage.ca$&', :if => Proc.new {|rack_env|
+    rack_env['SERVER_NAME'] != 'harrybrundage.ca'
+  }
 end
 
 #

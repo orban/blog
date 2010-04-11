@@ -40,6 +40,7 @@ header, footer, section, article {
 	display: block;
 	float: left;
 	padding-left: 15px;
+	text-shadow: #FFF 1px 1px 1px;
 }
 #articles {
 	clear: both;
@@ -94,15 +95,14 @@ body > header {
 	display: block;
 	padding-top: 10px;
 	margin-bottom: 20px;
-	background-color: ;
 	height: 60px;
-	
+	border-bottom: 2px solid #CCC;
 	background: -webkit-gradient(
-	  linear, 0 0, 0 100%, from(#F9F9F9), to(#E9E9E9)
+	  linear, 0 0, 0 100%, from(#F9F9F9), to(#DDD)
 	);
 
 	background: -moz-linear-gradient(
-	  top, #F9F9F9, #E9E9E9
+	  top, #F9F9F9, #DDD
 	);
 }
 
@@ -111,6 +111,7 @@ body > header h1 {
 	font-weight: normal;
 	width: 100px;
 	font-size: 2.25em;
+	text-shadow: #666666 1px 1px 2px;
 }
 
 h1, h2, h3, h4 {
