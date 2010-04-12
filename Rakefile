@@ -1,7 +1,7 @@
 require 'toto'
 
 @config = Toto::Config::Defaults
-
+@config[:ext] = 'md'
 task :default => :new
 
 desc "Create a new article."

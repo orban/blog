@@ -10,8 +10,8 @@ if ENV['RACK_ENV'] == 'development'
   use Rack::ShowExceptions
 else
   use Rack::Rewrite do
-    r301 %r{.*}, 'http://harrybrundage.ca$&', :if => Proc.new {|rack_env|
-      rack_env['SERVER_NAME'] != 'harrybrundage.ca'
+    r301 %r{.*}, 'http://harrybrundage.com$&', :if => Proc.new {|rack_env|
+      rack_env['SERVER_NAME'] != 'harrybrundage.com'
     }
   end
 end
