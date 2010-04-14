@@ -3,7 +3,7 @@ module Toto
     def html_stub
       "<article class=\"post\">
           <header>
-            <h1><a href=\" #{self.path}\">#{article.title}</a></h1>
+            <h1><a href=\"#{self.path}\">#{article.title}</a></h1>
             <span class=\"date\">#{article.date}</span>
           </header>
 
