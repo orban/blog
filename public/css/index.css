@@ -1,33 +1,44 @@
+body {
+	padding: 0 275px;
+}
 .piece {
   margin: 0 auto;
   width: 720px;
 }
 body > header h1 {
 	padding-left: 30px;
-	font-size: 201px;
 	margin: 10px 0 100px 0;
-	font-weight: normal;
 	float: none;
 	clear: both;
+	font-size: 201px;
+	font-weight: bold;
+	letter-spacing: -23px;
 }
 
 body > header {
 	background: none;
 	height: auto;
-	width: 720px;
-	margin: auto;
-	margin-bottom: 50px;
 	border: none;
+	position: absolute;
+	top: 220px;
+	left: -260px;
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	transform: rotate(-90deg);
 }
-
+body > header .piece {
+	margin: 0 0;
+	width: 100%;
+}
 nav {
 	position: absolute;
 	margin: -20px 0 0 0;
 	padding-left: 30px;
 	width: 720px;
 }
-nav a {
+nav a, nav p {
 	text-shadow: none;
+	padding-left: 13px;
 }
 
 section > h3, div > h3 {
@@ -52,12 +63,22 @@ section > h3 + a.small, div > h3 + a.small {
 #tweets small {
 	color: #888;
 }
+.very.small {
+	font-size: 12px;
+}
 #songs {
 	width: 260px;
 }
 #songs ol {
 	padding: 0px 4px 0px 4px;
 	margin: 0px;
+}
+#songs img {
+	width: 126px;
+	height: 126px;
+	border: none;
+	margin: 0;
+	padding: 0;
 }
 #tweets ul {
 	margin: 0px;
