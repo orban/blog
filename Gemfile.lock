@@ -1,0 +1,45 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    archive-tar-minitar (0.5.2)
+    builder (3.0.0)
+    columnize (0.3.2)
+    compass (0.10.6)
+      haml (>= 3.0.4)
+    haml (3.0.25)
+    kgio (2.0.0)
+    linecache19 (0.5.11)
+      ruby_core_source (>= 0.1.4)
+    rack (1.2.1)
+    rack-rewrite (1.0.2)
+    rdiscount (1.6.5)
+    ruby-debug-base19 (0.11.24)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby_core_source (>= 0.1.4)
+    ruby-debug19 (0.11.6)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby-debug-base19 (>= 0.11.19)
+    ruby_core_source (0.1.4)
+      archive-tar-minitar (>= 0.5.2)
+    tilt (1.1)
+    toto (0.4.6)
+      builder
+      rack
+      rdiscount
+    unicorn (3.1.0)
+      kgio (~> 2.0.0)
+      rack
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  compass (= 0.10.6)
+  haml (= 3.0.25)
+  rack-rewrite
+  ruby-debug19
+  tilt
+  toto (= 0.4.6)
+  unicorn
