@@ -3,7 +3,7 @@
    $('#tweets').tweetable({username: 'harrybrundage', limit: 8, time:true});
   	var _config = {username: 'hornairs',        // last.fm username
                    placeholder: 'songs',       // id of the div in HTML to use for cd covers
-                   defaultthumb: './lastfm_logo.jpg',  // image to show when no cd cover or artist image was found
+                   defaultthumb: '/images/lastfm_record.jpg',  // image to show when no cd cover or artist image was found
                    period: '7day',              // which period/type of data do you want to show? you can choose from
                                                 // recenttracks, 7day, 3month, 6month, 12month, overall, topalbums and lovedtracks
                    count: 8,                          // number of images to show
@@ -11,7 +11,7 @@
                    offset: 3                           // difference between your timezone and GMT.
                   };
   
-    lastFmRecords.debug();                             // log to console
+    //lastFmRecords.debug();                             // log to console
     lastFmRecords.init(_config);
   });
 

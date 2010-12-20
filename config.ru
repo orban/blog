@@ -57,7 +57,7 @@ toto = Toto::Server.new do
     Dir.glob("#{path}/#{page}.*").each do |filename|
       return ::Tilt.new(filename).render(ctx, &blk)
     end
-    return false
+    raise Errno::ENOENT
   }
 
 end

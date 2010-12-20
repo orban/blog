@@ -69,11 +69,14 @@ var lastFmRecords = (function() {
     );
   };
 
-  function _getArtistData(_artistmbid) {
-    jQuery.getJSON(
-    	_LASTFM_WS_URL + '?method=artist.getinfo&mbid=' + _artistmbid + '&api_key=' + _LASTFM_APIKEY + '&format=json&callback=?',
-    	lastFmRecords.processArtistData
-    );
+  function _getArtistData(_artistmbid, _artistname) {
+    if(typeof _artistmbid != "undefined" && _artistmbid != "") {
+      url = _LASTFM_WS_URL + '?method=artist.getinfo&mbid=' + _artistmbid + '&api_key=' + _LASTFM_APIKEY + '&format=json&callback=?';
+    } else {
+    	url = _LASTFM_WS_URL + '?method=artist.getinfo&artist=' + _artistname + '&api_key=' + _LASTFM_APIKEY + '&format=json&callback=?';
+    }
+    
+    jQuery.getJSON(url, lastFmRecords.processArtistData);
   };
 
 	function _errorInLastFmResponse(data) {
@@ -206,7 +209,7 @@ var lastFmRecords = (function() {
 				 	_logStatus('cover for ' + _track.name + ' not found, trying to find image of artist ' + _track.artistname);
 				 	// Setting a star to know we're already looking for this one
 					_imgs_found[_track.artistmbid] = '*';
-					_getArtistData(_track.artistmbid);
+					_getArtistData(_track.artistmbid, _track.artistname);
 				}
 
      		jQuery('#lastfmcover' + _id).attr('src', _defaultthumb);
