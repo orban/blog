@@ -2,11 +2,15 @@
 title: Toto on Tilt
 date: 20/12/2010
 
-[toto](https://github.com/cloudhead/toto) is a handly little blogging engine designed for hackers, written by [Alexis Sellier](http://cloudhead.io/). My blog runs on it too, because it was super easy to set up and was just handy enough without getting in the way.
+[toto](https://github.com/cloudhead/toto) is a handly little blogging engine designed for hackers, written by [Alexis Sellier](http://cloudhead.io/). My blog runs on it too, because it was super easy to set up and was just handy enough without getting in the way. In this post I'll try and show you how I got my toto installation to render all sorts of different templates using a library called Tilt. 
+
+![Haml is pretty cool I guess](http://haml-lang.com/images/haml.gif)
 
 I've been using the [Haml](http://haml-lang.com/) markup language and templating engine for some stuff here and there, and I wanted to use it for my toto powered blog. There are some [instructions](https://github.com/cloudhead/toto/wiki/Use-HAML-to-render-your-layout-and-pages) on configuring toto to render pages and layouts using Haml, but I thought I'd take it a step further and get toto running using [Tilt](https://github.com/rtomayko/tilt). Tilt is a useful template engine abstraction library written by [Ryan Tomayko](http://tomayko.com/about), where you pass it a filename and it will render the view using whatever engine it can. So, once Tilt is integrated, you can use any of the engines it supports, instead of being limited to one or making logic to decide between several.
 
 Getting toto to use Tilt isn't hard at all. I opted to monkey patch one tiny piece of it it which is a truely dastardly, evil, deed. I needed an extra peiece of information from toto's configuration handlers, so sorry about that. Be aware that this may break future versions of toto, and please do suggest a way to set all of this up without monkeypatching if you can think of one!
+
+## Actually Doing It
 
 First, I added a `blog.rb` file and required it in my `config.ru`. In here, I reopened the toto class and added that extra peice of information to the templating engine call nessecary for Tilt.
 

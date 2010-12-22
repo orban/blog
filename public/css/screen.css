@@ -86,7 +86,7 @@ body.bp {
   line-height: 1.5;
   font-family: "Neuton", arial, serif;
   color: #333333;
-  font-size: 75%;
+  font-size: 87.5%;
 }
 /* line 65, ../../../../.rvm/gems/ruby-1.9.2-p0/gems/compass-0.10.6/frameworks/blueprint/stylesheets/blueprint/_typography.scss */
 body.bp h1, body.bp h2, body.bp h3, body.bp h4, body.bp h5, body.bp h6 {
@@ -538,28 +538,28 @@ a {
   color: #b83000;
 }
 
-/* line 19, ../../assets/sass/screen.sass */
-#header a, header a {
+/* line 20, ../../assets/sass/screen.sass */
+#header h1 a, header h1 a {
   color: black;
   text-decoration: none;
 }
-/* line 22, ../../assets/sass/screen.sass */
-#header a:hover, header a:hover {
+/* line 23, ../../assets/sass/screen.sass */
+#header h1 a:hover, header h1 a:hover {
   text-decoration: underline;
 }
 
-/* line 25, ../../assets/sass/screen.sass */
+/* line 26, ../../assets/sass/screen.sass */
 code {
   font-family: "Anonymous Pro", "Bitstream Vera Sans", "Monaco", Courier, mono;
 }
 
-/* line 28, ../../assets/sass/screen.sass */
+/* line 29, ../../assets/sass/screen.sass */
 nav {
   margin-top: 13px;
   float: right;
   width: 500px;
 }
-/* line 32, ../../assets/sass/screen.sass */
+/* line 33, ../../assets/sass/screen.sass */
 nav a, nav p {
   display: block;
   float: left;
@@ -567,38 +567,38 @@ nav a, nav p {
   text-shadow: white 1px 1px 1px;
 }
 
-/* line 38, ../../assets/sass/screen.sass */
+/* line 39, ../../assets/sass/screen.sass */
 #by {
   font-style: italic;
   margin-right: 5px;
   font-size: 28px;
 }
 
-/* line 43, ../../assets/sass/screen.sass */
+/* line 44, ../../assets/sass/screen.sass */
 #caption {
   position: absolute;
   font-size: 24px;
   margin: -135px 0 0 70px;
 }
 
-/* line 48, ../../assets/sass/screen.sass */
+/* line 49, ../../assets/sass/screen.sass */
 #path {
   color: #b53131;
 }
 
-/* line 51, ../../assets/sass/screen.sass */
+/* line 52, ../../assets/sass/screen.sass */
 #articles, .clear {
   clear: both;
 }
 
-/* line 55, ../../assets/sass/screen.sass */
+/* line 56, ../../assets/sass/screen.sass */
 #programs ul {
   padding: 0px;
   margin: 10px;
   overflow: hidden;
   list-style-type: none;
 }
-/* line 60, ../../assets/sass/screen.sass */
+/* line 61, ../../assets/sass/screen.sass */
 #programs li {
   list-style-type: none;
   width: 30%;
@@ -611,40 +611,44 @@ nav a, nav p {
   padding-bottom: 2000px;
 }
 
-/* line 71, ../../assets/sass/screen.sass */
+/* line 72, ../../assets/sass/screen.sass */
 .date {
   font-style: italic;
   float: right;
   line-height: 43px;
   margin-right: 30px;
 }
-
 /* line 77, ../../assets/sass/screen.sass */
+h1 .date {
+  font-size: 14px;
+}
+
+/* line 80, ../../assets/sass/screen.sass */
 .post header, .page header {
   margin-bottom: 10px;
 }
 
-/* line 80, ../../assets/sass/screen.sass */
+/* line 83, ../../assets/sass/screen.sass */
 .post {
   margin-bottom: 30px;
 }
-/* line 82, ../../assets/sass/screen.sass */
+/* line 85, ../../assets/sass/screen.sass */
 .post .body p:first-child {
   margin-top: 0;
 }
-/* line 84, ../../assets/sass/screen.sass */
+/* line 87, ../../assets/sass/screen.sass */
 .post .body p:last-child {
   margin-bottom: 0;
 }
-/* line 87, ../../assets/sass/screen.sass */
+/* line 90, ../../assets/sass/screen.sass */
 .post:last-child {
   margin-bottom: 10px;
 }
-/* line 89, ../../assets/sass/screen.sass */
+/* line 92, ../../assets/sass/screen.sass */
 .post p {
   margin: 10px 0;
 }
-/* line 91, ../../assets/sass/screen.sass */
+/* line 94, ../../assets/sass/screen.sass */
 .post .more {
   margin-top: -10px;
   margin-right: 30px;
@@ -652,42 +656,42 @@ nav a, nav p {
   text-align: right;
 }
 
-/* line 97, ../../assets/sass/screen.sass */
+/* line 100, ../../assets/sass/screen.sass */
 .more a {
   text-decoration: none;
 }
-/* line 99, ../../assets/sass/screen.sass */
+/* line 102, ../../assets/sass/screen.sass */
 .more a:hover {
   text-decoration: underline;
 }
 
-/* line 102, ../../assets/sass/screen.sass */
+/* line 105, ../../assets/sass/screen.sass */
 .pleasant {
   padding: 10px;
   border: 1px solid #cccccc;
   margin: 10px;
   width: 400px;
 }
-/* line 107, ../../assets/sass/screen.sass */
+/* line 110, ../../assets/sass/screen.sass */
 .pleasant img {
   width: 400px;
 }
-/* line 109, ../../assets/sass/screen.sass */
+/* line 112, ../../assets/sass/screen.sass */
 .pleasant.small {
   width: 200px;
 }
-/* line 111, ../../assets/sass/screen.sass */
+/* line 114, ../../assets/sass/screen.sass */
 .pleasant.small img {
   width: 200px;
 }
-/* line 113, ../../assets/sass/screen.sass */
+/* line 116, ../../assets/sass/screen.sass */
 .pleasant p {
   font-style: italic;
   margin: 10px 10px 0px 10px;
   text-align: center;
 }
 
-/* line 118, ../../assets/sass/screen.sass */
+/* line 121, ../../assets/sass/screen.sass */
 #header {
   padding-top: 10px;
   margin-bottom: 20px;
@@ -696,7 +700,7 @@ nav a, nav p {
   background: -webkit-gradient(linear, 0 0, 0 100%, from(#f9f9f9), to(#dddddd));
   background: -moz-linear-gradient(top, #f9f9f9, #dddddd);
 }
-/* line 125, ../../assets/sass/screen.sass */
+/* line 128, ../../assets/sass/screen.sass */
 #header h1 {
   float: left;
   font-weight: normal;
@@ -705,7 +709,7 @@ nav a, nav p {
   text-shadow: #666666 1px 1px 2px;
 }
 
-/* line 132, ../../assets/sass/screen.sass */
+/* line 135, ../../assets/sass/screen.sass */
 #footer {
   text-align: left;
   margin-left: 10px;
@@ -714,7 +718,7 @@ nav a, nav p {
   color: #888888;
 }
 
-/* line 140, ../../assets/sass/screen.sass */
+/* line 143, ../../assets/sass/screen.sass */
 body.index #header {
   background: none;
   height: auto;
@@ -722,7 +726,7 @@ body.index #header {
   margin-bottom: 50px;
   border: none;
 }
-/* line 141, ../../assets/sass/screen.sass */
+/* line 144, ../../assets/sass/screen.sass */
 body.index #header h1 {
   padding-left: 30px;
   font-size: 201px;
@@ -733,52 +737,52 @@ body.index #header h1 {
   width: auto;
   text-shadow: #666666 2px 2px 5px;
 }
-/* line 150, ../../assets/sass/screen.sass */
+/* line 153, ../../assets/sass/screen.sass */
 body.index #header h1 a {
   color: auto;
   text-decoration: none;
 }
-/* line 153, ../../assets/sass/screen.sass */
+/* line 156, ../../assets/sass/screen.sass */
 body.index #header h1 a:hover {
   color: auto;
   text-decoration: none;
 }
-/* line 156, ../../assets/sass/screen.sass */
+/* line 159, ../../assets/sass/screen.sass */
 body.index #header h1 a:visted {
   color: auto;
 }
-/* line 164, ../../assets/sass/screen.sass */
+/* line 167, ../../assets/sass/screen.sass */
 body.index nav {
   position: absolute;
   margin: -20px 0 0 0;
   padding-left: 30px;
   width: 720px;
 }
-/* line 169, ../../assets/sass/screen.sass */
+/* line 172, ../../assets/sass/screen.sass */
 body.index nav a {
   text-shadow: none;
 }
-/* line 172, ../../assets/sass/screen.sass */
+/* line 175, ../../assets/sass/screen.sass */
 body.index section > h3, body.index div > h3 {
   border-bottom: 1px dashed #dddddd;
   padding-bottom: 2px;
   margin-bottom: 10px;
 }
-/* line 177, ../../assets/sass/screen.sass */
+/* line 180, ../../assets/sass/screen.sass */
 body.index section > h3 + a.small, body.index div > h3 + a.small {
   margin: -30px 0px 0px 0px;
   float: right;
   padding-left: 10px;
 }
-/* line 182, ../../assets/sass/screen.sass */
+/* line 185, ../../assets/sass/screen.sass */
 body.index #featured {
   padding-bottom: 10px;
 }
-/* line 185, ../../assets/sass/screen.sass */
+/* line 188, ../../assets/sass/screen.sass */
 body.index #tweets, body.index #songs {
   padding-bottom: 10px;
 }
-/* line 188, ../../assets/sass/screen.sass */
+/* line 191, ../../assets/sass/screen.sass */
 body.index #tweets {
   display: inline;
   float: left;
@@ -789,16 +793,16 @@ body.index #tweets {
 * html body.index #tweets {
   overflow-x: hidden;
 }
-/* line 190, ../../assets/sass/screen.sass */
+/* line 193, ../../assets/sass/screen.sass */
 body.index #tweets ul {
   margin: 0px;
   padding: 0px 4px 0px 4px;
 }
-/* line 193, ../../assets/sass/screen.sass */
+/* line 196, ../../assets/sass/screen.sass */
 body.index #tweets ul li {
   padding-bottom: 10px;
 }
-/* line 196, ../../assets/sass/screen.sass */
+/* line 199, ../../assets/sass/screen.sass */
 body.index #songs {
   display: inline;
   float: left;
@@ -809,12 +813,12 @@ body.index #songs {
 * html body.index #songs {
   overflow-x: hidden;
 }
-/* line 198, ../../assets/sass/screen.sass */
+/* line 201, ../../assets/sass/screen.sass */
 body.index #songs ol {
   padding: 0px 4px 0px 4px;
   margin: 0px;
 }
-/* line 202, ../../assets/sass/screen.sass */
+/* line 205, ../../assets/sass/screen.sass */
 body.index #articles {
   clear: both;
 }

@@ -233,6 +233,9 @@ var lastFmRecords = (function() {
     jQuery.each(data, function(i, _json) {
     	_imgurl = _findLargestImage(_json.image);
     	_mbid   = _json.mbid;
+      if(_mbid == "" || typeof _mbid == "undefined") {
+        return true;
+      }
     	// find images that need to be changed
     	jQuery('.' + _mbid).each( function() {
     	  // point src and href of parent a to the image
