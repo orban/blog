@@ -5,7 +5,7 @@ Bundler.require(:default, ENV['RACK_ENV'])
 require './blog.rb'
 
 # Rack config
-use Rack::Static, :urls => ['/css', '/js', '/images', '/favicon.ico'], :root => 'public'
+use Rack::Static, :urls => ['/css', '/js', '/images', '/fonts', '/favicon.ico', '/cv.pdf'], :root => 'public'
 use Rack::CommonLogger
 
 if ENV['RACK_ENV'] == 'development'
@@ -42,7 +42,7 @@ toto = Toto::Server.new do
   set :ext,         'md'                                     # file extension for articles
   set :cache,       28800                                     # cache site for 8 hours
   set :date, lambda {|now| now.strftime("%B #{now.day.ordinal} %Y") }
-  set :github, {:user => "hornairs", :repos => ["thwart", "jester", "ecse321"], :ext => ''} # Github username and list of repos
+  set :github, {:user => "hornairs", :repos => ["thwart", "jester", "titanium_ajax"], :ext => 'mkd'} # Github username and list of repos
 
   #set :to_html   do |path, page, ctx|                         # returns an html, from a path & context
     #ERB.new(File.read("#{path}/#{page}.rhtml")).result(ctx)
