@@ -1,5 +1,5 @@
 (function() {
-  var bigBangHorray, canvas, processingInstance, textShadowProperties;
+  var bigBangHorray, textShadowProperties;
   textShadowProperties = "Color X Y Blur".split(' ');
   (function() {
     var div, divStyle, props, rWhitespace, support;
@@ -98,6 +98,4 @@
       return drawArm(secondsPosition, 0.90, 1);
     };
   };
-  canvas = $('canvas.bang')[0];
-  processingInstance = new Processing(canvas, bigBangHorray);
 }).call(this);

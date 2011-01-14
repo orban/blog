@@ -101,7 +101,7 @@ bigBangHorray = (processing) ->
     secondsPosition = now.getSeconds() / 60
     drawArm(secondsPosition, 0.90, 1)
 
-canvas = $('canvas.bang')[0]
+#canvas = $('canvas.bang')[0]
 # attaching the sketchProc function to the canvas
-processingInstance = new Processing(canvas, bigBangHorray)
+#processingInstance = new Processing(canvas, bigBangHorray)
 

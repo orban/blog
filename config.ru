@@ -27,7 +27,7 @@ toto = Toto::Server.new do
   # set [:setting], [value]
   # 
   set :author,      "Harry Brundage"                          # blog author
-  set :title,       "Binharry"                                # site title
+  set :title,       "Will You Harry Me?"                                # site title
   if ENV['RACK_ENV'] == 'development'
     set :url, 'http://localhost:8080'
   else
