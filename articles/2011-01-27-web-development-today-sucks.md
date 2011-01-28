@@ -21,9 +21,9 @@ This decision ushers in a new era of code duplication and implementation inconsi
 
 ## Javascript Heavy Applications
 
-<div class="pleasant small">
-  <img src="http://www.bite.ca/wp-content/uploads/2010/12/abominable-snowman.jpg" alt="SNOWMAN!">
-  <p>I feel like this guy when making websites</p>
+<div class="pleasant">
+  <img src="/images/mobile-me-mobile-you.png" alt="Seriously.">
+  <p>Who has time to do this to their <a href="http://news.ycombinator.com/item?id=1930802">freaking logo??</a></p>
 </div>
 
 The situation becomes hellish when you move to the SPA domain. Designing and developing a Sproutcore app from scratch is way, way more work than the mediocre static HTML Rails version providing similar functionality. You write fat models on the client side with all sorts of domain logic and requirements-fulfilling-goodness, and then you go to save them to the server, and you start pulling your hair out. Like any sane developer, you must revalidate everything server side, requiring you to revalidate all the incoming data. The dumb database-esque backend promised to you by the SPA ideals (see [Cloudkit](http://getcloudkit.com/)) can't actually be dumb or malicious users would have a field day. Before said data even gets to the server like it would in a traditional form POST, you have to design and twice implement a transport strategy to marshal and load your data across the wire. With Javascript SPAs, you must transport it, revalidate it, and then store it server side, whereas with traditional methods, you rely on the browser to do the transport, and at the last and safest moment do your validation only once.
@@ -34,7 +34,7 @@ Also of note are tertiary symptoms like Coffeescript. Its creation and ensuing e
 
 ## The issue and the current solutions
 
-The issue in my mind comes down to this: *apps are already too big to write twice*. Big entities can write abstractions that fix all this business, like Google's GWT, or they can man up and pour resources into creating or enhancing the existing frameworks, like Apple and Eloqua with Sproutcore. For punks like me, none of these options are viable, but applications need to be better than they are now. The Rails for Javascript apps has yet to arrive.
+The issue in my mind comes down to this: *apps are already too big to write twice*. Big entities can write abstractions that fix all this business, like Google's GWT, or they can man up and pour resources into creating or enhancing the existing frameworks, like Apple and Eloqua with Sproutcore. For punks like me, none of these options are viable, but applications need to be better than they are now. Instead, we use things like Backbone.js or Sammy.js, which provide some welcome and useful instrumentation but nothing on the scale I want. The Rails for Javascript apps has yet to arrive.
 
 ## Some Successful Examples
 
@@ -64,5 +64,4 @@ Rails is so successful because it forced its conventions (good ones) upon people
  - An extensive UI Kit implementing all the stuff we are used to and then some. Building in handy stuff like sexy autocompletes or grids with searching and pagination will attract developers from the get go and give plugin developers a place to start. This stuff is traditionally plugins which makes sense in the jQuery world where one piece is needed on one page on one site out of a million. This is no longer the case though! Desktop class applications all need these types of super rich widgets. Standardizing them in the framework makes it easy to drop your data in and get desktop class functionality with rock solid reliability quickly. 
  - A gorgeous creative commons theme designed by Sofa. In my dreams.
 
-I see an opportunity for the next DHH to rise. I wish I were talented enough to accomplish such a feat, but alas, I tripped and fell trying to climb an escalator going in the wrong direction today, and thus convinced myself I am not the man for the job. I'm also not an [ass](http://www.codinghorror.com/blog/2008/02/douchebaggery.html), but I would love a lambo.
-
+I see an opportunity for the next DHH to rise. I wish I were talented enough to accomplish such a feat, but alas, I tripped and fell trying to climb an escalator going in the wrong direction today, and thus convinced myself I am not the man for the job. I'm also not an [ass](http://www.codinghorror.com/blog/2008/02/douchebaggery.html), but I would love a Lambo. Anyways, are you the man/woman who could do this? If so, please try! You'd have at least one zealous user, and I'd tell all my friends about it. 
