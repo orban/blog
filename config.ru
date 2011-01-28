@@ -5,15 +5,15 @@ Bundler.require(:default, ENV['RACK_ENV'])
 require './blog.rb'
 
 # Rack config
-use Rack::Static, :urls => ['/css', '/js', '/images', '/fonts', '/favicon.ico', '/cv.pdf'], :root => 'public'
+use Rack::Static, :urls => ['/css', '/js', '/images', '/fonts', '/favicon.ico', '/cv.pdf', '/google4b1c5818a10d5176.html'], :root => 'public'
 use Rack::CommonLogger
 
 if ENV['RACK_ENV'] == 'development'
   use Rack::ShowExceptions
 else
   use Rack::Rewrite do
-    r301 %r{.*}, 'http://harrybrundage.com$&', :if => Proc.new {|rack_env|
-      rack_env['SERVER_NAME'] != 'harrybrundage.com'
+    r301 %r{.*}, 'http://harry.me$&', :if => Proc.new {|rack_env|
+      rack_env['SERVER_NAME'] != 'harry.me'
     }
   end
 end
@@ -31,7 +31,7 @@ toto = Toto::Server.new do
   if ENV['RACK_ENV'] == 'development'
     set :url, 'http://localhost:8080'
   else
-    set :url, 'http://harrybrundage.com'                         # site root URL
+    set :url, 'http://harry.me'                         # site root URL
   end
   set :prefix,      ''                                        # common path prefix for all pages
   set :root,        "index"                                   # page to load on /
