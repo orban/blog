@@ -46,7 +46,7 @@ The issue in my mind comes down to this: *apps are already too big to write twic
 
  - [Gmail](http://mail.google.com/)
 
- An astounding accomplishment on the web today. Again, Google built the GWT so they didn't have to write code twice, but I don't want to be stuck in the Java world or be forced to learn the whole GWT and make any open source buddies of mine learn it too.
+ An astounding accomplishment on the web today. _Update: Gmail isn't built using GWT. Whoops._ Again, Google built the GWT so they didn't have to write code twice, but I don't want to be stuck in the Java world or be forced to learn the whole GWT and make any open source buddies of mine learn it too.
 
  - [NewsBlur](http://www.newsblur.com/)
 
