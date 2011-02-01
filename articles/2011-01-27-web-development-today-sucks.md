@@ -2,7 +2,7 @@
 title: Web Development Today Sucks
 date: 27/01/2011
 
-It seems clear to me that today, web development sucks. It's hairy, scary, maybe even downright nasty. Here I'll try and explain why I think our current toolchains are inadequate, and where I think we should be going.
+It seems clear to me that today, web development sucks. It's hairy, scary, maybe even downright abominable. Here I'll try and explain why I think our current toolchains are inadequate, and where I think we should be going.
 
 <div class="pleasant right small">
   <img src="/images/abominable-snowman.jpg" alt="SNOWMAN!">
@@ -34,7 +34,7 @@ Also of note are tertiary symptoms like Coffeescript. Its creation and ensuing e
 
 ## The issue and the current solutions
 
-The issue in my mind comes down to this: *apps are already too big to write twice*. Big entities can write abstractions that fix all this business, like Google's GWT, or they can man up and pour resources into creating or enhancing the existing frameworks, like Apple and Eloqua with Sproutcore. For punks like me, none of these options are viable, but applications need to be better than they are now. Instead, we use things like Backbone.js or Sammy.js, which provide some welcome and useful instrumentation but nothing on the scale I want. The Rails for Javascript apps has yet to arrive.
+The issue in my mind comes down to this: *apps are already too big to write twice*. Big entities can write abstractions that fix all this business, like Google's GWT, or they can man up and pour resources into creating or enhancing the existing frameworks, like Apple and Eloqua with Sproutcore. For punks like me, none of these options are viable, but applications need to be better than they are now. Instead, we use things like Backbone.js or Sammy.js or Faux, which provide some welcome and useful instrumentation but nothing on the scale I want. The Rails for Javascript apps has yet to arrive.
 
 ## Some Successful Examples
 
