@@ -16,6 +16,7 @@ else
       rack_env['SERVER_NAME'] != 'harry.me'
     }
   end
+  require 'newrelic_rpm'
 end
 
 #
