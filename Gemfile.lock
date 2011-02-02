@@ -3,20 +3,24 @@ GEM
   specs:
     archive-tar-minitar (0.5.2)
     builder (3.0.0)
+    coffee-script (2.1.1)
+      coffee-script-source
+    coffee-script-source (1.0.1)
     columnize (0.3.2)
     compass (0.10.6)
       haml (>= 3.0.4)
     configuration (1.2.0)
-    guard (0.2.2)
+    guard (0.3.0)
       open_gem (~> 1.4.2)
-      thor (~> 0.14.3)
-    guard-coffeescript (0.1.5)
-      guard (~> 0.2.2)
+      thor (~> 0.14.6)
+    guard-coffeescript (0.1.7)
+      coffee-script (~> 2.1.1)
+      guard (~> 0.3.0)
     guard-compass (0.0.6)
       compass (>= 0.10.5)
       guard (>= 0.2.1)
     haml (3.0.25)
-    kgio (2.0.0)
+    kgio (2.1.1)
     launchy (0.3.7)
       configuration (>= 0.0.5)
       rake (>= 0.8.1)
@@ -28,7 +32,7 @@ GEM
     rack (1.2.1)
     rack-rewrite (1.0.2)
     rake (0.8.7)
-    rdiscount (1.6.5)
+    rdiscount (1.6.8)
     ruby-debug-base19 (0.11.24)
       columnize (>= 0.3.1)
       linecache19 (>= 0.5.11)
@@ -40,13 +44,13 @@ GEM
     ruby_core_source (0.1.4)
       archive-tar-minitar (>= 0.5.2)
     thor (0.14.6)
-    tilt (1.1)
+    tilt (1.2.2)
     toto (0.4.6)
       builder
       rack
       rdiscount
-    unicorn (3.1.0)
-      kgio (~> 2.0.0)
+    unicorn (3.3.1)
+      kgio (~> 2.1)
       rack
 
 PLATFORMS

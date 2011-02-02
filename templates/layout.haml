@@ -6,14 +6,15 @@
     /[if lt IE 8]
       <link href="/public/css/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
 
-    %link{:href=>'http://fonts.googleapis.com/css?family=Droid+Sans',:rel=>'stylesheet', :type=>'text/css'}
+    %link{:href=>'http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold',:rel=>'stylesheet', :type=>'text/css'}
     
     %link{:href => "/index.xml", :rel => "alternate", :title => "#{title} - feed", :type => "application/atom+xml"}
     %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}
     %title= title
     %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js", :type => "text/javascript"}
-    :javascript
-      var disqus_developer = 1;
+    -if ENV['RACK_ENV'] == 'development'
+      :javascript
+        var disqus_developer = 1;
 
   %body{:class => "bp one-col #{"index" if @path == 'index'}"}
     #container
