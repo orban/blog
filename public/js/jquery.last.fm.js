@@ -434,7 +434,7 @@ var lastFmRecords = (function() {
           _a.attr('rel', 'lightbox');
         }
 
-        _img = jQuery('<img></img>').attr('src', _defaultthumb).attr('id', 'lastfmcover' + i).appendTo(_a);
+        _img = jQuery('<img></img>').attr('src', _defaultthumb).attr('id', 'lastfmcover' + i).attr('width',126).attr('height',126).appendTo(_a);
 
         _li.appendTo(_ol);
       }
