@@ -13,4 +13,5 @@ group :development, :test do
   gem 'guard'
   gem 'guard-coffeescript'
   gem 'guard-compass'
+  gem 'growl'
 end

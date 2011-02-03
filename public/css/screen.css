@@ -751,6 +751,7 @@ body.index #header {
   margin: auto;
   margin-bottom: 50px;
   border: none;
+  position: relative;
 }
 /* line 163, ../../assets/sass/screen.sass */
 body.index #header h1 {
@@ -777,46 +778,46 @@ body.index #header h1 a:hover {
 body.index #header h1 a:visted {
   color: auto;
 }
-/* line 186, ../../assets/sass/screen.sass */
+/* line 187, ../../assets/sass/screen.sass */
 body.index nav {
   position: absolute;
   margin: -20px 0 0 0;
   padding-left: 30px;
   width: 720px;
 }
-/* line 191, ../../assets/sass/screen.sass */
+/* line 192, ../../assets/sass/screen.sass */
 body.index nav a {
   text-shadow: none;
 }
-/* line 194, ../../assets/sass/screen.sass */
+/* line 195, ../../assets/sass/screen.sass */
 body.index section > h3, body.index div > h3 {
   border-bottom: 1px dashed #dddddd;
   padding-bottom: 2px;
   margin-bottom: 10px;
 }
-/* line 199, ../../assets/sass/screen.sass */
+/* line 200, ../../assets/sass/screen.sass */
 body.index section > h3 + a.small, body.index div > h3 + a.small {
   margin: -30px 10px 0px 0px;
   float: right;
   padding-left: 10px;
 }
-/* line 203, ../../assets/sass/screen.sass */
-body.index canvas.bang {
+/* line 205, ../../assets/sass/screen.sass */
+body.index canvas.swarm {
   position: absolute;
-  top: 130px;
-  left: 620px;
+  right: 0px;
+  bottom: 0px;
   z-index: -10;
 }
-/* line 209, ../../assets/sass/screen.sass */
+/* line 211, ../../assets/sass/screen.sass */
 body.index #featured {
   padding-bottom: 10px;
 }
-/* line 212, ../../assets/sass/screen.sass */
+/* line 214, ../../assets/sass/screen.sass */
 body.index #tweets, body.index #songs {
   padding-bottom: 10px;
   font-size: 16px;
 }
-/* line 216, ../../assets/sass/screen.sass */
+/* line 218, ../../assets/sass/screen.sass */
 body.index #tweets {
   display: inline;
   float: left;
@@ -827,16 +828,16 @@ body.index #tweets {
 * html body.index #tweets {
   overflow-x: hidden;
 }
-/* line 218, ../../assets/sass/screen.sass */
+/* line 220, ../../assets/sass/screen.sass */
 body.index #tweets ul {
   margin: 0px;
   padding: 0px 4px 0px 4px;
 }
-/* line 221, ../../assets/sass/screen.sass */
+/* line 223, ../../assets/sass/screen.sass */
 body.index #tweets ul li {
   padding-bottom: 10px;
 }
-/* line 224, ../../assets/sass/screen.sass */
+/* line 226, ../../assets/sass/screen.sass */
 body.index #songs {
   display: inline;
   float: left;
@@ -847,12 +848,12 @@ body.index #songs {
 * html body.index #songs {
   overflow-x: hidden;
 }
-/* line 226, ../../assets/sass/screen.sass */
+/* line 228, ../../assets/sass/screen.sass */
 body.index #songs ol {
   padding: 0px 4px 0px 4px;
   margin: 0px;
 }
-/* line 230, ../../assets/sass/screen.sass */
+/* line 232, ../../assets/sass/screen.sass */
 body.index #articles {
   clear: both;
 }
