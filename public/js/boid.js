@@ -1,9 +1,9 @@
 (function() {
   var ALIGNMENT_WEIGHT, COHESION_WEIGHT, DESIRED_SEPARATION, GRAVITY_WEIGHT, MOUSE_REPULSION, NEIGHBOUR_RADIUS, SEPARATION_WEIGHT;
-  SEPARATION_WEIGHT = 10;
+  SEPARATION_WEIGHT = 2;
   ALIGNMENT_WEIGHT = 1;
   COHESION_WEIGHT = 1;
-  GRAVITY_WEIGHT = 1;
+  GRAVITY_WEIGHT = 6;
   DESIRED_SEPARATION = 15;
   NEIGHBOUR_RADIUS = 40;
   MOUSE_REPULSION = 1;
@@ -14,7 +14,6 @@
     Boid.prototype.r = 2;
     Boid.prototype.max_speed = 0;
     Boid.prototype.max_force = 0;
-    Boid.prototype.stepCount = 0;
     function Boid(loc, max_speed, max_force, processing) {
       var _ref;
       this.p = processing;
@@ -24,8 +23,7 @@
     }
     Boid.prototype.step = function(neighbours) {
       var acceleration;
-      this.stepCount += 1;
-      acceleration = this._flock(neighbours);
+      acceleration = this._flock(neighbours).add(this._gravitate());
       this._move(acceleration);
       return this.render();
     };
@@ -107,14 +105,14 @@
       return separation.add(alignment).add(cohesion);
     };
     Boid.prototype._gravitate = function() {
-      var gravity, mouse, mouse_magnitude;
+      var d, gravity, mouse;
       gravity = new Harry.Vector;
       mouse = Harry.Vector.subtract(Harry.Mouse, this.location);
-      mouse_magnitude = mouse.magnitude();
-      if (mouse_magnitude < NEIGHBOUR_RADIUS) {
-        gravity.add(mouse.normalize.divide(mouse_magnitude * mouse_magnitude));
+      d = mouse.magnitude();
+      if (d > 0 && d < NEIGHBOUR_RADIUS * 4) {
+        gravity.add(mouse.normalize().divide(d * d).multiply(-1));
       }
-      return gravity * GRAVITY_WEIGHT;
+      return gravity.multiply(GRAVITY_WEIGHT);
     };
     Boid.prototype.steer_to = function(target) {
       var d, desired, steer;

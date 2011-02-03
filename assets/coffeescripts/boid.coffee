@@ -1,14 +1,15 @@
 # Boid class for use in the index page. Ported almost directly from http://processingjs.org/learning/topic/flocking,
 # thanks to Craig Reynold and Daniel Shiffman
-SEPARATION_WEIGHT = 10
+SEPARATION_WEIGHT = 2
 ALIGNMENT_WEIGHT = 1
 COHESION_WEIGHT = 1
-GRAVITY_WEIGHT = 1
+GRAVITY_WEIGHT = 6
 
 DESIRED_SEPARATION = 15
 NEIGHBOUR_RADIUS = 40
 
 MOUSE_REPULSION = 1
+
 #PLANETS = [{x:}]
 class Harry.Boid
     location: false
@@ -17,7 +18,6 @@ class Harry.Boid
     r: 2
     max_speed: 0
     max_force: 0
-    stepCount: 0
 
     constructor: (loc, max_speed, max_force, processing) ->
       @p = processing
@@ -26,8 +26,7 @@ class Harry.Boid
       [@max_speed, @max_force] = [max_speed, max_force]
 
     step: (neighbours) ->
-      @stepCount += 1
-      acceleration = this._flock(neighbours)#.add(this._gravitate())
+      acceleration = this._flock(neighbours).add(this._gravitate())
       this._move(acceleration)
       this.render()
 
@@ -99,11 +98,11 @@ class Harry.Boid
       gravity = new Harry.Vector
 
       mouse = Harry.Vector.subtract(Harry.Mouse, @location)
-      mouse_magnitude = mouse.magnitude()
-      if mouse_magnitude < NEIGHBOUR_RADIUS
-        gravity.add mouse.normalize.divide(mouse_magnitude*mouse_magnitude)
+      d = mouse.magnitude()
+      if d > 0 && d < NEIGHBOUR_RADIUS*4
+        gravity.add mouse.normalize().divide(d*d).multiply(-1)
 
-      return gravity * GRAVITY_WEIGHT
+      return gravity.multiply(GRAVITY_WEIGHT)
   
 
     steer_to: (target) ->
