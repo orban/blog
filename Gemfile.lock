@@ -46,7 +46,7 @@ GEM
       archive-tar-minitar (>= 0.5.2)
     thor (0.14.6)
     tilt (1.2.2)
-    toto (0.4.6)
+    toto (0.4.9)
       builder
       rack
       rdiscount
@@ -68,5 +68,5 @@ DEPENDENCIES
   rack-rewrite
   ruby-debug19
   tilt
-  toto (= 0.4.6)
+  toto (= 0.4.9)
   unicorn
