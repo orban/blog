@@ -1,11 +1,12 @@
 (function() {
-  var ALIGNMENT_WEIGHT, COHESION_WEIGHT, DESIRED_SEPARATION, GRAVITY_WEIGHT, NEIGHBOUR_RADIUS, SEPARATION_WEIGHT;
-  SEPARATION_WEIGHT = 2;
+  var ALIGNMENT_WEIGHT, COHESION_WEIGHT, DESIRED_SEPARATION, GRAVITY_WEIGHT, MOUSE_REPULSION, NEIGHBOUR_RADIUS, SEPARATION_WEIGHT;
+  SEPARATION_WEIGHT = 10;
   ALIGNMENT_WEIGHT = 1;
   COHESION_WEIGHT = 1;
   GRAVITY_WEIGHT = 1;
-  DESIRED_SEPARATION = 17;
-  NEIGHBOUR_RADIUS = 50;
+  DESIRED_SEPARATION = 15;
+  NEIGHBOUR_RADIUS = 40;
+  MOUSE_REPULSION = 1;
   Harry.Boid = (function() {
     Boid.prototype.location = false;
     Boid.prototype.velocity = false;
@@ -63,75 +64,58 @@
       }
     };
     Boid.prototype._flock = function(neighbours) {
-      var alignment, cohesion, separation;
-      separation = this._separate(neighbours).multiply(SEPARATION_WEIGHT);
-      alignment = this._align(neighbours).multiply(ALIGNMENT_WEIGHT);
-      cohesion = this._cohesion(neighbours).multiply(GRAVITY_WEIGHT);
+      var alignment, alignment_count, alignment_mean, boid, cohesion, cohesion_count, cohesion_sum, d, separation, separation_count, separation_mean, _i, _len;
+      separation_mean = new Harry.Vector;
+      alignment_mean = new Harry.Vector;
+      cohesion_sum = new Harry.Vector;
+      separation_count = 0;
+      alignment_count = 0;
+      cohesion_count = 0;
+      for (_i = 0, _len = neighbours.length; _i < _len; _i++) {
+        boid = neighbours[_i];
+        if (boid === this) {
+          continue;
+        }
+        d = this.location.distance(boid.location);
+        if (d > 0) {
+          if (d < DESIRED_SEPARATION) {
+            separation_mean.add(Harry.Vector.subtract(this.location, boid.location).normalize().divide(d));
+            separation_count++;
+          }
+          if (d < NEIGHBOUR_RADIUS) {
+            alignment_mean.add(boid.velocity);
+            alignment_count++;
+            cohesion_sum.add(boid.location);
+            cohesion_count++;
+          }
+        }
+      }
+      if (separation_count > 0) {
+        separation_mean.divide(separation_count);
+      }
+      if (alignment_count > 0) {
+        alignment_mean.divide(alignment_count);
+      }
+      if (cohesion_count > 0) {
+        cohesion_sum.divide(cohesion_count);
+      }
+      cohesion_sum = this.steer_to(cohesion_sum);
+      alignment_mean.limit(this.max_force);
+      separation = separation_mean.multiply(SEPARATION_WEIGHT);
+      alignment = alignment_mean.multiply(ALIGNMENT_WEIGHT);
+      cohesion = cohesion_sum.multiply(COHESION_WEIGHT);
       return separation.add(alignment).add(cohesion);
     };
-    Boid.prototype._separate = function(neighbours) {
-      var boid, count, d, mean, _i, _len;
-      mean = new Harry.Vector;
-      count = 0;
-      for (_i = 0, _len = neighbours.length; _i < _len; _i++) {
-        boid = neighbours[_i];
-        if (boid === this) {
-          continue;
-        }
-        d = this.location.distance(boid.location);
-        if (d > 0 && d < DESIRED_SEPARATION) {
-          mean.add(Harry.Vector.subtract(this.location, boid.location).normalize().divide(d));
-          count++;
-        }
+    Boid.prototype._gravitate = function() {
+      var gravity, mouse, mouse_magnitude;
+      gravity = new Harry.Vector;
+      mouse = Harry.Vector.subtract(Harry.Mouse, this.location);
+      mouse_magnitude = mouse.magnitude();
+      if (mouse_magnitude < NEIGHBOUR_RADIUS) {
+        gravity.add(mouse.normalize.divide(mouse_magnitude * mouse_magnitude));
       }
-      if (count > 0) {
-        mean.divide(count);
-      }
-      return mean;
+      return gravity * GRAVITY_WEIGHT;
     };
-    Boid.prototype._align = function(neighbours) {
-      var boid, count, d, mean, _i, _len;
-      mean = new Harry.Vector;
-      count = 0;
-      for (_i = 0, _len = neighbours.length; _i < _len; _i++) {
-        boid = neighbours[_i];
-        if (boid === this) {
-          continue;
-        }
-        d = this.location.distance(boid.location);
-        if (d > 0 && d < NEIGHBOUR_RADIUS) {
-          mean.add(boid.velocity);
-          count++;
-        }
-      }
-      if (count > 0) {
-        mean.divide(count);
-      }
-      mean.limit(this.max_force);
-      return mean;
-    };
-    Boid.prototype._cohesion = function(neighbours) {
-      var boid, count, d, sum, _i, _len;
-      sum = new Harry.Vector;
-      count = 0;
-      for (_i = 0, _len = neighbours.length; _i < _len; _i++) {
-        boid = neighbours[_i];
-        if (boid === this) {
-          continue;
-        }
-        d = this.location.distance(boid.location);
-        if (d > 0 && d < NEIGHBOUR_RADIUS) {
-          sum.add(boid.location);
-          count++;
-        }
-      }
-      if (count > 0) {
-        return this.steer_to(sum.divide(count));
-      } else {
-        return sum;
-      }
-    };
-    Boid.prototype._gravity = function() {};
     Boid.prototype.steer_to = function(target) {
       var d, desired, steer;
       desired = Harry.Vector.subtract(target, this.location);
@@ -143,7 +127,7 @@
         } else {
           desired.multiply(this.max_speed);
         }
-        steer = desired.subtract(desired, this.velocity);
+        steer = desired.subtract(this.velocity);
         steer.limit(this.max_force);
       } else {
         steer = new Harry.Vector(0, 0);

@@ -14,10 +14,12 @@
     return processing.draw = function() {
       var boid, _i, _len;
       processing.background(255);
+      Harry.Mouse = new Harry.Vector(processing.mouseX, processing.mouseY);
       for (_i = 0, _len = flock.length; _i < _len; _i++) {
         boid = flock[_i];
         boid.step(flock);
       }
+      processing.stroke(126);
       return true;
     };
   };

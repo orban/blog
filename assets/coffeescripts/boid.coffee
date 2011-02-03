@@ -1,13 +1,15 @@
 # Boid class for use in the index page. Ported almost directly from http://processingjs.org/learning/topic/flocking,
 # thanks to Craig Reynold and Daniel Shiffman
-SEPARATION_WEIGHT = 2
+SEPARATION_WEIGHT = 10
 ALIGNMENT_WEIGHT = 1
 COHESION_WEIGHT = 1
 GRAVITY_WEIGHT = 1
 
-DESIRED_SEPARATION = 17
-NEIGHBOUR_RADIUS = 50
+DESIRED_SEPARATION = 15
+NEIGHBOUR_RADIUS = 40
 
+MOUSE_REPULSION = 1
+#PLANETS = [{x:}]
 class Harry.Boid
     location: false
     velocity: false
@@ -25,7 +27,7 @@ class Harry.Boid
 
     step: (neighbours) ->
       @stepCount += 1
-      acceleration = this._flock(neighbours)
+      acceleration = this._flock(neighbours)#.add(this._gravitate())
       this._move(acceleration)
       this.render()
 
@@ -58,58 +60,50 @@ class Harry.Boid
       @location.y = -@r if @location.y > @p.height+@r
 
     _flock: (neighbours) ->
-      separation = this._separate(neighbours).multiply(SEPARATION_WEIGHT)
-      alignment = this._align(neighbours).multiply(ALIGNMENT_WEIGHT)
-      cohesion = this._cohesion(neighbours).multiply(GRAVITY_WEIGHT)
-      #gravity = this._gravity()
+      separation_mean = new Harry.Vector
+      alignment_mean = new Harry.Vector
+      cohesion_sum = new Harry.Vector
+
+      separation_count = 0
+      alignment_count = 0
+      cohesion_count = 0
+      
+      # Each flocking behaviour did this loop, so lets put them together into one
+      for boid in neighbours
+        continue if boid == this
+        d = @location.distance(boid.location)
+
+        if d > 0
+          if d < DESIRED_SEPARATION
+            separation_mean.add Harry.Vector.subtract(@location,boid.location).normalize().divide(d) # Normalized,weighted by distance vector pointing away from the neighbour
+            separation_count++
+          if d < NEIGHBOUR_RADIUS
+            alignment_mean.add(boid.velocity)
+            alignment_count++
+            cohesion_sum.add(boid.location)
+            cohesion_count++
+
+      separation_mean.divide(separation_count) if separation_count > 0
+      alignment_mean.divide(alignment_count) if alignment_count > 0
+      cohesion_sum.divide(cohesion_count) if cohesion_count > 0
+
+      cohesion_sum = this.steer_to cohesion_sum
+      alignment_mean.limit(@max_force)
+
+      separation = separation_mean.multiply(SEPARATION_WEIGHT)
+      alignment = alignment_mean.multiply(ALIGNMENT_WEIGHT)
+      cohesion = cohesion_sum.multiply(COHESION_WEIGHT)
       return separation.add(alignment).add(cohesion)
+      
+    _gravitate: () ->
+      gravity = new Harry.Vector
 
+      mouse = Harry.Vector.subtract(Harry.Mouse, @location)
+      mouse_magnitude = mouse.magnitude()
+      if mouse_magnitude < NEIGHBOUR_RADIUS
+        gravity.add mouse.normalize.divide(mouse_magnitude*mouse_magnitude)
 
-    _separate: (neighbours) ->
-      mean = new Harry.Vector
-      count = 0
-      for boid in neighbours
-        continue if boid == this
-        d = @location.distance(boid.location)
-        if d > 0 and d < DESIRED_SEPARATION
-          mean.add Harry.Vector.subtract(@location,boid.location).normalize().divide(d) # Normalized,weighted by distance vector pointing away from the neighbour
-          count++
-
-      mean.divide(count) if count > 0
-      mean
-
-
-    _align: (neighbours) ->
-      mean = new Harry.Vector
-      count = 0
-      for boid in neighbours
-        continue if boid == this
-        d = @location.distance(boid.location)
-        if d > 0 and d < NEIGHBOUR_RADIUS
-          mean.add(boid.velocity)
-          count++
-
-      mean.divide(count) if count > 0
-      mean.limit(@max_force)
-      mean
-
-    _cohesion: (neighbours) ->
-      sum = new Harry.Vector
-      count = 0
-      for boid in neighbours
-        continue if boid == this
-        d = @location.distance(boid.location)
-        if d > 0 and d < NEIGHBOUR_RADIUS
-          sum.add(boid.location)
-          count++
-
-      if count > 0
-        this.steer_to sum.divide(count)
-      else
-        sum
-
-    _gravity: () ->
-
+      return gravity * GRAVITY_WEIGHT
   
 
     steer_to: (target) ->
@@ -125,7 +119,7 @@ class Harry.Boid
         else
           desired.multiply(@max_speed)
           # Steering = Desired minus Velocity
-        steer = desired.subtract(desired,@velocity)
+        steer = desired.subtract(@velocity)
         steer.limit(@max_force)  # Limit to maximum steering force
       else
         steer = new Harry.Vector(0,0)
