@@ -23,16 +23,12 @@ end
 # Create and configure a toto instance
 #
 toto = Toto::Server.new do
-  #
-  # Add your settings here
-  # set [:setting], [value]
-  # 
   set :author,      "Harry Brundage"                          # blog author
-  set :title,       "Will You Harry Me?"                                # site title
+  set :title,       "Will You Harry Me?"                      # site title
   if ENV['RACK_ENV'] == 'development'
     set :url, 'http://localhost:8080'
   else
-    set :url, 'http://harry.me'                         # site root URL
+    set :url, 'http://harry.me'                               # site root URL
   end
   set :prefix,      ''                                        # common path prefix for all pages
   set :root,        "index"                                   # page to load on /
@@ -40,21 +36,20 @@ toto = Toto::Server.new do
   set :markdown,    :smart                                    # use markdown + smart-mode
   set :disqus,      "harrisonbrundage"                                     # disqus id, or false
   set :summary,     :max => 150, :delim => /~\n/              # length of article summary and delimiter
-  set :ext,         'md'                                     # file extension for articles
+  set :ext,         'md'                                      # file extension for articles
   set :cache,       28800                                     # cache site for 8 hours
   set :date, lambda {|now| now.strftime("%B #{now.day.ordinal} %Y") }
-  set :github, {:user => "hornairs", :repos => ["thwart", "jester", "titanium_ajax"], :ext => 'mkd'} # Github username and list of repos
 
-  #set :to_html   do |path, page, ctx|                         # returns an html, from a path & context
-    #ERB.new(File.read("#{path}/#{page}.rhtml")).result(ctx)
-  #end
+  # Github username and list of repos
+  rs = {"thwart" => "README.rdoc", "titanium_ajax" => "README.mkd"}
+  set :github, {:user => "hornairs", :repos => rs.keys, :files => rs}
 
-  set :error     do |code|                                    # The HTML for your error page
-    "<font style='font-size:300%'>toto, we're not in Kansas anymore (#{code})</font>"
+  # The HTML for the error page
+  set :error do |code|
+   "<font style='font-size:300%'>toto, we're not in Kansas anymore (#{code})</font>"
   end
 
   set :to_html, lambda {|path, page, ctx, blk|
-    #ctx = eval "self", ctx
     Dir.glob("#{path}/#{page}.*").each do |filename|
       return ::Tilt.new(filename).render(ctx, &blk)
     end
