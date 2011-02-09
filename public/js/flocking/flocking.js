@@ -2,7 +2,7 @@
   var Flocks;
   Flocks = {
     fullFlock: function(processing) {
-      var flock, i, start;
+      var flock, i, runMode, start;
       start = new Harry.Vector(processing.width / 2, processing.height / 2);
       flock = (function() {
         var _results;
@@ -13,15 +13,23 @@
         return _results;
       })();
       processing.frameRate(20);
-      return processing.draw = function() {
+      runMode = true;
+      processing.draw = function() {
         var boid, _i, _len;
         processing.background(255);
         Harry.Mouse = new Harry.Vector(processing.mouseX, processing.mouseY);
         for (_i = 0, _len = flock.length; _i < _len; _i++) {
           boid = flock[_i];
-          boid.step(flock);
+          if (runMode) {
+            boid.step(flock);
+          } else {
+            boid.renderWithIndications(flock);
+          }
         }
         return true;
+      };
+      return processing.mouseClicked = function() {
+        return runMode = !runMode;
       };
     }
   };

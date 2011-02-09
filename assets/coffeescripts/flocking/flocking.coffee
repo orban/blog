@@ -6,12 +6,21 @@ Flocks =
       new Harry.Boid(start, 2, 0.05, processing)
  
     processing.frameRate(20)
+    
+    runMode = true
+
     processing.draw = ->
       processing.background(255)
       Harry.Mouse = new Harry.Vector(processing.mouseX, processing.mouseY)
       for boid in flock
-        boid.step(flock)
+        if runMode
+          boid.step(flock)
+        else
+          boid.renderWithIndications(flock)
       true
+
+    processing.mouseClicked = ->
+      runMode = !runMode
 
 jQuery ->
   for name, f of Flocks
