@@ -15,7 +15,7 @@
     %title= title
     
     %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.js", :type => "text/javascript"}
-    -if ENV['RACK_ENV'] == 'development'
+    - unless ENV['RACK_ENV'] == 'production'
       :javascript
         var disqus_developer = 1;
 
