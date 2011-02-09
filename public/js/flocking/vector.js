@@ -56,6 +56,7 @@
       dz = this.z - other.z;
       return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
+    Vector.prototype.distance_with_wrap = function(other) {};
     Vector.prototype.subtract = function(other) {
       this.x -= other.x;
       this.y -= other.y;

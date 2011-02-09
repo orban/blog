@@ -34,6 +34,8 @@ class Harry.Vector
       dy = @y-other.y
       dz = @z-other.z
       Math.sqrt(dx*dx + dy*dy + dz*dz)
+  
+    distance_with_wrap: (other) ->
 
     subtract: (other) ->
       @x -= other.x

@@ -1,0 +1,15 @@
+/* line 1, ../../assets/sass/flocking.sass */
+.flock {
+  margin: 0 auto;
+}
+/* line 3, ../../assets/sass/flocking.sass */
+.flock canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* line 7, ../../assets/sass/flocking.sass */
+#fullFlock {
+  width: 500px;
+  height: 500px;
+}

@@ -11,7 +11,7 @@
     Boid.prototype.location = false;
     Boid.prototype.velocity = false;
     Boid.prototype.p = false;
-    Boid.prototype.r = 2;
+    Boid.prototype.r = 3;
     Boid.prototype.max_speed = 0;
     Boid.prototype.max_force = 0;
     function Boid(loc, max_speed, max_force, processing) {
@@ -31,7 +31,7 @@
       var theta;
       theta = this.velocity.heading() + this.p.radians(90);
       this.p.fill(70);
-      this.p.stroke(255, 255, 0);
+      this.p.stroke(0, 0, 255);
       this.p.pushMatrix();
       this.p.translate(this.location.x, this.location.y);
       this.p.rotate(theta);

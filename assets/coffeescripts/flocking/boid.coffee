@@ -15,7 +15,7 @@ class Harry.Boid
     location: false
     velocity: false
     p: false
-    r: 2
+    r: 3
     max_speed: 0
     max_force: 0
 
@@ -35,7 +35,7 @@ class Harry.Boid
       # Draw a triangle rotated in the direction of velocity
       theta = @velocity.heading() + @p.radians(90)
       @p.fill(70)
-      @p.stroke(255,255,0)
+      @p.stroke(0,0,255)
       @p.pushMatrix()
       @p.translate(@location.x,@location.y)
       @p.rotate(theta)
