@@ -76,5 +76,12 @@ class Harry.Vector
       [@x,@y,@z] = [@x*n,@y*n,@z*n]
       this
     
+    dot: (other) ->
+      @x*other.x + @y*other.y + @z*other.z
+    
+    # Not the strict projection, the other isn't converted to a unit first.
+    projectOnto: (other) ->
+      other.copy().multiply(this.dot(other))
+
     invalid: () ->
       return @x == Infinity || isNaN(@x) || @y == Infinity || isNaN(@y) || @z == Infinity || isNaN(@z)

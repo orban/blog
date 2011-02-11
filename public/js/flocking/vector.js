@@ -1,6 +1,9 @@
 (function() {
   Harry.Vector = (function() {
     var name, _fn, _i, _len, _ref;
+    Vector.prototype.map_width = 500;
+    Vector.prototype.map_height = 500;
+    Vector.prototype.map_depth = 500;
     _ref = ['add', 'subtract', 'multiply', 'divide'];
     _fn = function(name) {
       return Vector[name] = function(a, b) {
@@ -11,7 +14,7 @@
       name = _ref[_i];
       _fn(name);
     }
-    function Vector(x, y, z) {
+    function Vector(x, y, z, width, height) {
       var _ref;
       if (x == null) {
         x = 0;
@@ -23,6 +26,12 @@
         z = 0;
       }
       _ref = [x, y, z], this.x = _ref[0], this.y = _ref[1], this.z = _ref[2];
+      if (width != null) {
+        this.map_width = width;
+      }
+      if (height != null) {
+        this.map_height = height;
+      }
     }
     Vector.prototype.copy = function() {
       return new Harry.Vector(this.x, this.y, this.z);
@@ -49,14 +58,22 @@
     Vector.prototype.heading = function() {
       return -1 * Math.atan2(-1 * this.y, this.x);
     };
-    Vector.prototype.distance = function(other) {
+    Vector.prototype.eucl_distance = function(other) {
       var dx, dy, dz;
       dx = this.x - other.x;
       dy = this.y - other.y;
       dz = this.z - other.z;
       return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
-    Vector.prototype.distance_with_wrap = function(other) {};
+    Vector.prototype.distance = function(other) {
+      var dx, dy, dz;
+      dx = Math.abs(this.x - other.x);
+      dy = Math.abs(this.y - other.y);
+      dz = Math.abs(this.z - other.z);
+      dx = dx < this.map_width / 2 ? dx : this.map_width - dx;
+      dy = dy < this.map_height / 2 ? dy : this.map_height - dy;
+      return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    };
     Vector.prototype.subtract = function(other) {
       this.x -= other.x;
       this.y -= other.y;
@@ -78,6 +95,12 @@
       var _ref;
       _ref = [this.x * n, this.y * n, this.z * n], this.x = _ref[0], this.y = _ref[1], this.z = _ref[2];
       return this;
+    };
+    Vector.prototype.dot = function(other) {
+      return this.x * other.x + this.y * other.y + this.z * other.z;
+    };
+    Vector.prototype.projectOnto = function(other) {
+      return other.copy().multiply(this.dot(other));
     };
     Vector.prototype.invalid = function() {
       return this.x === Infinity || isNaN(this.x) || this.y === Infinity || isNaN(this.y) || this.z === Infinity || isNaN(this.z);

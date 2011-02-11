@@ -4,7 +4,7 @@
   ALIGNMENT_WEIGHT = 1;
   COHESION_WEIGHT = 1;
   GRAVITY_WEIGHT = 6;
-  DESIRED_SEPARATION = 15;
+  DESIRED_SEPARATION = 18;
   NEIGHBOUR_RADIUS = 50;
   MOUSE_REPULSION = 1;
   MOUSE_RADIUS = 5;
@@ -16,12 +16,12 @@
     Boid.prototype.r = 3;
     Boid.prototype.max_speed = 0;
     Boid.prototype.max_force = 0;
-    function Boid(loc, max_speed, max_force, processing) {
+    function Boid(loc, max_speed, max_force, radius, processing) {
       var _ref;
       this.p = processing;
       this.location = loc.copy();
       this.velocity = new Harry.Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
-      _ref = [max_speed, max_force], this.max_speed = _ref[0], this.max_force = _ref[1];
+      _ref = [max_speed, max_force, radius], this.max_speed = _ref[0], this.max_force = _ref[1], this.r = _ref[2];
     }
     Boid.prototype.step = function(neighbours) {
       var acceleration;
@@ -33,11 +33,10 @@
     Boid.prototype.render = function() {
       this.p.fill(70);
       this.p.stroke(0, 0, 255);
-      return this.renderSelf();
+      return this._renderSelf();
     };
     Boid.prototype.renderWithIndications = function(neighbours) {
       var boid, d, _i, _len;
-      this.renderedThisStep = false;
       if (this.inspecting()) {
         this.p.pushMatrix();
         this.p.translate(this.location.x, this.location.y);
@@ -55,22 +54,22 @@
             if (d < DESIRED_SEPARATION) {
               this.p.fill(250, 0, 0);
               this.p.stroke(100, 0, 0);
-              boid.renderSelf(true);
+              boid._renderSelf(true);
             } else if (d < NEIGHBOUR_RADIUS) {
               this.p.fill(0, 100, 0);
               this.p.stroke(0, 100, 0);
-              boid.renderSelf(true);
+              boid._renderSelf(true);
             }
           }
         }
         this.p.fill(200, 0, 200);
         this.p.stroke(250, 0, 250);
-        return this.renderSelf(true);
+        return this._renderSelf(true);
       } else {
         return this.render();
       }
     };
-    Boid.prototype.renderSelf = function(rerender) {
+    Boid.prototype._renderSelf = function(rerender) {
       var theta;
       if (rerender == null) {
         rerender = false;
@@ -186,9 +185,9 @@
       return steer;
     };
     Boid.prototype.inspecting = function() {
-      var mouse;
-      mouse = Harry.Vector.subtract(Harry.Mouse, this.location);
-      return mouse.magnitude() < this.r * this.r;
+      var d;
+      d = Harry.Vector.subtract(Harry.Mouse, this.location);
+      return d.magnitude() < this.r * 2;
     };
     return Boid;
   })();

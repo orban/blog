@@ -5,12 +5,12 @@ ALIGNMENT_WEIGHT = 1
 COHESION_WEIGHT = 1
 GRAVITY_WEIGHT = 6
 
-DESIRED_SEPARATION = 15
+DESIRED_SEPARATION = 18
 NEIGHBOUR_RADIUS = 50
 
 MOUSE_REPULSION = 1
 MOUSE_RADIUS = 5
-#PLANETS = [{x:}]
+
 class Harry.Boid
     location: false
     velocity: false
@@ -20,11 +20,11 @@ class Harry.Boid
     max_speed: 0
     max_force: 0
 
-    constructor: (loc, max_speed, max_force, processing) ->
+    constructor: (loc, max_speed, max_force, radius, processing) ->
       @p = processing
       @location = loc.copy()
       @velocity = new Harry.Vector(Math.random()*2-1,Math.random()*2-1)
-      [@max_speed, @max_force] = [max_speed, max_force]
+      [@max_speed, @max_force, @r] = [max_speed, max_force, radius]
 
     step: (neighbours) ->
       @renderedThisStep = false
@@ -35,10 +35,9 @@ class Harry.Boid
     render: () ->
       @p.fill(70)
       @p.stroke(0,0,255)
-      this.renderSelf()
+      this._renderSelf()
 
     renderWithIndications: (neighbours) ->
-      @renderedThisStep = false
       if this.inspecting()
         @p.pushMatrix()
         @p.translate(@location.x,@location.y)
@@ -55,24 +54,27 @@ class Harry.Boid
           d = @location.distance(boid.location)
           if d > 0
             if d < DESIRED_SEPARATION
+              # Highlight other boids which are too close in red
               @p.fill(250,0,0)
               @p.stroke(100,0,0)
-              boid.renderSelf(true)
+              boid._renderSelf(true)
             else if d < NEIGHBOUR_RADIUS
+              # Highlight other neighbouring boids which affect cohesion and alignment in green
               @p.fill(0,100,0)
               @p.stroke(0,100,0)
-              boid.renderSelf(true)
+              boid._renderSelf(true)
 
         # Render self
         @p.fill(200,0,200)
         @p.stroke(250,0,250)
-        this.renderSelf(true)
+        this._renderSelf(true)
       else
         this.render()
 
-    renderSelf: (rerender = false) ->
+    # Expects the colour to be set already
+    _renderSelf: (rerender = false) ->
       unless rerender
-        return if @renderedThisStep
+        return if @renderedThisStep # don't render twice unless forced
       @renderedThisStep = true
       # Draw a triangle rotated in the direction of velocity
       theta = @velocity.heading() + @p.radians(90)
@@ -168,5 +170,5 @@ class Harry.Boid
       return steer
 
     inspecting: () ->
-      mouse = Harry.Vector.subtract(Harry.Mouse, @location)
-      mouse.magnitude() < @r * @r # HACKETYHACKHACK
+      d = Harry.Vector.subtract(Harry.Mouse, @location)
+      d.magnitude() < @r * 2 # HACKETYHACKHACK
