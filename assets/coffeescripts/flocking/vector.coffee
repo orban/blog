@@ -79,7 +79,7 @@ class Harry.Vector
     dot: (other) ->
       @x*other.x + @y*other.y + @z*other.z
     
-    # Not the strict projection, the other isn't converted to a unit first.
+    # Not the strict projection, the other isn't converted to a unit vector first.
     projectOnto: (other) ->
       other.copy().multiply(this.dot(other))
 
