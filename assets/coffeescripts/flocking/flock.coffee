@@ -77,7 +77,9 @@ class Harry.Flock
       @options.boids(processing)
     else
     # Figure out the initial position
-    start = new Harry.Vector(processing.scaledWidth,processing.scaledHeight).projectOnto(@options.startPosition)
+    start = new Harry.Vector(processing.scaledWidth,processing.scaledHeight)
+    start.x = start.x * @options.startPosition.x
+    start.y = start.y * @options.startPosition.y
     # Fill an array with all the boid instances
     options = jQuery.extend(true, {processing: processing}, @options.boid)
     for i in [1..@options.boids]

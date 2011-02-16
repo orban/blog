@@ -18,6 +18,7 @@ class Harry.Boid
     gravity: 6
   indicators:
     separation: true
+    separationRadius: false
     alignment: true
     alignmentNeighbours: false
     cohesion: true
@@ -51,9 +52,9 @@ class Harry.Boid
     twor = @r * 2
     @wrapDimensions =
       north:  -twor
-      south:  @p.scaledWidth + twor
+      south:  @p.scaledHeight + twor
       west:   -twor
-      east:   @p.scaledHeight + twor
+      east:   @p.scaledWidth + twor
       width:  @p.scaledWidth + 2*twor
       height: @p.scaledHeight + 2*twor
 
@@ -171,6 +172,12 @@ class Harry.Boid
         @p.fill(100,200,50, 100)
         @p.stroke(100,200,50, 200)
         @p.ellipse(0,0, @neighbourRadius*2, @neighbourRadius*2)
+      
+      # Draw separation radius
+      if @indicators.separationRadius
+        @p.fill(200,10,10,100)
+        @p.stroke(200,10,10,200)
+        @p.ellipse(0,0, @desiredSeparation*2, @desiredSeparation*2)
 
       @p.popMatrix()
       this._renderSelfWithIndicators(neighbours)

@@ -86,7 +86,9 @@
       } else {
 
       }
-      start = new Harry.Vector(processing.scaledWidth, processing.scaledHeight).projectOnto(this.options.startPosition);
+      start = new Harry.Vector(processing.scaledWidth, processing.scaledHeight);
+      start.x = start.x * this.options.startPosition.x;
+      start.y = start.y * this.options.startPosition.y;
       options = jQuery.extend(true, {
         processing: processing
       }, this.options.boid);

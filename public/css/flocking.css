@@ -1,6 +1,6 @@
 /* line 1, ../../assets/sass/flocking.sass */
 .flock {
-  margin: 0 auto;
+  margin: 0 auto 1.5em auto;
   height: 200px;
   width: 200px;
   border: 1px solid black;
@@ -12,25 +12,30 @@
 }
 
 /* line 10, ../../assets/sass/flocking.sass */
-#fullFlock, #prettyDemo {
+#prettyDemo {
+  width: 90%;
+  height: 500px;
+}
+
+/* line 14, ../../assets/sass/flocking.sass */
+#fullFlock {
   width: 500px;
   height: 500px;
 }
 
-/* line 16, ../../assets/sass/flocking.sass */
+/* line 20, ../../assets/sass/flocking.sass */
 #cohesionDemo, #alignmentDemo, #separationDemo {
   width: 300px;
   height: 300px;
-  margin-bottom: 1.5em;
 }
 
-/* line 21, ../../assets/sass/flocking.sass */
+/* line 24, ../../assets/sass/flocking.sass */
 #cohesionDemo, #separationDemo {
   float: right;
   margin-left: 10px;
 }
 
-/* line 25, ../../assets/sass/flocking.sass */
+/* line 28, ../../assets/sass/flocking.sass */
 #alignmentDemo {
   width: 300px;
   height: 300px;
@@ -38,7 +43,7 @@
   margin-right: 10px;
 }
 
-/* line 32, ../../assets/sass/flocking.sass */
-.content h3 {
+/* line 35, ../../assets/sass/flocking.sass */
+.content h1, .content h2, .content h3, .content h4 {
   clear: both;
 }

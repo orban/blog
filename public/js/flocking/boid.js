@@ -18,6 +18,7 @@
     };
     Boid.prototype.indicators = {
       separation: true,
+      separationRadius: false,
       alignment: true,
       alignmentNeighbours: false,
       cohesion: true,
@@ -58,9 +59,9 @@
       twor = this.r * 2;
       this.wrapDimensions = {
         north: -twor,
-        south: this.p.scaledWidth + twor,
+        south: this.p.scaledHeight + twor,
         west: -twor,
-        east: this.p.scaledHeight + twor,
+        east: this.p.scaledWidth + twor,
         width: this.p.scaledWidth + 2 * twor,
         height: this.p.scaledHeight + 2 * twor
       };
@@ -192,6 +193,11 @@
           this.p.fill(100, 200, 50, 100);
           this.p.stroke(100, 200, 50, 200);
           this.p.ellipse(0, 0, this.neighbourRadius * 2, this.neighbourRadius * 2);
+        }
+        if (this.indicators.separationRadius) {
+          this.p.fill(200, 10, 10, 100);
+          this.p.stroke(200, 10, 10, 200);
+          this.p.ellipse(0, 0, this.desiredSeparation * 2, this.desiredSeparation * 2);
         }
         this.p.popMatrix();
         this._renderSelfWithIndicators(neighbours);
