@@ -1,12 +1,18 @@
 require "rubygems"
 require "bundler/setup"
 Bundler.require(:default, ENV['RACK_ENV'])
-
 require './blog.rb'
 
 # Rack config
 use Rack::Static, :urls => ['/css', '/js', '/images', '/fonts', '/favicon.ico', '/cv.pdf', '/google4b1c5818a10d5176.html'], :root => 'public'
 use Rack::CommonLogger
+use Rack::Codehighlighter, 
+  :ultraviolet, 
+  :theme => "sunburst",
+  :markdown => true, 
+  :element => "pre>code", 
+  :pattern => /\A:::(\w+)\s*(\n|&#x000A;)/i, 
+  :logging => true
 
 unless ENV['RACK_ENV'] == 'production'
   use Rack::ShowExceptions

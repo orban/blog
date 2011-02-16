@@ -9,7 +9,7 @@
 }
 
 /* line 7, ../../assets/sass/flocking.sass */
-#fullFlock {
+#fullFlock, #prettyDemo {
   width: 500px;
   height: 500px;
 }

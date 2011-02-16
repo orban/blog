@@ -1,8 +1,10 @@
 !!!
-%html
+%html<
   %head
     %link{:href=>'http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold',:rel=>'stylesheet', :type=>'text/css'}    
+    %link{:href=>'http://fonts.googleapis.com/css?family=Inconsolata',:rel=>'stylesheet', :type=>'text/css'}    
     %link{:href => "/css/screen.css", :media => "screen, projection", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/css/sunburst.css", :media => "screen, projection", :rel => "stylesheet", :type => "text/css"}
     %link{:href => "/css/print.css", :media => "print", :rel => "stylesheet", :type => "text/css"}
     /[if lt IE 8]
       <link href="/public/css/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -19,8 +21,8 @@
       :javascript
         var disqus_developer = 1;
 
-  %body{:class => "bp one-col #{"index" if @path == 'index'}"}
-    #container
+  %body{:class => "bp one-col #{"index" if @path == 'index'}"}<
+    #container<
       %header#header
         %h1
           %a{:href => "/"} Will you Harry Me?
@@ -32,7 +34,7 @@
           %a{:href => "mailto:harry.brundage@gmail.com"} email
           %a{:href => "http://twitter.com/harrybrundage"} twitter
           %a{:href => "http://github.com/hornairs"} github
-      %section#content
+      %section#content<
         = yield
       %footer
         powered by
