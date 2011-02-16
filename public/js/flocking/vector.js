@@ -14,7 +14,7 @@
       name = _ref[_i];
       _fn(name);
     }
-    function Vector(x, y, z, width, height) {
+    function Vector(x, y, z, width, height, depth) {
       var _ref;
       if (x == null) {
         x = 0;
@@ -32,9 +32,12 @@
       if (height != null) {
         this.map_height = height;
       }
+      if (depth != null) {
+        this.map_depth = depth;
+      }
     }
     Vector.prototype.copy = function() {
-      return new Harry.Vector(this.x, this.y, this.z);
+      return new Harry.Vector(this.x, this.y, this.z, this.map_width, this.map_height, this.map_depth);
     };
     Vector.prototype.magnitude = function() {
       return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
@@ -102,8 +105,30 @@
     Vector.prototype.projectOnto = function(other) {
       return other.copy().multiply(this.dot(other));
     };
+    Vector.prototype.wrapRelativeTo = function(location) {
+      var a, d, key, map_d, v, _ref;
+      v = this.copy();
+      _ref = {
+        "x": "width",
+        "y": "height",
+        "z": "depth"
+      };
+      for (a in _ref) {
+        key = _ref[a];
+        d = this[a] - location[a];
+        map_d = this["map_" + key];
+        if (Math.abs(d) > map_d / 2) {
+          if (d > 0) {
+            v[a] = (map_d - this[a]) * -1;
+          } else {
+            v[a] = this[a] + map_d;
+          }
+        }
+      }
+      return v;
+    };
     Vector.prototype.invalid = function() {
-      return this.x === Infinity || isNaN(this.x) || this.y === Infinity || isNaN(this.y) || this.z === Infinity || isNaN(this.z);
+      return (this.x === Infinity) || isNaN(this.x) || this.y === Infinity || isNaN(this.y) || this.z === Infinity || isNaN(this.z);
     };
     return Vector;
   })();

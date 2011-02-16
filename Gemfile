@@ -11,7 +11,7 @@ gem 'rack-codehighlighter', :require => 'rack/codehighlighter'
 # Ultraviolet. God what a pain.
 gem 'plist', :git => "git://github.com/spox/plist.git"
 gem 'textpow', :git => "git://github.com/spox/textpow.git"
-gem 'ultraviolet', :path => "~/Code/ultraviolet", :require => 'uv'
+gem 'ultraviolet', :git => "git://github.com/hornairs/ultraviolet.git", :require => 'uv'
 
 group :development, :test do 
   gem 'unicorn'

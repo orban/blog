@@ -20,12 +20,20 @@
     Boid.prototype.mousePhobic = true;
     Boid.prototype.forceInspection = false;
     Boid.prototype.inspectable = false;
+    Boid.prototype._separation = new Harry.Vector;
+    Boid.prototype._alignment = new Harry.Vector;
+    Boid.prototype._cohesion = new Harry.Vector;
+    Boid.prototype._cohesion_mean = new Harry.Vector;
     function Boid(loc, maxSpeed, maxForce, radius, mousePhobic, processing) {
       var _ref;
+      this.velocity = new Harry.Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
       this.p = processing;
       this.location = loc.copy();
-      this.velocity = new Harry.Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
       _ref = [maxSpeed, maxForce, radius, mousePhobic], this.maxSpeed = _ref[0], this.maxForce = _ref[1], this.r = _ref[2], this.mousePhobic = _ref[3];
+      this.wrapHeightNorth = 0;
+      this.wrapHeightSouth = this.p.width;
+      this.wrapWidthWest = 0;
+      this.wrapWidthEast = this.p.height;
     }
     Boid.prototype.step = function(neighbours) {
       var acceleration;
@@ -138,28 +146,29 @@
       return this._wrapIfNeeded();
     };
     Boid.prototype._wrapIfNeeded = function() {
-      this._unwrappedLocation = this.location.copy();
-      if (this.location.x < -this.r) {
-        this.location.x = this.p.width + this.r;
+      if (this.location.x < this.wrapWidthWest) {
+        this.location.x = this.p.width;
       }
-      if (this.location.y < -this.r) {
-        this.location.y = this.p.height + this.r;
+      if (this.location.y < this.wrapHeightNorth) {
+        this.location.y = this.p.height;
       }
-      if (this.location.x > this.p.width + this.r) {
-        this.location.x = -this.r;
+      if (this.location.x > this.wrapWidthEast) {
+        this.location.x = 0;
       }
-      if (this.location.y > this.p.height + this.r) {
-        return this.location.y = -this.r;
+      if (this.location.y > this.wrapHeightSouth) {
+        return this.location.y = 0;
       }
     };
     Boid.prototype._flock = function(neighbours) {
       var alignment_count, alignment_mean, boid, cohesion_count, cohesion_mean, d, separation_count, separation_mean, _i, _len;
       separation_mean = new Harry.Vector;
       alignment_mean = new Harry.Vector;
-      cohesion_mean = new Harry.Vector;
+      cohesion_mean = this.location.copy();
       separation_count = 0;
       alignment_count = 0;
-      cohesion_count = 0;
+      cohesion_count = 1;
+      this.contributors = [];
+      this.neighbours = [];
       for (_i = 0, _len = neighbours.length; _i < _len; _i++) {
         boid = neighbours[_i];
         if (boid === this) {
@@ -168,13 +177,14 @@
         d = this.location.distance(boid.location);
         if (d > 0) {
           if (d < DESIRED_SEPARATION) {
-            separation_mean.add(Harry.Vector.subtract(this.location, boid.location).normalize().divide(d));
+            separation_mean.add(Harry.Vector.subtract(this.location, boid.location).copy().normalize().divide(d));
             separation_count++;
           }
           if (d < NEIGHBOUR_RADIUS) {
+            this.neighbours.push(boid);
             alignment_mean.add(boid.velocity);
             alignment_count++;
-            cohesion_mean.add(boid.location);
+            cohesion_mean.add(boid.location.wrapRelativeTo(this.location));
             cohesion_count++;
           }
         }

@@ -23,12 +23,22 @@ class Harry.Boid
     mousePhobic: true
     forceInspection: false
     inspectable: false
+    _separation: new Harry.Vector
+    _alignment: new Harry.Vector
+    _cohesion: new Harry.Vector
+    _cohesion_mean: new Harry.Vector
     
     constructor: (loc, maxSpeed, maxForce, radius, mousePhobic, processing) ->
+      @velocity = new Harry.Vector(Math.random()*2-1,Math.random()*2-1)
       @p = processing
       @location = loc.copy()
-      @velocity = new Harry.Vector(Math.random()*2-1,Math.random()*2-1)
       [@maxSpeed, @maxForce, @r, @mousePhobic] = [maxSpeed, maxForce, radius, mousePhobic]
+
+      @wrapHeightNorth = 0
+      @wrapHeightSouth = @p.width
+      @wrapWidthWest = 0
+      @wrapWidthEast = @p.height
+
 
     step: (neighbours) ->
       acceleration = this._flock(neighbours).add(this._gravitate())
@@ -142,34 +152,35 @@ class Harry.Boid
 
     # Wraparound
     _wrapIfNeeded: () ->
-      @_unwrappedLocation = @location.copy()
-      @location.x = @p.width+@r if @location.x < -@r
-      @location.y = @p.height+@r if @location.y < -@r
-      @location.x = -@r if @location.x > @p.width+@r
-      @location.y = -@r if @location.y > @p.height+@r
+      @location.x = @p.width if @location.x < @wrapWidthWest    # go out west come in east
+      @location.y = @p.height if @location.y < @wrapHeightNorth # go out north come in south
+      @location.x = 0 if @location.x > @wrapWidthEast            # go out east come in west
+      @location.y = 0 if @location.y > @wrapHeightSouth        # go out south come in north
 
     _flock: (neighbours) ->
       separation_mean = new Harry.Vector
       alignment_mean = new Harry.Vector
-      cohesion_mean = new Harry.Vector
+      cohesion_mean = @location.copy()
 
       separation_count = 0
       alignment_count = 0
-      cohesion_count = 0
+      cohesion_count = 1
+      @contributors = []
+      @neighbours = []
 
       # Each flocking behaviour did this loop, so lets put them together into one
       for boid in neighbours
         continue if boid == this
         d = @location.distance(boid.location)
-
         if d > 0
           if d < DESIRED_SEPARATION
-            separation_mean.add Harry.Vector.subtract(@location,boid.location).normalize().divide(d) # Normalized,weighted by distance vector pointing away from the neighbour
+            separation_mean.add Harry.Vector.subtract(@location,boid.location).copy().normalize().divide(d) # Normalized,weighted by distance vector pointing away from the neighbour
             separation_count++
           if d < NEIGHBOUR_RADIUS
+            @neighbours.push boid
             alignment_mean.add(boid.velocity)
             alignment_count++
-            cohesion_mean.add(boid.location)
+            cohesion_mean.add(boid.location.wrapRelativeTo(@location))
             cohesion_count++
 
       separation_mean.divide(separation_count) if separation_count > 0

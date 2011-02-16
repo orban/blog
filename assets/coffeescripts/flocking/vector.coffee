@@ -9,7 +9,7 @@ class Harry.Vector
         Vector[name] = (a,b) ->
           a.copy()[name](b)
 
-    constructor: (x=0,y=0,z=0,width,height) ->
+    constructor: (x=0,y=0,z=0,width,height,depth) ->
       [@x,@y,@z] = [x,y,z]
       # Don't use coffeescript's default arguments, these things get instantiated a lot,
       # and I'd rather use one property on the prototype than set it every time
@@ -17,9 +17,11 @@ class Harry.Vector
         @map_width = width
       if height?
         @map_height = height
+      if depth?
+        @map_depth = depth
 
     copy: ->
-      new Harry.Vector(@x, @y, @z)
+      new Harry.Vector(@x,@y,@z,@map_width,@map_height,@map_depth)
 
     magnitude: ->
       Math.sqrt(@x*@x + @y*@y + @z*@z)
@@ -82,6 +84,28 @@ class Harry.Vector
     # Not the strict projection, the other isn't converted to a unit vector first.
     projectOnto: (other) ->
       other.copy().multiply(this.dot(other))
+    
+    # Called on a vector acting as a position vector to return the wrapped representation closest
+    # to another location
+    wrapRelativeTo: (location) ->
+      v = this.copy()
+      for a,key of {"x":"width", "y":"height", "z":"depth"}
+        d = this[a]-location[a]
+        map_d = this["map_#{key}"]
+        # If the distance is greater than half the map wrap it.
+        if Math.abs(d) > map_d/2
+          # If the distance is positive, then the this vector is in front of the location, and it 
+          # would be closer to the location if it were wrapped to the negative behind the axis
+          if d > 0
+            # Take the distance to the axis and put the point behind the opposite side of the map by
+            # that much
+            v[a] = (map_d - this[a]) * -1
+          else
+          # If the distance is negative, then this this vector is behind the location, and it
+          # would be closer if it were wrapped in front of the location past the axis in the positive
+          # direction. Take the distance back to the axis, and put the point past the edge by that much
+            v[a] = (this[a] + map_d)
+      v
 
     invalid: () ->
-      return @x == Infinity || isNaN(@x) || @y == Infinity || isNaN(@y) || @z == Infinity || isNaN(@z)
+      return (@x == Infinity) || isNaN(@x) || @y == Infinity || isNaN(@y) || @z == Infinity || isNaN(@z)

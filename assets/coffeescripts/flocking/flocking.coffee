@@ -11,6 +11,7 @@ class Flock
     inspectOne: false
     inspectOneMagnification: false
     legend: false
+    startOnPageLoad: false
 
   constructor: (canvas, options) ->
     @options = jQuery.extend {}, Flock.defaults, options
@@ -31,7 +32,7 @@ class Flock
 
     processing.frameRate(@options.frameRate)
 
-    timeRunning = true # closed over variable for tracking if "time" is paused or running
+    timeRunning = @options.startOnPageLoad # closed over variable for tracking if "time" is paused or running
 
     if @options.legend
       font = processing.loadFont('/fonts/aller_rg-webfont')
@@ -55,9 +56,16 @@ class Flock
       for boid in boids
         boid.render(boids)
 
+      # Draw lines to prevent flickering at the edges when wrapping
+      processing.stroke(255)
+      processing.strokeWeight(@options.radius+1)
+      processing.noFill()
+      processing.rect(@options.radius/2-1,@options.radius/2-1, processing.width-@options.radius+1,processing.height-@options.radius+1)
+
       # Draw our friend the inspected boid
       if @options.inspectOneMagnification and @options.inspectOne
         processing.stroke(0)
+        processing.strokeWeight(1)
         processing.fill(255)
         processing.rect(0,0, 100, 100)
         processing.pushMatrix()
@@ -70,15 +78,16 @@ class Flock
       if @options.legend
         processing.fill(255)
         processing.stroke(0)
+        processing.strokeWeight(1)
         processing.pushMatrix()
         processing.translate(0,processing.height-101)
         processing.rect(0,0, 100, 100)
         processing.textFont(font, 14)
         processing.fill(0)
         processing.text("Legend",24,15)
-  
+
         processing.translate(10,16)
-        
+
         demo = new Harry.Vector(0,-12)
         ctx = {p:processing}
         legends = [
@@ -91,20 +100,20 @@ class Flock
         processing.pushMatrix()
         processing.strokeWeight(2)
         processing.textFont(font, 12)
-        
+
         for l in legends
           processing.translate(0,20)
-          
+
           #Velocity - black
           processing.stroke(l.r,l.g,l.b)
           processing.fill(l.r,l.g,l.b)
           Harry.Boid::_renderVector.call(ctx, demo,1)
           processing.text(l.name,8,-2)
-        
+
         processing.popMatrix()
 
       return true
-      
+
     setInspectable = (what) ->
       boid.inspectable = what for boid in boids
 
@@ -114,8 +123,15 @@ class Flock
         timeRunning = !timeRunning
 
 Flocks =
+  prettyDemo:
+    boids: 75
+    radius: 4
+    inspectOne: false
+    legend: false
+    startOnPageLoad: true
+
   fullFlock:
-    boids: 100
+    boids: 75
     radius: 4
     inspectOne: true
     inspectOneMagnification: true

@@ -13,7 +13,8 @@
       mousePhobic: false,
       inspectOne: false,
       inspectOneMagnification: false,
-      legend: false
+      legend: false,
+      startOnPageLoad: false
     };
     function Flock(canvas, options) {
       this.run = __bind(this.run, this);;      this.options = jQuery.extend({}, Flock.defaults, options);
@@ -35,7 +36,7 @@
         inspectorGadget.forceInspection = true;
       }
       processing.frameRate(this.options.frameRate);
-      timeRunning = true;
+      timeRunning = this.options.startOnPageLoad;
       if (this.options.legend) {
         font = processing.loadFont('/fonts/aller_rg-webfont');
       }
@@ -57,8 +58,13 @@
           boid = boids[_k];
           boid.render(boids);
         }
+        processing.stroke(255);
+        processing.strokeWeight(this.options.radius + 1);
+        processing.noFill();
+        processing.rect(this.options.radius / 2 - 1, this.options.radius / 2 - 1, processing.width - this.options.radius + 1, processing.height - this.options.radius + 1);
         if (this.options.inspectOneMagnification && this.options.inspectOne) {
           processing.stroke(0);
+          processing.strokeWeight(1);
           processing.fill(255);
           processing.rect(0, 0, 100, 100);
           processing.pushMatrix();
@@ -70,6 +76,7 @@
         if (this.options.legend) {
           processing.fill(255);
           processing.stroke(0);
+          processing.strokeWeight(1);
           processing.pushMatrix();
           processing.translate(0, processing.height - 101);
           processing.rect(0, 0, 100, 100);
@@ -138,8 +145,15 @@
     return Flock;
   })();
   Flocks = {
+    prettyDemo: {
+      boids: 75,
+      radius: 4,
+      inspectOne: false,
+      legend: false,
+      startOnPageLoad: true
+    },
     fullFlock: {
-      boids: 100,
+      boids: 75,
       radius: 4,
       inspectOne: true,
       inspectOneMagnification: true,

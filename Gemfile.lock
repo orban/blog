@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/hornairs/ultraviolet.git
+  revision: 58c01abcd0e7c39cec3cfb604b9addc46b0db9bb
+  specs:
+    ultraviolet (0.10.5)
+      spox-textpow
+
+GIT
   remote: git://github.com/spox/plist.git
   revision: deb5f9e1ef1cd4ef7de7b2a2c8a1846ca5a29f4f
   specs:
@@ -10,12 +17,6 @@ GIT
   specs:
     textpow (0.10.3)
       spox-plist
-
-PATH
-  remote: /Users/hornairs/Code/ultraviolet
-  specs:
-    ultraviolet (0.10.5)
-      spox-textpow
 
 GEM
   remote: http://rubygems.org/
