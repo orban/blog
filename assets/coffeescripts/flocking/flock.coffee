@@ -23,7 +23,8 @@ class Harry.Flock
 
   run: (processing) =>
     processing.frameRate(@options.frameRate)
-    processing.scale(@options.scale)
+    processing.scaledHeight = processing.height/@options.scale
+    processing.scaledWidth = processing.width/@options.scale
     timeRunning = @options.startOnPageLoad # closed over variable for tracking if "time" is paused or running
 
     boids = this._getBoids(processing)
@@ -38,8 +39,10 @@ class Harry.Flock
       font ||= processing.loadFont('/fonts/aller_rg-webfont')
 
     processing.draw = =>
+      processing.pushMatrix()
+      processing.scale(@options.scale)
       # Update mouse location for the boids to look at
-      Harry.Mouse = new Harry.Vector(processing.mouseX, processing.mouseY)
+      Harry.Mouse = new Harry.Vector(processing.mouseX/@options.scale, processing.mouseY/@options.scale)
 
       processing.background(255)
 
@@ -55,6 +58,8 @@ class Harry.Flock
       # Render each boid
       for boid in boids
         boid.render(boids)
+
+      processing.popMatrix()
       # Other stuff
       #this._drawAntiFlicker(processing) if @options.antiFlicker
       this._drawInspector(inspectorGadget,processing) if @options.inspectOneMagnification and @options.inspectOne
@@ -66,15 +71,15 @@ class Harry.Flock
       processing.mouseClicked = ->
         boid.inspectable = timeRunning for boid in boids
         timeRunning = !timeRunning
-    
+
   _getBoids: (processing) ->
     if @options.boids.call?
       @options.boids(processing)
     else
     # Figure out the initial position
-    start = new Harry.Vector(processing.width,processing.height).projectOnto(@options.startPosition)
+    start = new Harry.Vector(processing.scaledWidth,processing.scaledHeight).projectOnto(@options.startPosition)
     # Fill an array with all the boid instances
-    options = jQuery.extend({processing: processing}, @options.boid)
+    options = jQuery.extend(true, {processing: processing}, @options.boid)
     for i in [1..@options.boids]
       velocity = new Harry.Vector(Math.random()*2-1,Math.random()*2-1)
       startPosition = start.copy()
@@ -82,7 +87,6 @@ class Harry.Flock
       startPosition.y += Math.random() * 10 - 5
       new Harry.Boid(jQuery.extend(options, {velocity: velocity, startPosition: startPosition}))
 
-      
   _drawLegend: (processing) ->
     # Draw legend
     processing.fill(255)
@@ -137,6 +141,6 @@ class Harry.Flock
     processing.pushMatrix()
     processing.translate(50,50)
     processing.scale(2)
-    boid._renderSelfWithIndicators(false) # dont let it translate itself to its location
+    boid._renderSelfWithIndicators([], false) # dont let it translate itself to its location
     processing.popMatrix()
 

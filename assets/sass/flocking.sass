@@ -2,6 +2,7 @@
   margin: 0 auto
   height: 200px
   width: 200px
+  border: 1px solid black
   canvas
     width: 100%
     height: 100%
@@ -9,3 +10,24 @@
 #fullFlock, #prettyDemo
   width: 500px
   height: 500px
+
+$inline-size: 300px
+
+#cohesionDemo, #alignmentDemo, #separationDemo
+  width: $inline-size
+  height: $inline-size
+  margin-bottom: 1.5em
+
+#cohesionDemo, #separationDemo
+  float: right
+  margin-left: 10px
+
+#alignmentDemo
+  width: $inline-size
+  height: $inline-size
+  float: left
+  margin-right: 10px
+
+
+.content h3
+  clear: both

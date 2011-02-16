@@ -3,15 +3,42 @@
   margin: 0 auto;
   height: 200px;
   width: 200px;
+  border: 1px solid black;
 }
-/* line 5, ../../assets/sass/flocking.sass */
+/* line 6, ../../assets/sass/flocking.sass */
 .flock canvas {
   width: 100%;
   height: 100%;
 }
 
-/* line 9, ../../assets/sass/flocking.sass */
+/* line 10, ../../assets/sass/flocking.sass */
 #fullFlock, #prettyDemo {
   width: 500px;
   height: 500px;
+}
+
+/* line 16, ../../assets/sass/flocking.sass */
+#cohesionDemo, #alignmentDemo, #separationDemo {
+  width: 300px;
+  height: 300px;
+  margin-bottom: 1.5em;
+}
+
+/* line 21, ../../assets/sass/flocking.sass */
+#cohesionDemo, #separationDemo {
+  float: right;
+  margin-left: 10px;
+}
+
+/* line 25, ../../assets/sass/flocking.sass */
+#alignmentDemo {
+  width: 300px;
+  height: 300px;
+  float: left;
+  margin-right: 10px;
+}
+
+/* line 32, ../../assets/sass/flocking.sass */
+.content h3 {
+  clear: both;
 }

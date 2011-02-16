@@ -28,7 +28,8 @@
     Flock.prototype.run = function(processing) {
       var boids, inspectorGadget, timeRunning;
       processing.frameRate(this.options.frameRate);
-      processing.scale(this.options.scale);
+      processing.scaledHeight = processing.height / this.options.scale;
+      processing.scaledWidth = processing.width / this.options.scale;
       timeRunning = this.options.startOnPageLoad;
       boids = this._getBoids(processing);
       if (this.options.inspectOne) {
@@ -40,7 +41,9 @@
       }
       processing.draw = __bind(function() {
         var boid, _i, _j, _k, _len, _len2, _len3;
-        Harry.Mouse = new Harry.Vector(processing.mouseX, processing.mouseY);
+        processing.pushMatrix();
+        processing.scale(this.options.scale);
+        Harry.Mouse = new Harry.Vector(processing.mouseX / this.options.scale, processing.mouseY / this.options.scale);
         processing.background(255);
         for (_i = 0, _len = boids.length; _i < _len; _i++) {
           boid = boids[_i];
@@ -56,6 +59,7 @@
           boid = boids[_k];
           boid.render(boids);
         }
+        processing.popMatrix();
         if (this.options.inspectOneMagnification && this.options.inspectOne) {
           this._drawInspector(inspectorGadget, processing);
         }
@@ -82,8 +86,8 @@
       } else {
 
       }
-      start = new Harry.Vector(processing.width, processing.height).projectOnto(this.options.startPosition);
-      options = jQuery.extend({
+      start = new Harry.Vector(processing.scaledWidth, processing.scaledHeight).projectOnto(this.options.startPosition);
+      options = jQuery.extend(true, {
         processing: processing
       }, this.options.boid);
       _results = [];
@@ -165,7 +169,7 @@
       processing.pushMatrix();
       processing.translate(50, 50);
       processing.scale(2);
-      boid._renderSelfWithIndicators(false);
+      boid._renderSelfWithIndicators([], false);
       return processing.popMatrix();
     };
     return Flock;

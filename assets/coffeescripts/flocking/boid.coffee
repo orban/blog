@@ -19,8 +19,10 @@ class Harry.Boid
   indicators:
     separation: true
     alignment: true
+    alignmentNeighbours: false
     cohesion: true
     cohesionMean: false
+    cohesionNeighbours: false
     velocity: true
     neighbours: true
     neighbourRadius: true
@@ -49,127 +51,17 @@ class Harry.Boid
     twor = @r * 2
     @wrapDimensions =
       north:  -twor
-      south:  @p.width + twor
+      south:  @p.scaledWidth + twor
       west:   -twor
-      east:   @p.height + twor
-      width:  @p.width + 2*twor
-      height: @p.height + 2*twor
+      east:   @p.scaledHeight + twor
+      width:  @p.scaledWidth + 2*twor
+      height: @p.scaledHeight + 2*twor
 
     @desiredSeparation = @desiredSeparation * @r
 
   step: (neighbours) ->
     acceleration = this._flock(neighbours).add(this._gravitate())
     this._move(acceleration)
-
-  render: (neighbours) ->
-    if this.inspecting()
-      @p.pushMatrix()
-      @p.translate(@location.x,@location.y)
-      # Draw neighbour radius
-      if @indicators.neighbourRadius
-        @p.fill(100,200,50, 100)
-        @p.stroke(100,200,50, 200)
-        @p.ellipse(0,0, @neighbourRadius*2, @neighbourRadius*2)
-        @p.popMatrix()
-        this._renderSelfWithIndicators()
-
-      # Highlight neighbours
-      if @indicators.neighbours
-        for boid in neighbours
-          continue if boid == this
-          d = @location.distance(boid.location,@wrapDimensions)
-          if d > 0
-            if d < @desiredSeparation
-              # Highlight other boids which are too close in red
-              @p.fill(250,0,0)
-              @p.stroke(100,0,0)
-              boid._renderSelf(true)
-            else if d < @neighbourRadius
-              # Highlight other neighbouring boids which affect cohesion and alignment in green
-              @p.fill(0,100,0)
-              @p.stroke(0,100,0)
-              boid._renderSelf(true)
-
-    else
-      # Standard Render
-      @p.fill(70)
-      @p.stroke(0,0,255)
-      this._renderSelf()
-
-  # Expects the colour to be set already
-  _renderSelf: (rerender = false, translate = true) ->
-    @p.strokeWeight(1)
-    unless rerender
-      return if @renderedThisStep # don't render twice unless forced
-    @renderedThisStep = true
-    # Draw a triangle rotated in the direction of velocity
-    theta = @velocity.heading() + @p.radians(90)
-    @p.pushMatrix()
-    @p.translate(@location.x,@location.y) if translate
-    @p.rotate(theta)
-    @p.beginShape(@p.TRIANGLES)
-    @p.vertex(0, -1 * @r *2)
-    @p.vertex(-1 * @r, @r * 2)
-    @p.vertex(@r, @r * 2)
-    @p.endShape()
-    @p.popMatrix()
-
-  _renderSelfWithIndicators: (translate = true) ->
-      # Render self
-      @p.fill(200,0,200)
-      @p.stroke(250,0,250)
-      this._renderSelf(true, translate)
-
-      # Draw component vectors
-      @p.pushMatrix()
-      @p.translate(@location.x,@location.y) if translate
-
-      #Velocity - black
-      if @indicators.velocity
-        @p.stroke(0,0,0)
-        @p.fill(0,0,0)
-        this._renderVector(@velocity)
-
-      # Seperation - red
-      if @indicators.separation
-        @p.stroke(250,0,0)
-        @p.fill(250,0,0)
-        this._renderVector(@_separation, 100)
-
-      # Alignment - green
-      if @indicators.alignment
-        @p.stroke(0,250,0)
-        @p.fill(0,250,0)
-        this._renderVector(@_alignment, 300)
-
-      # Cohesion - blue
-      if @indicators.cohesion
-        @p.stroke(0,0,250)
-        @p.fill(0,0,250)
-        this._renderVector(@_cohesion, 300)
-
-      if @indicators.cohesionMean
-        # Cohesion mean - blue
-        @p.stroke(250,0,250)
-        @p.fill(250,0,250)
-        this._renderVector(@_cohesionMean, 1)
-
-      @p.popMatrix()
-
-  # Have location and color set by the calling function
-  _renderVector: (vector, scale=10) ->
-    m = vector.magnitude() * scale
-    r = 2
-    @p.pushMatrix()
-    theta = vector.heading() - @p.radians(90)
-    @p.rotate(theta)
-    @p.line(0,0,0,m)
-    @p.beginShape(@p.TRIANGLES)
-    @p.vertex(0,m)
-    @p.vertex(0-r, m - r*2)
-    @p.vertex(0+r, m - r*2)
-    @p.endShape()
-    @p.popMatrix()
 
   _move: (acceleration) ->
     @velocity.add(acceleration).limit(@maxSpeed)
@@ -186,18 +78,19 @@ class Harry.Boid
   _flock: (neighbours) ->
     separation_mean = new Harry.Vector
     alignment_mean = new Harry.Vector
-    cohesion_mean = @location.copy()
+    cohesion_mean = new Harry.Vector
 
     separation_count = 0
     alignment_count = 0
-    cohesion_count = 1
+    cohesion_count = 0
     @contributors = []
     @neighbours = []
 
     # Each flocking behaviour did this loop, so lets put them together into one
     for boid in neighbours
       continue if boid == this
-      d = @location.distance(boid.location,@wrapDimensions)
+      #d = @location.distance(boid.location,@wrapDimensions)
+      d = @location.eucl_distance(boid.location,@wrapDimensions)
       if d > 0
         if d < @desiredSeparation
           separation_mean.add Harry.Vector.subtract(@location,boid.location).copy().normalize().divide(d) # Normalized,weighted by distance vector pointing away from the neighbour
@@ -206,13 +99,18 @@ class Harry.Boid
           @neighbours.push boid
           alignment_mean.add(boid.velocity)
           alignment_count++
-          cohesion_mean.add(boid.location.wrapRelativeTo(@location,@wrapDimensions))
+          cohesion_mean.add(boid.location) #.wrapRelativeTo(@location,@wrapDimensions))
           cohesion_count++
         
     separation_mean.divide(separation_count) if separation_count > 0
     alignment_mean.divide(alignment_count) if alignment_count > 0
-    cohesion_mean.divide(cohesion_count) if cohesion_count > 0
-    @_cohesion_mean = cohesion_mean.copy().subtract(@location)
+
+    if cohesion_count > 0
+      cohesion_mean.divide(cohesion_count)
+    else
+      cohesion_mean = @location.copy()
+
+    @_cohesionMean = cohesion_mean.copy().subtract(@location)
     cohesion_direction = this.steer_to cohesion_mean
     alignment_mean.limit(@maxForce)
 
@@ -262,3 +160,142 @@ class Harry.Boid
     return false unless @inspectable
     d = Harry.Vector.subtract(Harry.Mouse, @location)
     d.magnitude() < @r * 2 # HACKETYHACKHACK
+
+
+   render: (neighbours) ->
+    if this.inspecting()
+      @p.pushMatrix()
+      @p.translate(@location.x,@location.y)
+      # Draw neighbour radius
+      if @indicators.neighbourRadius
+        @p.fill(100,200,50, 100)
+        @p.stroke(100,200,50, 200)
+        @p.ellipse(0,0, @neighbourRadius*2, @neighbourRadius*2)
+
+      @p.popMatrix()
+      this._renderSelfWithIndicators(neighbours)
+
+      # Highlight neighbours
+      if @indicators.neighbours
+        for boid in neighbours
+          continue if boid == this
+          d = @location.distance(boid.location,@wrapDimensions)
+          if d > 0 && d < @neighbourRadius
+            if d < @desiredSeparation && @indicators.separation
+              # Highlight other boids which are too close in red
+              @p.fill(250,0,0)
+              @p.stroke(100,0,0)
+            else
+              # Highlight other neighbouring boids which affect cohesion and alignment in green
+              @p.fill(0,100,0)
+              @p.stroke(0,100,0)
+            boid._renderSelf(true)
+
+    else
+      # Standard Render
+      @p.fill(70)
+      @p.stroke(0,0,255)
+      this._renderSelf()
+
+  # Expects the colour to be set already
+  _renderSelf: (rerender = false, translate = true) ->
+    @p.strokeWeight(1)
+    unless rerender
+      return if @renderedThisStep # don't render twice unless forced
+    @renderedThisStep = true
+    # Draw a triangle rotated in the direction of velocity
+    theta = @velocity.heading() + @p.radians(90)
+    @p.pushMatrix()
+    @p.translate(@location.x,@location.y) if translate
+    @p.rotate(theta)
+    @p.beginShape(@p.TRIANGLES)
+    @p.vertex(0, -1 * @r *2)
+    @p.vertex(-1 * @r, @r * 2)
+    @p.vertex(@r, @r * 2)
+    @p.endShape()
+    @p.popMatrix()
+
+  _renderSelfWithIndicators: (neighbours, translate = true) ->
+      # Render self
+      @p.fill(200,0,200)
+      @p.stroke(250,0,250)
+      this._renderSelf(true, translate)
+
+      # Draw component vectors
+      @p.pushMatrix()
+      @p.translate(@location.x,@location.y) if translate
+
+      #Velocity - black
+      if @indicators.velocity
+        @p.stroke(0,0,0)
+        @p.fill(0,0,0)
+        this._renderVector(@velocity)
+
+      # Seperation - red
+      if @indicators.separation
+        @p.stroke(250,0,0)
+        @p.fill(250,0,0)
+        this._renderVector(@_separation, 100)
+
+      # Alignment - green
+      if @indicators.alignment
+        @p.stroke(0,250,0)
+        @p.fill(0,250,0)
+        this._renderVector(@_alignment, 300)
+      
+      # Alignment Neighbours - dark green
+      if @indicators.alignmentNeighbours
+        @p.stroke(0,175,0)
+        @p.fill(0,175,0)
+        for boid in neighbours
+          continue if boid == this
+          d = @location.distance(boid.location, @wrapDimensions)
+          if d > 0 && d < @neighbourRadius
+            @p.pushMatrix()
+            spot = boid.location.copy().subtract(@location)
+            @p.translate(spot.x, spot.y)
+            this._renderVector(boid.velocity.copy().add(boid.velocity.copy().normalize().multiply(1.5)),7)
+            @p.popMatrix()
+
+      # Cohesion - blue
+      if @indicators.cohesion
+        @p.stroke(0,0,250)
+        @p.fill(0,0,250)
+        this._renderVector(@_cohesion, 300)
+
+      if @indicators.cohesionMean
+        # Cohesion mean - blue
+        @p.stroke(250,0,250)
+        @p.fill(250,0,250)
+        this._renderVector(@_cohesionMean, 1)
+      
+      if @indicators.cohesionNeighbours
+        @p.stroke(100,0,100)
+        @p.fill(100,0,100)
+        @p.pushMatrix()
+        spot = @_cohesionMean.copy().add(@location)
+        @p.translate(@_cohesionMean.x, @_cohesionMean.y)
+        for boid in neighbours
+          continue if boid == this
+          d = @location.eucl_distance(boid.location)
+          if d > 0 && d < @neighbourRadius
+            this._renderVector(boid.location.copy().subtract(spot),1)
+        @p.popMatrix()
+
+      @p.popMatrix()
+
+  # Have location and color set by the calling function
+  _renderVector: (vector, scale=10) ->
+    m = vector.magnitude() * scale
+    r = 2
+    @p.pushMatrix()
+    theta = vector.heading() - @p.radians(90)
+    @p.rotate(theta)
+    @p.line(0,0,0,m)
+    @p.beginShape(@p.TRIANGLES)
+    @p.vertex(0,m)
+    @p.vertex(0-r, m - r*2)
+    @p.vertex(0+r, m - r*2)
+    @p.endShape()
+    @p.popMatrix()
+
