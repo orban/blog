@@ -1,27 +1,15 @@
 class Harry.Vector
-    map_width: 500 # Accessors used for wrapping
-    map_height: 500
-    map_depth: 500
-
     # Class methods for nondestructively operating
     for name in ['add', 'subtract', 'multiply', 'divide']
       do (name) ->
         Vector[name] = (a,b) ->
           a.copy()[name](b)
 
-    constructor: (x=0,y=0,z=0,width,height,depth) ->
+    constructor: (x=0,y=0,z=0) ->
       [@x,@y,@z] = [x,y,z]
-      # Don't use coffeescript's default arguments, these things get instantiated a lot,
-      # and I'd rather use one property on the prototype than set it every time
-      if width?
-        @map_width = width
-      if height?
-        @map_height = height
-      if depth?
-        @map_depth = depth
 
     copy: ->
-      new Harry.Vector(@x,@y,@z,@map_width,@map_height,@map_depth)
+      new Harry.Vector(@x,@y,@z)
 
     magnitude: ->
       Math.sqrt(@x*@x + @y*@y + @z*@z)
@@ -47,14 +35,15 @@ class Harry.Vector
       dz = @z-other.z
       Math.sqrt(dx*dx + dy*dy + dz*dz)
 
-    distance: (other) ->
+    distance: (other, dimensions = false) ->
       dx = Math.abs(@x-other.x)
       dy = Math.abs(@y-other.y)
       dz = Math.abs(@z-other.z)
 
       # Wrap
-      dx = if dx < @map_width/2 then dx else @map_width - dx
-      dy = if dy < @map_height/2 then dy else @map_height - dy
+      if dimensions
+        dx = if dx < dimensions.width/2 then dx else dimensions.width - dx
+        dy = if dy < dimensions.height/2 then dy else dimensions.height - dy
 
       Math.sqrt(dx*dx + dy*dy + dz*dz)
 
@@ -87,11 +76,11 @@ class Harry.Vector
     
     # Called on a vector acting as a position vector to return the wrapped representation closest
     # to another location
-    wrapRelativeTo: (location) ->
+    wrapRelativeTo: (location, dimensions) ->
       v = this.copy()
-      for a,key of {"x":"width", "y":"height", "z":"depth"}
+      for a,key of {"x":"width", "y":"height"}
         d = this[a]-location[a]
-        map_d = this["map_#{key}"]
+        map_d = dimensions[key]
         # If the distance is greater than half the map wrap it.
         if Math.abs(d) > map_d/2
           # If the distance is positive, then the this vector is in front of the location, and it 

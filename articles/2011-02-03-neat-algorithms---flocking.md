@@ -11,43 +11,44 @@ Flocking algorithms have some really neat real world applications:
  * Aerospace engineering. By sending [UAV](http://en.wikipedia.org/wiki/Unmanned_aerial_vehicle)s on missions in flocks they are able to more effectively complete their missions and react to enemy events. See [one paper][5] and [another][6] on the subject.
  * Distributed systems analysis, search, and optimization. By modeling things like spacial data, network traffic, or solutions to an optimization problem as entities, the direction of the flock can be used to find [clusters][7], where to push traffic, or [optimal solutions](8).
 
-Tasty test:
+
+## How it Works
+
+Each entity on the map, which we'll now refer to as a "boid", is governed by a few simple rules. Each boid starts out at the center of the map with a random velocity, and for each frame of the simulation, a new velocity is calculated. The new velocity depends on the boid's current velocity, its neighbours' velocities, and its position relative to its neighbours. There are three components of the new velocity, which in combination simulate the full blown flocking behaviour.
+
+### Cohesion
+
+<div class="flock" id="cohesionDemo"></div>
+
+Each boid "wants" to be in a flock with its neighbors, and the _cohesion_ component of the algorithm is mainly responsible for this. Each boid looks at the position of each other boid to see if it is within a specified `neighbour_radius`, that is, it checks to see which other boids are close enough to be considered flockmates. The positions of the qualifying neighbours are averaged and the boid steers to towards that position. This way, each boid is trying to steer towards the center of the flock, resulting in them all staying close together. 
+
+### Alignment
+
+### Separation
+
+Heres the essence of the Coffeescript class for the 
     :::coffeescript
-    # Boid class for use in the index page. Ported almost directly from http://processingjs.org/learning/topic/flocking,
-    # thanks to Craig Reynold and Daniel Shiffman
+    # Ported almost directly from http://processingjs.org/learning/topic/flocking
+    # thanks to Craig Reynolds and Daniel Shiffman
+    # 
     SEPARATION_WEIGHT = 2
     ALIGNMENT_WEIGHT = 1
     COHESION_WEIGHT = 1
-    GRAVITY_WEIGHT = 6
 
     DESIRED_SEPARATION = 18
     NEIGHBOUR_RADIUS = 50
 
-    MOUSE_REPULSION = 1
-    MOUSE_RADIUS = 5
-
     class Harry.Boid
         location: false
-        _unwrappedLocation: false
         velocity: false
-        renderedThisStep: false
-        p: false
         r: 3
         maxSpeed: 0
         maxForce: 0
-        mousePhobic: true
-        forceInspection: false
-        inspectable: false
-        _separation: new Harry.Vector
-        _alignment: new Harry.Vector
-        _cohesion: new Harry.Vector
-        _cohesion_mean: new Harry.Vector
         
-        constructor: (loc, maxSpeed, maxForce, radius, mousePhobic, processing) ->
-          @velocity = new Harry.Vector(Math.random()*2-1,Math.random()*2-1)
-          @p = processing
+        constructor: (loc, maxSpeed, maxForce) ->
+          @velocity = new Vector(Math.random()*2-1,Math.random()*2-1)
           @location = loc.copy()
-          [@maxSpeed, @maxForce, @r, @mousePhobic] = [maxSpeed, maxForce, radius, mousePhobic]
+          [@maxSpeed, @maxForce] = [maxSpeed, maxForce]
 
 
 
@@ -57,7 +58,6 @@ Here's the full algorithm in action:
 Here's some indicators: 
 <div class="flock" id="fullFlock"></div>
 
-
 <script type="text/javascript">
   var Harry = {};
 </script>
@@ -65,6 +65,7 @@ Here's some indicators:
 <script src="/js/processing.js" type="text/javascript"></script>
 <script src="/js/flocking/vector.js" type="text/javascript"></script>
 <script src="/js/flocking/boid.js" type="text/javascript"></script>
+<script src="/js/flocking/flock.js" type="text/javascript"></script>
 <script src="/js/flocking/flocking.js" type="text/javascript"></script>
 <link href='/css/flocking.css' rel='stylesheet' type='text/css' /> 
 

@@ -1,238 +1,264 @@
 # Boid class for use in the index page. Ported almost directly from http://processingjs.org/learning/topic/flocking,
 # thanks to Craig Reynold and Daniel Shiffman
-SEPARATION_WEIGHT = 2
-ALIGNMENT_WEIGHT = 1
-COHESION_WEIGHT = 1
-GRAVITY_WEIGHT = 6
-
-DESIRED_SEPARATION = 18
-NEIGHBOUR_RADIUS = 50
-
-MOUSE_REPULSION = 1
-MOUSE_RADIUS = 5
-
 class Harry.Boid
-    location: false
-    _unwrappedLocation: false
-    velocity: false
-    renderedThisStep: false
-    p: false
-    r: 3
-    maxSpeed: 0
-    maxForce: 0
-    mousePhobic: true
-    forceInspection: false
-    inspectable: false
-    _separation: new Harry.Vector
-    _alignment: new Harry.Vector
-    _cohesion: new Harry.Vector
-    _cohesion_mean: new Harry.Vector
-    
-    constructor: (loc, maxSpeed, maxForce, radius, mousePhobic, processing) ->
-      @velocity = new Harry.Vector(Math.random()*2-1,Math.random()*2-1)
-      @p = processing
-      @location = loc.copy()
-      [@maxSpeed, @maxForce, @r, @mousePhobic] = [maxSpeed, maxForce, radius, mousePhobic]
+  location: false
+  velocity: false
+  renderedThisStep: false
+  p: false
+  r: 3
+  maxSpeed: 2
+  maxForce: 0.05
+  mousePhobic: true
+  forceInspection: false
+  inspectable: false
+  weights:
+    separation: 2
+    alignment: 1
+    cohesion: 1
+    gravity: 6
+  indicators:
+    separation: true
+    alignment: true
+    cohesion: true
+    cohesionMean: false
+    velocity: true
+    neighbours: true
+    neighbourRadius: true
 
-      @wrapHeightNorth = 0
-      @wrapHeightSouth = @p.width
-      @wrapWidthWest = 0
-      @wrapWidthEast = @p.height
+  desiredSeparation: 6
+  neighbourRadius: 50
 
+  mouseRepulsion: 1
+  mouseRadius: 5
 
-    step: (neighbours) ->
-      acceleration = this._flock(neighbours).add(this._gravitate())
-      this._move(acceleration)
+  _separation: new Harry.Vector
+  _alignment: new Harry.Vector
+  _cohesion: new Harry.Vector
+  _cohesionMean: new Harry.Vector
 
-    render: (neighbours) ->
-      if this.inspecting()
-        @p.pushMatrix()
-        @p.translate(@location.x,@location.y)
-        # Draw neighbour radius
+  constructor: (options = {}) ->
+    throw "Boid needs a processing instance to render to! " unless options.processing || options.p
+    throw "Boid needs a start velocity! " unless options.velocity
+    throw "Boid needs a start position!" unless options.startPosition
+
+    jQuery.extend(this, options)
+    @r = options.radius if options.radius
+    @p = (options.processing || options.p)
+    @location = options.startPosition.copy()
+
+    twor = @r * 2
+    @wrapDimensions =
+      north:  -twor
+      south:  @p.width + twor
+      west:   -twor
+      east:   @p.height + twor
+      width:  @p.width + 2*twor
+      height: @p.height + 2*twor
+
+    @desiredSeparation = @desiredSeparation * @r
+
+  step: (neighbours) ->
+    acceleration = this._flock(neighbours).add(this._gravitate())
+    this._move(acceleration)
+
+  render: (neighbours) ->
+    if this.inspecting()
+      @p.pushMatrix()
+      @p.translate(@location.x,@location.y)
+      # Draw neighbour radius
+      if @indicators.neighbourRadius
         @p.fill(100,200,50, 100)
         @p.stroke(100,200,50, 200)
-        @p.ellipse(0,0, NEIGHBOUR_RADIUS*2, NEIGHBOUR_RADIUS*2)
+        @p.ellipse(0,0, @neighbourRadius*2, @neighbourRadius*2)
         @p.popMatrix()
         this._renderSelfWithIndicators()
-        
-        # Highlight neighbours
+
+      # Highlight neighbours
+      if @indicators.neighbours
         for boid in neighbours
           continue if boid == this
-          d = @location.distance(boid.location)
+          d = @location.distance(boid.location,@wrapDimensions)
           if d > 0
-            if d < DESIRED_SEPARATION
+            if d < @desiredSeparation
               # Highlight other boids which are too close in red
               @p.fill(250,0,0)
               @p.stroke(100,0,0)
               boid._renderSelf(true)
-            else if d < NEIGHBOUR_RADIUS
+            else if d < @neighbourRadius
               # Highlight other neighbouring boids which affect cohesion and alignment in green
               @p.fill(0,100,0)
               @p.stroke(0,100,0)
               boid._renderSelf(true)
 
-      else
-        # Standard Render
-        @p.fill(70)
-        @p.stroke(0,0,255)
-        this._renderSelf()
+    else
+      # Standard Render
+      @p.fill(70)
+      @p.stroke(0,0,255)
+      this._renderSelf()
 
-    # Expects the colour to be set already
-    _renderSelf: (rerender = false, translate = true) ->
-      @p.strokeWeight(1)
-      unless rerender
-        return if @renderedThisStep # don't render twice unless forced
-      @renderedThisStep = true
-      # Draw a triangle rotated in the direction of velocity
-      theta = @velocity.heading() + @p.radians(90)
+  # Expects the colour to be set already
+  _renderSelf: (rerender = false, translate = true) ->
+    @p.strokeWeight(1)
+    unless rerender
+      return if @renderedThisStep # don't render twice unless forced
+    @renderedThisStep = true
+    # Draw a triangle rotated in the direction of velocity
+    theta = @velocity.heading() + @p.radians(90)
+    @p.pushMatrix()
+    @p.translate(@location.x,@location.y) if translate
+    @p.rotate(theta)
+    @p.beginShape(@p.TRIANGLES)
+    @p.vertex(0, -1 * @r *2)
+    @p.vertex(-1 * @r, @r * 2)
+    @p.vertex(@r, @r * 2)
+    @p.endShape()
+    @p.popMatrix()
+
+  _renderSelfWithIndicators: (translate = true) ->
+      # Render self
+      @p.fill(200,0,200)
+      @p.stroke(250,0,250)
+      this._renderSelf(true, translate)
+
+      # Draw component vectors
       @p.pushMatrix()
       @p.translate(@location.x,@location.y) if translate
-      @p.rotate(theta)
-      @p.beginShape(@p.TRIANGLES)
-      @p.vertex(0, -1 * @r *2)
-      @p.vertex(-1 * @r, @r * 2)
-      @p.vertex(@r, @r * 2)
-      @p.endShape()
-      @p.popMatrix()
 
-    _renderSelfWithIndicators: (translate = true) ->
-        # Render self
-        @p.fill(200,0,200)
-        @p.stroke(250,0,250)
-        this._renderSelf(true, translate)
-
-        # Draw component vectors
-        @p.pushMatrix()
-        @p.translate(@location.x,@location.y) if translate
-
-        #Velocity - black
+      #Velocity - black
+      if @indicators.velocity
         @p.stroke(0,0,0)
         @p.fill(0,0,0)
         this._renderVector(@velocity)
 
-        # Seperation - red
+      # Seperation - red
+      if @indicators.separation
         @p.stroke(250,0,0)
         @p.fill(250,0,0)
         this._renderVector(@_separation, 100)
 
-        # Alignment - green
+      # Alignment - green
+      if @indicators.alignment
         @p.stroke(0,250,0)
         @p.fill(0,250,0)
         this._renderVector(@_alignment, 300)
 
-        # Cohesion - blue
+      # Cohesion - blue
+      if @indicators.cohesion
         @p.stroke(0,0,250)
         @p.fill(0,0,250)
         this._renderVector(@_cohesion, 300)
-        # Cohesion - blue
+
+      if @indicators.cohesionMean
+        # Cohesion mean - blue
         @p.stroke(250,0,250)
         @p.fill(250,0,250)
-        this._renderVector(@_cohesion_mean, 1)
-        @p.popMatrix()
-      
-    # Have location and color set by the calling function
-    _renderVector: (vector, scale=10) ->
-      m = vector.magnitude() * scale
-      r = 2
-      @p.pushMatrix()
-      theta = vector.heading() - @p.radians(90)
-      @p.rotate(theta)
-      @p.line(0,0,0,m)
-      @p.beginShape(@p.TRIANGLES)
-      @p.vertex(0,m)
-      @p.vertex(0-r, m - r*2)
-      @p.vertex(0+r, m - r*2)
-      @p.endShape()
+        this._renderVector(@_cohesionMean, 1)
+
       @p.popMatrix()
-      
-    _move: (acceleration) ->
-      @velocity.add(acceleration).limit(@maxSpeed)
-      @location.add(@velocity)
-      this._wrapIfNeeded()
 
-    # Wraparound
-    _wrapIfNeeded: () ->
-      @location.x = @p.width if @location.x < @wrapWidthWest    # go out west come in east
-      @location.y = @p.height if @location.y < @wrapHeightNorth # go out north come in south
-      @location.x = 0 if @location.x > @wrapWidthEast            # go out east come in west
-      @location.y = 0 if @location.y > @wrapHeightSouth        # go out south come in north
+  # Have location and color set by the calling function
+  _renderVector: (vector, scale=10) ->
+    m = vector.magnitude() * scale
+    r = 2
+    @p.pushMatrix()
+    theta = vector.heading() - @p.radians(90)
+    @p.rotate(theta)
+    @p.line(0,0,0,m)
+    @p.beginShape(@p.TRIANGLES)
+    @p.vertex(0,m)
+    @p.vertex(0-r, m - r*2)
+    @p.vertex(0+r, m - r*2)
+    @p.endShape()
+    @p.popMatrix()
 
-    _flock: (neighbours) ->
-      separation_mean = new Harry.Vector
-      alignment_mean = new Harry.Vector
-      cohesion_mean = @location.copy()
+  _move: (acceleration) ->
+    @velocity.add(acceleration).limit(@maxSpeed)
+    @location.add(@velocity)
+    this._wrapIfNeeded()
 
-      separation_count = 0
-      alignment_count = 0
-      cohesion_count = 1
-      @contributors = []
-      @neighbours = []
+  # Wraparound
+  _wrapIfNeeded: () ->
+    @location.x = @wrapDimensions.east if @location.x < @wrapDimensions.west    # go out west come in east
+    @location.y = @wrapDimensions.south if @location.y < @wrapDimensions.north  # go out north come in south
+    @location.x = @wrapDimensions.west if @location.x > @wrapDimensions.east    # go out east come in west
+    @location.y = @wrapDimensions.north if @location.y > @wrapDimensions.south  # go out south come in north
 
-      # Each flocking behaviour did this loop, so lets put them together into one
-      for boid in neighbours
-        continue if boid == this
-        d = @location.distance(boid.location)
-        if d > 0
-          if d < DESIRED_SEPARATION
-            separation_mean.add Harry.Vector.subtract(@location,boid.location).copy().normalize().divide(d) # Normalized,weighted by distance vector pointing away from the neighbour
-            separation_count++
-          if d < NEIGHBOUR_RADIUS
-            @neighbours.push boid
-            alignment_mean.add(boid.velocity)
-            alignment_count++
-            cohesion_mean.add(boid.location.wrapRelativeTo(@location))
-            cohesion_count++
+  _flock: (neighbours) ->
+    separation_mean = new Harry.Vector
+    alignment_mean = new Harry.Vector
+    cohesion_mean = @location.copy()
 
-      separation_mean.divide(separation_count) if separation_count > 0
-      alignment_mean.divide(alignment_count) if alignment_count > 0
-      cohesion_mean.divide(cohesion_count) if cohesion_count > 0
-      @_cohesion_mean = cohesion_mean.copy().subtract(@location)
-      cohesion_mean = this.steer_to cohesion_mean
-      alignment_mean.limit(@maxForce)
+    separation_count = 0
+    alignment_count = 0
+    cohesion_count = 1
+    @contributors = []
+    @neighbours = []
 
-      # Store these as temporary variables for use in the indicators.
-      # Only the return value of the function is actually used for calculation
-      @_separation = separation_mean.multiply(SEPARATION_WEIGHT)
-      @_alignment = alignment_mean.multiply(ALIGNMENT_WEIGHT)
-      @_cohesion = cohesion_mean.multiply(COHESION_WEIGHT)
-      return @_separation.add(@_alignment).add(@_cohesion)
-
-
-    # Adds negative gravity from the mouse
-    _gravitate: () ->
-      gravity = new Harry.Vector
-
-      if @mousePhobic
-        mouse = Harry.Vector.subtract(Harry.Mouse, @location)
-        d = mouse.magnitude() - MOUSE_RADIUS
-        d = 0.01 if d < 0
-        if d > 0 && d < NEIGHBOUR_RADIUS*5
-          gravity.add mouse.normalize().divide(d*d).multiply(-1)
-
-      return gravity.multiply(GRAVITY_WEIGHT)
-
-
-    steer_to: (target) ->
-      desired = Harry.Vector.subtract(target, @location) # A vector pointing from the location to the target
-      d = desired.magnitude()  # Distance from the target is the magnitude of the vector
-      # If the distance is greater than 0, calc steering (otherwise return zero vector)
+    # Each flocking behaviour did this loop, so lets put them together into one
+    for boid in neighbours
+      continue if boid == this
+      d = @location.distance(boid.location,@wrapDimensions)
       if d > 0
-        # Normalize desired
-        desired.normalize()
-        # Two options for desired vector magnitude (1 -- based on distance, 2 -- maxspeed)
-        if d < 100.0
-          desired.multiply(@maxSpeed*(d/100.0)) # This damping is somewhat arbitrary
-        else
-          desired.multiply(@maxSpeed)
-          # Steering = Desired minus Velocity
-        steer = desired.subtract(@velocity)
-        steer.limit(@maxForce)  # Limit to maximum steering force
-      else
-        steer = new Harry.Vector(0,0)
-      return steer
+        if d < @desiredSeparation
+          separation_mean.add Harry.Vector.subtract(@location,boid.location).copy().normalize().divide(d) # Normalized,weighted by distance vector pointing away from the neighbour
+          separation_count++
+        if d < @neighbourRadius
+          @neighbours.push boid
+          alignment_mean.add(boid.velocity)
+          alignment_count++
+          cohesion_mean.add(boid.location.wrapRelativeTo(@location,@wrapDimensions))
+          cohesion_count++
+        
+    separation_mean.divide(separation_count) if separation_count > 0
+    alignment_mean.divide(alignment_count) if alignment_count > 0
+    cohesion_mean.divide(cohesion_count) if cohesion_count > 0
+    @_cohesion_mean = cohesion_mean.copy().subtract(@location)
+    cohesion_direction = this.steer_to cohesion_mean
+    alignment_mean.limit(@maxForce)
 
-    inspecting: () ->
-      return true if @forceInspection
-      return false unless @inspectable
-      d = Harry.Vector.subtract(Harry.Mouse, @location)
-      d.magnitude() < @r * 2 # HACKETYHACKHACK
+    # Store these as temporary variables for use in the indicators.
+    # Only the return value of the function is actually used for calculation
+    @_separation = separation_mean.multiply(@weights.separation)
+    @_alignment = alignment_mean.multiply(@weights.alignment)
+    @_cohesion = cohesion_direction.multiply(@weights.cohesion)
+    return @_separation.add(@_alignment).add(@_cohesion)
+
+
+  # Adds negative gravity from the mouse
+  _gravitate: () ->
+    gravity = new Harry.Vector
+
+    if @mousePhobic
+      mouse = Harry.Vector.subtract(Harry.Mouse, @location)
+      d = mouse.magnitude() - @mouseRadius
+      d = 0.01 if d < 0
+      if d > 0 && d < @neighbourRadius*5
+        gravity.add mouse.normalize().divide(d*d).multiply(-1)
+
+    return gravity.multiply(@weights.gravity)
+
+
+  steer_to: (target) ->
+    desired = Harry.Vector.subtract(target, @location) # A vector pointing from the location to the target
+    d = desired.magnitude()  # Distance from the target is the magnitude of the vector
+    # If the distance is greater than 0, calc steering (otherwise return zero vector)
+    if d > 0
+      # Normalize desired
+      desired.normalize()
+      # Two options for desired vector magnitude (1 -- based on distance, 2 -- maxspeed)
+      if d < 100.0
+        desired.multiply(@maxSpeed*(d/100.0)) # This damping is somewhat arbitrary
+      else
+        desired.multiply(@maxSpeed)
+        # Steering = Desired minus Velocity
+      steer = desired.subtract(@velocity)
+      steer.limit(@maxForce)  # Limit to maximum steering force
+    else
+      steer = new Harry.Vector(0,0)
+    return steer
+
+  inspecting: () ->
+    return true if @forceInspection
+    return false unless @inspectable
+    d = Harry.Vector.subtract(Harry.Mouse, @location)
+    d.magnitude() < @r * 2 # HACKETYHACKHACK
