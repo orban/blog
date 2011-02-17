@@ -31,12 +31,7 @@ class Harry.Flock
 
     # inspectOne option allows to force one boid to always show its component vectors.
     # Pick the last one so it always renders on top
-    if @options.inspectOne
-      inspectorGadget = boids[boids.length-1]
-      inspectorGadget.forceInspection = true
-
-    if @options.legend
-      font ||= processing.loadFont('/fonts/aller_rg-webfont')
+    inspectorGadget = boids[boids.length-1]
 
     processing.draw = =>
       processing.pushMatrix()
@@ -60,10 +55,14 @@ class Harry.Flock
         boid.render(boids)
 
       processing.popMatrix()
+
       # Other stuff
-      #this._drawAntiFlicker(processing) if @options.antiFlicker
+      inspectorGadget.forceInspection = @options.inspectOne
       this._drawInspector(inspectorGadget,processing) if @options.inspectOneMagnification and @options.inspectOne
-      this._drawLegend(processing) if @options.drawLegend
+
+      if @options.legend
+        font ||= processing.loadFont('/fonts/aller_rg-webfont')
+        this._drawLegend(processing)
 
       return true
 

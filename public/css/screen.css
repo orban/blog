@@ -570,7 +570,7 @@ code {
 nav {
   margin-top: 13px;
   float: right;
-  width: 500px;
+  width: 400px;
 }
 /* line 48, ../../assets/sass/screen.sass */
 nav a, nav p {
@@ -642,27 +642,39 @@ h1 .date {
   margin-bottom: 10px;
 }
 
-/* line 99, ../../assets/sass/screen.sass */
+/* line 100, ../../assets/sass/screen.sass */
+.content p code {
+  background: #e7e7e7;
+  padding: 0.2em;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+}
+
+/* line 105, ../../assets/sass/screen.sass */
 .post {
   margin-bottom: 30px;
 }
-/* line 101, ../../assets/sass/screen.sass */
+/* line 107, ../../assets/sass/screen.sass */
 .post .body p:first-child {
   margin-top: 0;
 }
-/* line 103, ../../assets/sass/screen.sass */
+/* line 109, ../../assets/sass/screen.sass */
 .post .body p:last-child {
   margin-bottom: 0;
 }
-/* line 106, ../../assets/sass/screen.sass */
+/* line 112, ../../assets/sass/screen.sass */
 .post:last-child {
   margin-bottom: 10px;
 }
-/* line 108, ../../assets/sass/screen.sass */
+/* line 114, ../../assets/sass/screen.sass */
 .post p {
   margin: 10px 0;
 }
-/* line 110, ../../assets/sass/screen.sass */
+/* line 116, ../../assets/sass/screen.sass */
 .post .more {
   margin-top: -10px;
   margin-right: 30px;
@@ -670,16 +682,16 @@ h1 .date {
   text-align: right;
 }
 
-/* line 116, ../../assets/sass/screen.sass */
+/* line 122, ../../assets/sass/screen.sass */
 .more a {
   text-decoration: none;
 }
-/* line 118, ../../assets/sass/screen.sass */
+/* line 124, ../../assets/sass/screen.sass */
 .more a:hover {
   text-decoration: underline;
 }
 
-/* line 123, ../../assets/sass/screen.sass */
+/* line 129, ../../assets/sass/screen.sass */
 body.bp pre.sunburst {
   width: 95%;
   margin: 1em auto;
@@ -692,7 +704,7 @@ body.bp pre.sunburst {
   padding: 1em;
   font-size: 17px;
 }
-/* line 130, ../../assets/sass/screen.sass */
+/* line 136, ../../assets/sass/screen.sass */
 body.bp .pleasant {
   float: left;
   padding: 10px;
@@ -700,37 +712,37 @@ body.bp .pleasant {
   margin: 10px;
   width: 322px;
 }
-/* line 136, ../../assets/sass/screen.sass */
+/* line 142, ../../assets/sass/screen.sass */
 body.bp .pleasant img {
   width: 300px;
 }
-/* line 138, ../../assets/sass/screen.sass */
+/* line 144, ../../assets/sass/screen.sass */
 body.bp .pleasant.small {
   width: 200px;
 }
-/* line 140, ../../assets/sass/screen.sass */
+/* line 146, ../../assets/sass/screen.sass */
 body.bp .pleasant.small img {
   width: 200px;
 }
-/* line 142, ../../assets/sass/screen.sass */
+/* line 148, ../../assets/sass/screen.sass */
 body.bp .pleasant p {
   font-style: italic;
   margin: 10px 10px 0px 10px;
   text-align: center;
 }
-/* line 146, ../../assets/sass/screen.sass */
+/* line 152, ../../assets/sass/screen.sass */
 body.bp .pleasant.right {
   float: right;
 }
 
-/* line 149, ../../assets/sass/screen.sass */
+/* line 155, ../../assets/sass/screen.sass */
 #header {
   padding-top: 10px;
   margin-bottom: 20px;
   height: 60px;
   border-bottom: 2px solid #cccccc;
 }
-/* line 154, ../../assets/sass/screen.sass */
+/* line 160, ../../assets/sass/screen.sass */
 #header h1 {
   margin: 10px 20px;
   float: left;
@@ -738,17 +750,17 @@ body.bp .pleasant.right {
   font-size: 2.25em;
   text-shadow: #666666 1px 1px 1px;
 }
-/* line 160, ../../assets/sass/screen.sass */
+/* line 166, ../../assets/sass/screen.sass */
 #header h1 a {
   color: black;
   text-decoration: none;
 }
-/* line 163, ../../assets/sass/screen.sass */
+/* line 169, ../../assets/sass/screen.sass */
 #header h1 a:hover {
   text-decoration: underline;
 }
 
-/* line 166, ../../assets/sass/screen.sass */
+/* line 172, ../../assets/sass/screen.sass */
 #footer {
   text-align: left;
   margin-left: 10px;
@@ -757,7 +769,7 @@ body.bp .pleasant.right {
   color: #888888;
 }
 
-/* line 174, ../../assets/sass/screen.sass */
+/* line 180, ../../assets/sass/screen.sass */
 body.index #header {
   background: none;
   height: auto;
@@ -766,7 +778,7 @@ body.index #header {
   border: none;
   position: relative;
 }
-/* line 175, ../../assets/sass/screen.sass */
+/* line 181, ../../assets/sass/screen.sass */
 body.index #header h1 {
   padding-left: 30px;
   font-size: 201px;
@@ -777,53 +789,53 @@ body.index #header h1 {
   width: auto;
   text-shadow: #444444 2px 2px 5px;
 }
-/* line 184, ../../assets/sass/screen.sass */
+/* line 190, ../../assets/sass/screen.sass */
 body.index #header h1 a {
   color: auto;
   text-decoration: none;
 }
-/* line 187, ../../assets/sass/screen.sass */
+/* line 193, ../../assets/sass/screen.sass */
 body.index #header h1 a:hover {
   color: auto;
   text-decoration: none;
 }
-/* line 190, ../../assets/sass/screen.sass */
+/* line 196, ../../assets/sass/screen.sass */
 body.index #header h1 a:visted {
   color: auto;
 }
-/* line 199, ../../assets/sass/screen.sass */
+/* line 205, ../../assets/sass/screen.sass */
 body.index nav {
   position: absolute;
   margin: -20px 0 0 0;
   padding-left: 30px;
   width: 720px;
 }
-/* line 204, ../../assets/sass/screen.sass */
+/* line 210, ../../assets/sass/screen.sass */
 body.index nav a {
   text-shadow: none;
 }
-/* line 207, ../../assets/sass/screen.sass */
+/* line 213, ../../assets/sass/screen.sass */
 body.index section > h3, body.index div > h3 {
   border-bottom: 1px dashed #dddddd;
   padding-bottom: 2px;
   margin-bottom: 10px;
 }
-/* line 212, ../../assets/sass/screen.sass */
+/* line 218, ../../assets/sass/screen.sass */
 body.index section > h3 + a.small, body.index div > h3 + a.small {
   margin: -30px 10px 0px 0px;
   float: right;
   padding-left: 10px;
 }
-/* line 217, ../../assets/sass/screen.sass */
+/* line 223, ../../assets/sass/screen.sass */
 body.index #featured {
   padding-bottom: 10px;
 }
-/* line 220, ../../assets/sass/screen.sass */
+/* line 226, ../../assets/sass/screen.sass */
 body.index #tweets, body.index #songs {
   padding-bottom: 10px;
   font-size: 16px;
 }
-/* line 224, ../../assets/sass/screen.sass */
+/* line 230, ../../assets/sass/screen.sass */
 body.index #tweets {
   display: inline;
   float: left;
@@ -834,16 +846,16 @@ body.index #tweets {
 * html body.index #tweets {
   overflow-x: hidden;
 }
-/* line 226, ../../assets/sass/screen.sass */
+/* line 232, ../../assets/sass/screen.sass */
 body.index #tweets ul {
   margin: 0px;
   padding: 0px 4px 0px 4px;
 }
-/* line 229, ../../assets/sass/screen.sass */
+/* line 235, ../../assets/sass/screen.sass */
 body.index #tweets ul li {
   padding-bottom: 10px;
 }
-/* line 232, ../../assets/sass/screen.sass */
+/* line 238, ../../assets/sass/screen.sass */
 body.index #songs {
   display: inline;
   float: left;
@@ -854,12 +866,12 @@ body.index #songs {
 * html body.index #songs {
   overflow-x: hidden;
 }
-/* line 234, ../../assets/sass/screen.sass */
+/* line 240, ../../assets/sass/screen.sass */
 body.index #songs ol {
   padding: 0px 4px 0px 4px;
   margin: 0px;
 }
-/* line 238, ../../assets/sass/screen.sass */
+/* line 244, ../../assets/sass/screen.sass */
 body.index #articles {
   clear: both;
 }

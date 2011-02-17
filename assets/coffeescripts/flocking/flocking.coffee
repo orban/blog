@@ -3,8 +3,8 @@ Flocks =
     boids: 120
     boid:
       radius: 4
-    inspectOne: false
-    legend: false
+    inspectOne: true
+    legend: true
     startOnPageLoad: true
 
   cohesionDemo:
@@ -64,4 +64,19 @@ jQuery ->
   for name, options of Flocks
     div = $("##{name}")
     canvas = $('<canvas></canvas>').attr('width', div.width()).attr('height', div.height()).appendTo(div)[0]
-    new Harry.Flock(canvas, options)
+    options.flock = new Harry.Flock(canvas, options)
+
+  options = Flocks.prettyDemo.flock.options
+  decorations = true
+  $('#decorateDemo').click((e) ->
+    if decorations
+      e.target.innerHTML = "Decorate"
+    else
+      e.target.innerHTML = "Undecorate"
+    
+    decorations = !decorations
+    
+    for name in ['legend', 'inspectOne', 'inspectOneMagnification']
+      options[name] = decorations
+    
+  ).trigger('click')

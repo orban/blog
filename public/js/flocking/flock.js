@@ -32,13 +32,7 @@
       processing.scaledWidth = processing.width / this.options.scale;
       timeRunning = this.options.startOnPageLoad;
       boids = this._getBoids(processing);
-      if (this.options.inspectOne) {
-        inspectorGadget = boids[boids.length - 1];
-        inspectorGadget.forceInspection = true;
-      }
-      if (this.options.legend) {
-        font || (font = processing.loadFont('/fonts/aller_rg-webfont'));
-      }
+      inspectorGadget = boids[boids.length - 1];
       processing.draw = __bind(function() {
         var boid, _i, _j, _k, _len, _len2, _len3;
         processing.pushMatrix();
@@ -60,10 +54,12 @@
           boid.render(boids);
         }
         processing.popMatrix();
+        inspectorGadget.forceInspection = this.options.inspectOne;
         if (this.options.inspectOneMagnification && this.options.inspectOne) {
           this._drawInspector(inspectorGadget, processing);
         }
-        if (this.options.drawLegend) {
+        if (this.options.legend) {
+          font || (font = processing.loadFont('/fonts/aller_rg-webfont'));
           this._drawLegend(processing);
         }
         return true;

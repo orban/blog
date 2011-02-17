@@ -6,8 +6,8 @@
       boid: {
         radius: 4
       },
-      inspectOne: false,
-      legend: false,
+      inspectOne: true,
+      legend: true,
       startOnPageLoad: true
     },
     cohesionDemo: {
@@ -71,14 +71,30 @@
     }
   };
   jQuery(function() {
-    var canvas, div, name, options, _results;
-    _results = [];
+    var canvas, decorations, div, name, options;
     for (name in Flocks) {
       options = Flocks[name];
       div = $("#" + name);
       canvas = $('<canvas></canvas>').attr('width', div.width()).attr('height', div.height()).appendTo(div)[0];
-      _results.push(new Harry.Flock(canvas, options));
+      options.flock = new Harry.Flock(canvas, options);
     }
-    return _results;
+    options = Flocks.prettyDemo.flock.options;
+    decorations = true;
+    return $('#decorateDemo').click(function(e) {
+      var name, _i, _len, _ref, _results;
+      if (decorations) {
+        e.target.innerHTML = "Decorate";
+      } else {
+        e.target.innerHTML = "Undecorate";
+      }
+      decorations = !decorations;
+      _ref = ['legend', 'inspectOne', 'inspectOneMagnification'];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        name = _ref[_i];
+        _results.push(options[name] = decorations);
+      }
+      return _results;
+    }).trigger('click');
   });
 }).call(this);
