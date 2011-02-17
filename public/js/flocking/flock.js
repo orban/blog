@@ -3,6 +3,7 @@
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   font = false;
   Harry.Flock = (function() {
+    var everStarted;
     Flock.defaults = {
       boids: 100,
       boid: {
@@ -19,8 +20,10 @@
       legend: false,
       startOnPageLoad: false,
       antiFlicker: true,
-      scale: 1
+      scale: 1,
+      startNotification: true
     };
+    everStarted = false;
     function Flock(canvas, options) {
       this.run = __bind(this.run, this);;      this.options = jQuery.extend({}, Flock.defaults, options);
       new Processing(canvas, this.run);
@@ -44,6 +47,7 @@
           boid.renderedThisStep = false;
         }
         if (timeRunning) {
+          this.everStarted = true;
           for (_j = 0, _len2 = boids.length; _j < _len2; _j++) {
             boid = boids[_j];
             boid.step(boids);
@@ -57,6 +61,9 @@
         inspectorGadget.forceInspection = this.options.inspectOne;
         if (this.options.inspectOneMagnification && this.options.inspectOne) {
           this._drawInspector(inspectorGadget, processing);
+        }
+        if (this.options.startNotification && !this.everStarted) {
+          this._drawStartNotification(processing);
         }
         if (this.options.legend) {
           font || (font = processing.loadFont('/fonts/aller_rg-webfont'));
@@ -167,6 +174,11 @@
       processing.scale(2);
       boid._renderSelfWithIndicators([], false);
       return processing.popMatrix();
+    };
+    Flock.prototype._drawStartNotification = function(processing) {
+      processing.fill(0);
+      processing.textFont(font, 12);
+      return processing.text("click me to start", processing.width / 2 - 35, processing.height - 10);
     };
     return Flock;
   })();

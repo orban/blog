@@ -16,6 +16,9 @@ class Harry.Flock
     startOnPageLoad: false
     antiFlicker: true
     scale: 1
+    startNotification: true
+
+  everStarted = false
 
   constructor: (canvas, options) ->
     @options = jQuery.extend {}, Flock.defaults, options
@@ -48,6 +51,8 @@ class Harry.Flock
         boid.renderedThisStep = false
       # Step each boid
       if timeRunning
+        this.everStarted = true
+
         for boid in boids
           boid.step(boids)
       # Render each boid
@@ -59,7 +64,7 @@ class Harry.Flock
       # Other stuff
       inspectorGadget.forceInspection = @options.inspectOne
       this._drawInspector(inspectorGadget,processing) if @options.inspectOneMagnification and @options.inspectOne
-
+      this._drawStartNotification(processing) if @options.startNotification && !@everStarted
       if @options.legend
         font ||= processing.loadFont('/fonts/aller_rg-webfont')
         this._drawLegend(processing)
@@ -145,3 +150,7 @@ class Harry.Flock
     boid._renderSelfWithIndicators([], false) # dont let it translate itself to its location
     processing.popMatrix()
 
+  _drawStartNotification: (processing) ->
+    processing.fill(0)
+    processing.textFont(font, 12)
+    processing.text("click me to start", processing.width/2-35, processing.height - 10)
