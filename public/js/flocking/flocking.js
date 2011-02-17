@@ -19,6 +19,7 @@
         neighbourRadius: 35,
         desiredSeparation: 5,
         maxSpeed: 1,
+        wrapFactor: 0.5,
         indicators: {
           alignment: false,
           separation: false,
@@ -39,6 +40,7 @@
         neighbourRadius: 35,
         desiredSeparation: 5,
         maxSpeed: 1,
+        wrapFactor: 0.5,
         indicators: {
           alignment: true,
           alignmentNeighbours: true,
@@ -59,6 +61,7 @@
         neighbourRadius: 35,
         desiredSeparation: 5,
         maxSpeed: 1,
+        wrapFactor: 0.5,
         indicators: {
           alignment: false,
           velocity: false,

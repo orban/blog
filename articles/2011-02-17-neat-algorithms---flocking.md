@@ -24,9 +24,10 @@ Here's the full algorithm in action:
 <div class="flock" id="prettyDemo"></div>
 
 You can also turn on a legend and a magnified view of one boid: <button class="awesome" id="decorateDemo">Decorate</button>
+
 ### The code & components
 
-Heres the essence of the Coffeescript class modeling the boid. Each boid has a `location` and a `velocity`, which are represented as `Vector` objects ([source](https://github.com/hornairs/blog/blob/master/assets/coffeescripts/flocking/vector.coffee)). Each frame calls the `step` method on each boid, which calculates an acceleration based on the 3 components. This acceleration is added to the velocity and limited so the boid can't go too fast. The new velocity is added to the location to actually move the boid.
+Heres the essence of the Coffeescript class modeling the boid. Each boid has a `location` and a `velocity`, which are represented as `Vector` objects ([source](https://github.com/hornairs/blog/blob/master/assets/coffeescripts/flocking/vector.coffee)). Each frame calls the `step` method on each boid, which calculates an acceleration based on the 3 components. This acceleration is added to the velocity, which is then limited to a maxmium magnitude so the boid can't go too fast. The new velocity is added to the location to translate the boid on the map.
 
     :::coffeescript
     # Ported almost directly from http://processingjs.org/learning/topic/flocking
@@ -41,34 +42,42 @@ Heres the essence of the Coffeescript class modeling the boid. Each boid has a `
         @location = loc.copy()
         @p = processing
 
+      # Called every frame. Calculates the acceleration using the flock method, 
+      # and moves the boid based on it.
       step: (neighbours) ->
         acceleration = this.flock(neighbours)
         @velocity.add(acceleration).limit(MAX_SPEED) # Limit the maximum speed at which a boid can go
         @location.add(@velocity)
         this._wrapIfNeeded()
-
+      
+      # Implements the flocking algorthim by collecting the three components 
+      # and returning a weighted sum.
       flock: (neighbours) ->
         separation = this.separate(neighbours).multiply(SEPARATION_WEIGHT)
         alignment = this.align(neighbours).multiply(ALIGNMENT_WEIGHT)
         cohesion = this.cohere(neighbours).multiply(COHESION_WEIGHT)
         return separation.add(alignment).add(cohesion)
 
+Next up is the three components which generate the acceleration.
+
 ### Cohesion
 
 <div class="flock" id="cohesionDemo"></div>
 
-Each boid tries to stay close to its neighbors, and the _cohesion_ component of the algorithm is mainly responsible for this. Every frame, each boid looks at the position of each other boid to see if it is within a specified `neighbour_radius`, that is, it checks to see which other boids are close enough to be considered flockmates. The positions of the qualifying neighbours are averaged and the boid steers to towards that position. This way, each boid is trying to steer towards the center of the flock, resulting in them all staying close together. 
+A flock is defined as a group of boids all staying close to each together, and the _cohesion_ component of the algorithm is mainly responsible for the togetherness aspect of this. Every frame, each boid looks at the position of each other boid to see if it is within a specified `NEIGHBOUR_RADIUS`, that is, it checks to see which other boids are close enough to be considered flockmates. The positions of the qualifying neighbours are averaged and the boid steers to towards that position. This way, each boid is trying to steer towards the center of the flock, resulting in them all staying close together. 
 
-The example on the right shows how the cohesion component of the algorithm works. The neighbour boids are drawn as green instead of blue when they are inside of the `neighbour_radius` of the pink boid. Their absolute locations are summed up (the dark purple vectors) to find the center of the flock. The light pink vector points to the center point. The blue vector shows the path by which the boid decides to steer towards the center point at the end of the light pink vector.
+The example on the right shows how the cohesion component of the algorithm works. The pink boid's `NEIGHBOUR_RADIUS` is drawn as the green circle around it, and boids inside it (neighbours) are drawn as green instead of blue when they are inside it. Their locations (the dark purple vectors) are summed up to find the center of the flock. The light pink vector points to this center point which the pink boid is trying to reach. The blue vector shows the path by which the boid steers towards this center point. This steering vector looks a tad odd, but have a look at the code to see why it is necessary.
 
-Also note that if a boid has only one neighbour, the center of its neighbouring flock is exactly its neighbour's location, so the dark purple and light purple vectors point to the same position.
+Also note that if a boid has only one neighbour, the center of its neighbouring flock is exactly its neighbour's location. In this case the dark purple vector has a zero magnitude (it starts and ends at the same point), and the light purple vector points to the position of that neighbour.
 
 #### Code
 
-The cohesion component is calculated by averaging the location of all the neighbours within the `NEIGHBOUR_RADIUS`. Note that the returned value is the result of calling `steer_to` on the average position. The `steer_to` method implements some basic easing towards a target so the boids turn towards fellow flock members at reasonable speeds instead of instantly switching direction.
+The cohesion component is calculated by averaging the location of all the neighbours within the `NEIGHBOUR_RADIUS`. Note that the returned value is the result of calling `steer_to` on the average position. The `steer_to` method implements some basic easing towards a target so the boids turn towards fellow flock members at reasonable speeds instead of instantly switching direction. You can also see this as an implementation of friction and reaction speeds.
 
     :::coffeescript
     class Boid
+
+      # Called to get the cohesion component of the acceleration
       cohere: (neighbours) ->
         sum = new Vector
         count = 0
@@ -109,16 +118,18 @@ The cohesion component is calculated by averaging the location of all the neighb
 
 <div class="flock" id="alignmentDemo"></div>
 
-Each boid in a flock tries to stay in line with rest of the flock, which is the responsibility of the _alignment_ portion of the algorithm. Each frame, each boid looks at the heading in which it is travelling in comparison to the headings of all its neighbours, and realigns itself to match their heading. The velocity vectors of each boid within the `neighbour_radius` are averaged and the resulting vector is mixed in with the other components of the algorithm to find the boid's final acceleration for the frame.
+Each boid in a flock tries to head in the same direction as the rest of the flock, which is the responsibility of the _alignment_ portion of the algorithm. Each frame, each boid looks at the heading in which it is travelling in comparison to the headings of all its neighbours, and realigns itself to match their heading. The velocity vectors of each boid within the `NEIGHBOUR_RADIUS` are averaged and the resulting vector points in the average direction of the flock, which the boid then tried to head in.
 
 In the example on the left, the neighbouring boids are highlighted in green, and their velocities are shown in light green. Each of those velocities is averaged to find the average heading the pink boid should head in. This new heading is shown as the bright green vector coming from the pink boid. You can also see the pink boid's velocity as the black vector, and notice how if the angle between the current velocity in black and the average alignment of the neighbours in bright green is large, it gradually decreases as the boid adopts the new heading.
 
 #### Code
 
-The alignment is calculated by averaging the velocities of the neighbours within the `NEIGHBOUR_RADIUS`. The return value is also `limited` to exert upto the maximium force. This is so that the alignment component can't overpower the others, which can happen if there is a big difference between the current boid and its neighbours' velocities.
+The alignment is calculated by averaging the velocities of the neighbours within the `NEIGHBOUR_RADIUS`. The return value is also `limited` to exert no more than the maximum force. This is so that the alignment component can't overpower the others, which can happen if there is a big difference between the current boid and its neighbours' velocities.
 
     :::coffeescript
     class Boid
+
+      # Alignment component for the frame's acceleration
       align: (neighbours) ->
         mean = new Vector
         count = 0
@@ -136,16 +147,18 @@ The alignment is calculated by averaging the velocities of the neighbours within
 
 <div class="flock" id="separationDemo"></div>
 
-While in a flock each boid tries not to run into all the other ones. They try to remain _separate_ by keeping a specified amount of space in between themselves. Each boid checks all the other boids on the map to see if the distance between them is too small, and if so, adds an inversely proportional amount to its velocity in the opposite direction.
+While in a flock, each boid tries not to run into each other one in the flock. They try to remain _separate_ by keeping a specified amount of space in between themselves. Each boid checks all the other boids on the map to see if the distance between them is too small, and if so, adds an inversely proportional amount to its velocity in the opposite direction.
 
 In the example on the right you can see the red circle which indicates the desired separation around the pink boid. If a boid enters this radius, the pink boid tries to navigate away. Boids which violate the pink boid's desired separation are also highlighted in red. The red arrow pointing out of the pink boid is the separation component of the algorithm, pointing away from any boids that are too close. Note that right at the start, all the boids are too close to the pink one, so they are all highlighted in red. 
 
 #### Code
 
-The code loops through the neighbours as the other methods do while checking each neighbour to see if the distance to it is less than the `DESIRED_SEPARATION`. If it is, the vector going from the uncomfortably close boid's position to the current position is found such that it is pointing away from the boid which is too close. This vector is normalized, and then scaled up proportionally to how close the boid is. If the boid is closer, the vector is larger, and the current boid will move away faster. 
+The code loops through the neighbours as the other methods do while checking each neighbour to see if the distance to it is less than the `DESIRED_SEPARATION`. If it is, the vector going between the two boids is found such that it is pointing away from the uncomfortably close boid. This vector is normalized, and then scaled up proportionally to how close the boid is. If the foreign boid is closer, the vector is larger, and the current boid will move away faster. 
 
     :::coffeescript
     class Boid
+
+      # Separation component for the frame's acceleration
       separate: (neighbours) ->
         mean = new Vector
         count = 0
@@ -162,7 +175,7 @@ The code loops through the neighbours as the other methods do while checking eac
 
 ## Bringing it all together
 
-Once the component accelerations have been calculated, the weighted sum can be taken, and the final acceleration can be applied to the boid's velocity. A small script like the one below is needed to manage each boid and `step` each one in sequence. To render this whole thing, I used [Processing.js](http://processingjs.org/), which was an absolute joy.
+Once the component accelerations have been calculated, the weighted sum can be taken, and the final acceleration can be applied to the boid's velocity, as is shown at the beginning of the post. A small script like the one below is needed to manage each boid and `step` each one in sequence. To render this whole thing, I used [Processing.js](http://processingjs.org/), which was an absolute joy. The code (which has nothing to do with the flocking algorithm) to render the boid is below. For more on the Processing part of this page, I encourage you to check out the source for this page on [Github](https://github.com/hornairs/blog/blob/master/assets/coffeescripts/flocking/flock.coffee).
 
     :::coffeescript
     class Boid
@@ -182,9 +195,13 @@ Once the component accelerations have been calculated, the weighted sum can be t
         @p.endShape()
         @p.popMatrix()
     
+    # flock function, passed the Processing instance by Processing itself
     flock = (processing) ->
       start = new Vector(processing.width/2,processing.height/2)
      
+      # Instantiate 100 boids who start in the middle of the map, have a maxmimum 
+      # speed of 2, maximum force of 0.05, and give them a reference to the 
+      # processing instance so they can render themselves.
       boids = for i in [0..100]
         new Boid(start, 2, 0.05, processing)
 
@@ -198,7 +215,7 @@ Once the component accelerations have been calculated, the weighted sum can be t
     canvas = $('<canvas width="550" height="550"></canvas>').appendTo($('#flockingDemo'))[0]
     processingInstance = new Processing(canvas, flock)
 
-For more on the Processing part of this page, I encourage you to check out the source for this page on [Github](https://github.com/hornairs/blog/blob/master/assets/coffeescripts/flocking/flock.coffee).
+That's it! You can now stir up your own flocks of tiny little dudes to watch and herd about. 
 
 ## Wrap Up
 

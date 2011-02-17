@@ -30,6 +30,7 @@ class Harry.Boid
 
   desiredSeparation: 6
   neighbourRadius: 50
+  wrapFactor: 1
 
   mouseRepulsion: 1
   mouseRadius: 5
@@ -49,7 +50,7 @@ class Harry.Boid
     @p = (options.processing || options.p)
     @location = options.startPosition.copy()
 
-    twor = @r * 2
+    twor = @r * 2 * @wrapFactor
     @wrapDimensions =
       north:  -twor
       south:  @p.scaledHeight + twor

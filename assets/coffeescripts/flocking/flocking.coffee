@@ -16,6 +16,7 @@ Flocks =
       neighbourRadius: 35
       desiredSeparation: 5
       maxSpeed: 1
+      wrapFactor: 0.5
       indicators:
         alignment: false
         separation: false
@@ -34,6 +35,7 @@ Flocks =
       neighbourRadius: 35
       desiredSeparation: 5
       maxSpeed: 1
+      wrapFactor: 0.5
       indicators:
         alignment: true
         alignmentNeighbours: true
@@ -52,6 +54,7 @@ Flocks =
       neighbourRadius: 35
       desiredSeparation: 5
       maxSpeed: 1
+      wrapFactor: 0.5
       indicators:
         alignment: false
         velocity: false
@@ -73,10 +76,10 @@ jQuery ->
       e.target.innerHTML = "Decorate"
     else
       e.target.innerHTML = "Undecorate"
-    
+
     decorations = !decorations
-    
+
     for name in ['legend', 'inspectOne', 'inspectOneMagnification']
       options[name] = decorations
-    
+
   ).trigger('click')

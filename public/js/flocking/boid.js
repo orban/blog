@@ -30,6 +30,7 @@
     };
     Boid.prototype.desiredSeparation = 6;
     Boid.prototype.neighbourRadius = 50;
+    Boid.prototype.wrapFactor = 1;
     Boid.prototype.mouseRepulsion = 1;
     Boid.prototype.mouseRadius = 5;
     Boid.prototype._separation = new Harry.Vector;
@@ -56,7 +57,7 @@
       }
       this.p = options.processing || options.p;
       this.location = options.startPosition.copy();
-      twor = this.r * 2;
+      twor = this.r * 2 * this.wrapFactor;
       this.wrapDimensions = {
         north: -twor,
         south: this.p.scaledHeight + twor,
