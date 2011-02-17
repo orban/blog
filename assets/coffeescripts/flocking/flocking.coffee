@@ -7,15 +7,6 @@ Flocks =
     legend: false
     startOnPageLoad: true
 
-  fullFlock:
-    startOnPageLoad: false
-    boids: 75
-    boid:
-      radius: 4
-    inspectOne: true
-    inspectOneMagnification: true
-    legend: true
-
   cohesionDemo:
     startOnPageLoad: false
     inspectOne: true

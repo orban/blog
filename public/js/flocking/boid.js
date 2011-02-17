@@ -73,9 +73,9 @@
       return this._move(acceleration);
     };
     Boid.prototype._move = function(acceleration) {
+      this._wrapIfNeeded();
       this.velocity.add(acceleration).limit(this.maxSpeed);
-      this.location.add(this.velocity);
-      return this._wrapIfNeeded();
+      return this.location.add(this.velocity);
     };
     Boid.prototype._wrapIfNeeded = function() {
       if (this.location.x < this.wrapDimensions.west) {
@@ -99,8 +99,6 @@
       separation_count = 0;
       alignment_count = 0;
       cohesion_count = 0;
-      this.contributors = [];
-      this.neighbours = [];
       for (_i = 0, _len = neighbours.length; _i < _len; _i++) {
         boid = neighbours[_i];
         if (boid === this) {
@@ -113,10 +111,9 @@
             separation_count++;
           }
           if (d < this.neighbourRadius) {
-            this.neighbours.push(boid);
             alignment_mean.add(boid.velocity);
             alignment_count++;
-            cohesion_mean.add(boid.location);
+            cohesion_mean.add(boid.location.wrapRelativeTo(this.location, this.wrapDimensions));
             cohesion_count++;
           }
         }

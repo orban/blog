@@ -102,8 +102,8 @@
       var a, d, key, map_d, v, _ref;
       v = this.copy();
       _ref = {
-        "x": "width",
-        "y": "height"
+        x: "width",
+        y: "height"
       };
       for (a in _ref) {
         key = _ref[a];

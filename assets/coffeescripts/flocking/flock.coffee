@@ -84,9 +84,9 @@ class Harry.Flock
     options = jQuery.extend(true, {processing: processing}, @options.boid)
     for i in [1..@options.boids]
       velocity = new Harry.Vector(Math.random()*2-1,Math.random()*2-1)
-      startPosition = start.copy()
-      startPosition.x += Math.random() * 10 - 5
-      startPosition.y += Math.random() * 10 - 5
+      startPosition = start
+      #startPosition.x += Math.random() * 10 - 5
+      #startPosition.y += Math.random() * 10 - 5
       new Harry.Boid(jQuery.extend(options, {velocity: velocity, startPosition: startPosition}))
 
   _drawLegend: (processing) ->

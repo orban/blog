@@ -65,9 +65,9 @@ class Harry.Boid
     this._move(acceleration)
 
   _move: (acceleration) ->
+    this._wrapIfNeeded()
     @velocity.add(acceleration).limit(@maxSpeed)
     @location.add(@velocity)
-    this._wrapIfNeeded()
 
   # Wraparound
   _wrapIfNeeded: () ->
@@ -84,25 +84,21 @@ class Harry.Boid
     separation_count = 0
     alignment_count = 0
     cohesion_count = 0
-    @contributors = []
-    @neighbours = []
 
     # Each flocking behaviour did this loop, so lets put them together into one
     for boid in neighbours
       continue if boid == this
-      #d = @location.distance(boid.location,@wrapDimensions)
       d = @location.eucl_distance(boid.location,@wrapDimensions)
       if d > 0
         if d < @desiredSeparation
           separation_mean.add Harry.Vector.subtract(@location,boid.location).copy().normalize().divide(d) # Normalized,weighted by distance vector pointing away from the neighbour
           separation_count++
         if d < @neighbourRadius
-          @neighbours.push boid
           alignment_mean.add(boid.velocity)
           alignment_count++
-          cohesion_mean.add(boid.location) #.wrapRelativeTo(@location,@wrapDimensions))
+          cohesion_mean.add(boid.location.wrapRelativeTo(@location,@wrapDimensions))
           cohesion_count++
-        
+
     separation_mean.divide(separation_count) if separation_count > 0
     alignment_mean.divide(alignment_count) if alignment_count > 0
 
@@ -172,7 +168,7 @@ class Harry.Boid
         @p.fill(100,200,50, 100)
         @p.stroke(100,200,50, 200)
         @p.ellipse(0,0, @neighbourRadius*2, @neighbourRadius*2)
-      
+
       # Draw separation radius
       if @indicators.separationRadius
         @p.fill(200,10,10,100)
@@ -249,7 +245,7 @@ class Harry.Boid
         @p.stroke(0,250,0)
         @p.fill(0,250,0)
         this._renderVector(@_alignment, 300)
-      
+
       # Alignment Neighbours - dark green
       if @indicators.alignmentNeighbours
         @p.stroke(0,175,0)
@@ -275,7 +271,7 @@ class Harry.Boid
         @p.stroke(250,0,250)
         @p.fill(250,0,250)
         this._renderVector(@_cohesionMean, 1)
-      
+
       if @indicators.cohesionNeighbours
         @p.stroke(100,0,100)
         @p.fill(100,0,100)

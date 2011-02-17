@@ -78,7 +78,7 @@ class Harry.Vector
     # to another location
     wrapRelativeTo: (location, dimensions) ->
       v = this.copy()
-      for a,key of {"x":"width", "y":"height"}
+      for a,key of {x:"width", y:"height"}
         d = this[a]-location[a]
         map_d = dimensions[key]
         # If the distance is greater than half the map wrap it.

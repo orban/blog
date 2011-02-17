@@ -95,9 +95,7 @@
       _results = [];
       for (i = 1, _ref = this.options.boids; (1 <= _ref ? i <= _ref : i >= _ref); (1 <= _ref ? i += 1 : i -= 1)) {
         velocity = new Harry.Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
-        startPosition = start.copy();
-        startPosition.x += Math.random() * 10 - 5;
-        startPosition.y += Math.random() * 10 - 5;
+        startPosition = start;
         _results.push(new Harry.Boid(jQuery.extend(options, {
           velocity: velocity,
           startPosition: startPosition
