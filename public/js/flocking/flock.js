@@ -21,12 +21,14 @@
       startOnPageLoad: false,
       antiFlicker: true,
       scale: 1,
-      startNotification: true
+      startNotification: false,
+      controls: true,
+      border: true
     };
     everStarted = false;
     function Flock(canvas, options) {
       this.run = __bind(this.run, this);;      this.options = jQuery.extend({}, Flock.defaults, options);
-      new Processing(canvas, this.run);
+      this.processing = new Processing(canvas, this.run);
     }
     Flock.prototype.run = function(processing) {
       var boids, inspectorGadget, timeRunning;
@@ -34,7 +36,7 @@
       processing.scaledHeight = processing.height / this.options.scale;
       processing.scaledWidth = processing.width / this.options.scale;
       timeRunning = this.options.startOnPageLoad;
-      boids = this._getBoids(processing);
+      this.boids = boids = this._getBoids(processing);
       inspectorGadget = boids[boids.length - 1];
       processing.draw = __bind(function() {
         var boid, _i, _j, _k, _len, _len2, _len3;
@@ -69,17 +71,25 @@
           font || (font = processing.loadFont('/fonts/aller_rg-webfont'));
           this._drawLegend(processing);
         }
+        if (this.options.border) {
+          processing.stroke(0);
+          processing.noFill();
+          processing.rect(0, 0, processing.width - 1, processing.height - 1);
+        }
         return true;
       }, this);
       if (this.options.clickToStop) {
-        return processing.mouseClicked = function() {
+        return processing.mouseClicked = __bind(function() {
           var boid, _i, _len;
           for (_i = 0, _len = boids.length; _i < _len; _i++) {
             boid = boids[_i];
             boid.inspectable = timeRunning;
           }
-          return timeRunning = !timeRunning;
-        };
+          timeRunning = !timeRunning;
+          if (this.clicked != null) {
+            return this.clicked.call(this, timeRunning);
+          }
+        }, this);
       }
     };
     Flock.prototype._getBoids = function(processing) {
@@ -108,7 +118,7 @@
     };
     Flock.prototype._drawLegend = function(processing) {
       var ctx, demo, l, legends, _i, _len;
-      processing.fill(255);
+      processing.fill(230);
       processing.stroke(0);
       processing.strokeWeight(1);
       processing.pushMatrix();
@@ -167,7 +177,7 @@
     Flock.prototype._drawInspector = function(boid, processing) {
       processing.stroke(0);
       processing.strokeWeight(1);
-      processing.fill(255);
+      processing.fill(230);
       processing.rect(0, 0, 100, 100);
       processing.pushMatrix();
       processing.translate(50, 50);

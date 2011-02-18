@@ -16,13 +16,15 @@ class Harry.Flock
     startOnPageLoad: false
     antiFlicker: true
     scale: 1
-    startNotification: true
+    startNotification: false
+    controls: true
+    border: true
 
   everStarted = false
 
   constructor: (canvas, options) ->
     @options = jQuery.extend {}, Flock.defaults, options
-    new Processing(canvas, this.run)
+    @processing = new Processing(canvas, this.run)
 
   run: (processing) =>
     processing.frameRate(@options.frameRate)
@@ -30,7 +32,7 @@ class Harry.Flock
     processing.scaledWidth = processing.width/@options.scale
     timeRunning = @options.startOnPageLoad # closed over variable for tracking if "time" is paused or running
 
-    boids = this._getBoids(processing)
+    @boids = boids = this._getBoids(processing)
 
     # inspectOne option allows to force one boid to always show its component vectors.
     # Pick the last one so it always renders on top
@@ -69,12 +71,18 @@ class Harry.Flock
         font ||= processing.loadFont('/fonts/aller_rg-webfont')
         this._drawLegend(processing)
 
+      if @options.border
+        processing.stroke(0)
+        processing.noFill()
+        processing.rect(0,0,processing.width-1, processing.height-1)
+
       return true
 
     if @options.clickToStop
-      processing.mouseClicked = ->
+      processing.mouseClicked = =>
         boid.inspectable = timeRunning for boid in boids
         timeRunning = !timeRunning
+        this.clicked.call(this, timeRunning) if this.clicked?
 
   _getBoids: (processing) ->
     if @options.boids.call?
@@ -95,7 +103,7 @@ class Harry.Flock
 
   _drawLegend: (processing) ->
     # Draw legend
-    processing.fill(255)
+    processing.fill(230)
     processing.stroke(0)
     processing.strokeWeight(1)
     processing.pushMatrix()
@@ -142,7 +150,7 @@ class Harry.Flock
     # Draw our friend the inspected boid
     processing.stroke(0)
     processing.strokeWeight(1)
-    processing.fill(255)
+    processing.fill(230)
     processing.rect(0,0, 100, 100)
     processing.pushMatrix()
     processing.translate(50,50)

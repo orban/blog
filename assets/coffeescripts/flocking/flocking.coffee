@@ -1,13 +1,18 @@
 Flocks =
   prettyDemo:
+    width: 855
+    height: 500
     boids: 120
     boid:
       radius: 4
     inspectOne: true
     legend: true
     startOnPageLoad: true
+    controls: false
 
   cohesionDemo:
+    width: 300
+    height: 300
     startOnPageLoad: false
     inspectOne: true
     boids: 15
@@ -27,6 +32,8 @@ Flocks =
         cohesionNeighbours: true
 
   alignmentDemo:
+    width: 300
+    height: 300
     startOnPageLoad: false
     inspectOne: true
     boids: 15
@@ -46,6 +53,8 @@ Flocks =
         cohesion: false
 
   separationDemo:
+    width: 300
+    height: 300
     startOnPageLoad: false
     inspectOne: true
     boids: 15
@@ -66,8 +75,24 @@ Flocks =
 jQuery ->
   for name, options of Flocks
     div = $("##{name}")
-    canvas = $('<canvas></canvas>').attr('width', div.width()).attr('height', div.height()).appendTo(div)[0]
-    options.flock = new Harry.Flock(canvas, options)
+    canvas = $('<canvas></canvas>').attr('width', options.width).attr('height', options.height).appendTo(div)[0]
+    options.flock = flock = new Harry.Flock(canvas, options)
+
+    do (flock) ->
+      if flock.options.controls
+        start = $('<button></button').addClass('awesome').html('Start')
+
+        flock.clicked = (timeRunning) ->
+          start.html if timeRunning then "Stop" else "Start"
+          
+        start.appendTo(div).click(flock.processing.mouseClicked)
+
+        for s in [10, 50, 100, 200]
+          do (s) ->
+            btn = $('<button></button>').addClass('awesome').appendTo(div).html("#{s}%").click ->
+              #flock.processing.frameRate(s/100*20)
+              for boid in flock.boids
+                boid.maxSpeed = s/100 * 2
 
   options = Flocks.prettyDemo.flock.options
   decorations = true
