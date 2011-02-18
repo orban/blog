@@ -166,6 +166,7 @@
         Harry.Boid.prototype._renderVector.call(ctx, demo, 1);
         processing.text(l.name, 8, -2);
       }
+      processing.popMatrix();
       return processing.popMatrix();
     };
     Flock.prototype._drawAntiFlicker = function(processing) {

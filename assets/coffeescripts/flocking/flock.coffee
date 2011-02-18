@@ -138,6 +138,7 @@ class Harry.Flock
       processing.text(l.name,8,-2)
 
     processing.popMatrix()
+    processing.popMatrix()
 
   _drawAntiFlicker: (processing) ->
     # Draw lines to prevent flickering at the edges when wrapping
