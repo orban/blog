@@ -221,6 +221,13 @@ That's it! You can now stir up your own flocks of tiny little dudes to watch and
 
 I hope you found this informative! If you have any questions, comments, corrections, or know of any neat uses of flocking algorithms in the wild (baha!), please leave them below. Also, thanks again to Craig Reynolds for publishing his code in the first place and Daniel Shiffman for creating a basic Processing version of it.  
 
+
+### Thanks
+
+Thanks to Craig Reynolds for coming up with the algorithm and Daniel Shiffman for the initial port to Processing. Daniel is working on a new, free book called "The Nature of Code", exploring what properties of nature we can find and use while coding. He's publishing the draft chapters for anyone who helps fund the project on Kickstarter, so if you like this kind of thing you could help contribute to it on [Kickstarter](https://www.kickstarter.com/projects/shiffman/the-nature-of-code-book-project). 
+
+Also, thanks to Mo for helping edit.
+
 <script type="text/javascript">
   var Harry = {};
 </script>
