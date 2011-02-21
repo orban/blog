@@ -1,14 +1,20 @@
 require "rubygems"
 require "bundler/setup"
 Bundler.require(:default, ENV['RACK_ENV'])
-
 require './blog.rb'
 
 # Rack config
 use Rack::Static, :urls => ['/css', '/js', '/images', '/fonts', '/favicon.ico', '/cv.pdf', '/google4b1c5818a10d5176.html'], :root => 'public'
 use Rack::CommonLogger
+use Rack::Codehighlighter, 
+  :ultraviolet, 
+  :theme => "sunburst",
+  :markdown => true, 
+  :element => "pre>code", 
+  :pattern => /\A:::(\w+)\s*(\n|&#x000A;)/i, 
+  :logging => true
 
-if ENV['RACK_ENV'] == 'development'
+unless ENV['RACK_ENV'] == 'production'
   use Rack::ShowExceptions
 else
   use Rack::Rewrite do
@@ -25,7 +31,7 @@ end
 toto = Toto::Server.new do
   set :author,      "Harry Brundage"                          # blog author
   set :title,       "Will You Harry Me?"                      # site title
-  if ENV['RACK_ENV'] == 'development'
+  unless ENV['RACK_ENV'] == 'production'
     set :url, 'http://localhost:8080'
   else
     set :url, 'http://harry.me'                               # site root URL
