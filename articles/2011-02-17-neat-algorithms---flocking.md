@@ -17,7 +17,8 @@ You can also turn on a legend and a magnified view of one boid: <button class="a
 
 ## How it Works
 
-Each entity on the map, which we'll now refer to as a "boid", is governed by a few simple rules. Each boid starts out at the center of the map with a random velocity, and for each frame of the simulation, a new velocity is calculated using the flocking algorithm. For each boid, the algorithm uses the boid's current velocity, its neighbours' velocities, and its position relative to its neighbours to calculate this new velocity. There are three components to it: the _alignment_, the _cohesion_, and the _separation_, which when used in combination display the full blown flocking behaviour.
+
+Each entity on the map, which we'll now refer to as a "boid", moves around while being governed by a few simple rules. Each boid starts out at the center of the map with a random velocity, and for each frame of the simulation, a new velocity is calculated using the flocking algorithm. For each boid, the algorithm uses the boid's current velocity, its neighbours' velocities, and its position relative to its neighbours to calculate this new velocity. There are three components to it: the _alignment_, the _cohesion_, and the _separation_, which when used in combination display the full blown flocking behaviour.
 
 ## About this page
 
@@ -226,7 +227,7 @@ I hope you found this informative! If you have any questions, comments, correcti
 
 Thanks to Craig Reynolds for coming up with the algorithm and Daniel Shiffman for the initial port to Processing. Daniel is working on a new, free book called "The Nature of Code", exploring what properties of nature we can find and use while coding. He's publishing the draft chapters for anyone who helps fund the project on Kickstarter, so if you like this kind of thing you could help contribute to it on [Kickstarter](https://www.kickstarter.com/projects/shiffman/the-nature-of-code-book-project). 
 
-Also, thanks to Mo for helping edit.
+Also, thanks to [Mo](http://fustat.org/) for helping edit.
 
 <script type="text/javascript">
   var Harry = {};
