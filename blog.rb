@@ -20,5 +20,4 @@ module Toto
 
     alias :content readme    
   end
-
 end

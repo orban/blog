@@ -48,5 +48,17 @@
           var pageTracker = _gat._getTracker("UA-15787846-1");
           pageTracker._trackPageview();
         } catch(err) {}
+        var clicky = { log: function(){ return; }, goal: function(){ return; }};
+        var clicky_site_id = 66390845;
+        (function() {
+          var s = document.createElement('script');
+          s.type = 'text/javascript';
+          s.async = true;
+          s.src = ( document.location.protocol == 'https:' ? 'https://static.getclicky.com/js' : 'http://static.getclicky.com/js' );
+          ( document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0] ).appendChild( s );
+        })();
+      %noscript
+        %p
+          %img(alt="Clicky" width="1" height="1" src="http://in.getclicky.com/66390845ns.gif")
+        
       #footer
-
