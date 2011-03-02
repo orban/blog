@@ -4,7 +4,7 @@ Bundler.require(:default, ENV['RACK_ENV'])
 require './blog.rb'
 
 # Rack config
-use Rack::Static, :urls => ['/css', '/js', '/images', '/fonts', '/favicon.ico', '/cv.pdf', '/googlec44438f9318443e5.html'], :root => 'public'
+use Rack::Static, :urls => ['/css', '/js', '/images', '/fonts', '/favicon.ico', '/cv.pdf', '/googlec44438f9318443e5.html', '/robots.txt'], :root => 'public'
 use Rack::CommonLogger
 use Rack::Codehighlighter, 
   :ultraviolet, 

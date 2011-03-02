@@ -36,26 +36,30 @@
           %a{:href => "http://github.com/hornairs"} github
       %section#content<
         = yield
-      %footer
-        powered by
-        %a{:href => "http://cloudhead.io/toto"} toto
+      %footer#footer
+        This is the blog of
+        %a{:href => "/about"} Harry Brundage
         |
         %a{:href => "https://github.com/hornairs/blog"} source
+        |
+        %a{:href => "/archives"} archives
+        | powered by
+        %a{:href => "http://cloudhead.io/toto"} toto
       :javascript
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-        try {
-          var pageTracker = _gat._getTracker("UA-15787846-1");
-          pageTracker._trackPageview();
-        } catch(err) {}
-        var clicky = { log: function(){ return; }, goal: function(){ return; }};
-        var clicky_site_id = 66390845;
         (function() {
-          var s = document.createElement('script');
-          s.type = 'text/javascript';
-          s.async = true;
-          s.src = ( document.location.protocol == 'https:' ? 'https://static.getclicky.com/js' : 'http://static.getclicky.com/js' );
-          ( document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0] ).appendChild( s );
+          var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+          document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          var clicky = { log: function(){ return; }, goal: function(){ return; }};
+          var clicky_site_id = 66390845;
+          try {
+            var pageTracker = _gat._getTracker("UA-15787846-1");
+            pageTracker._trackPageview();
+            var s = document.createElement('script');
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = ( document.location.protocol == 'https:' ? 'https://static.getclicky.com/js' : 'http://static.getclicky.com/js' );
+            ( document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0] ).appendChild( s );
+          } catch(err) {} 
         })();
       %noscript
         %p
