@@ -22,5 +22,6 @@ See the algorithm in action:
 <script src="/js/harmonics/harmony.js" type="text/javascript"></script>
 <script src="/js/harmonics/harmony_search.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku_harmony.js" type="text/javascript"></script>
+<script src="/js/harmonics/sudoku_visualization.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku.js" type="text/javascript"></script>
 <link href='/css/harmonics.css' rel='stylesheet' type='text/css' /> 

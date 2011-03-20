@@ -17,6 +17,9 @@ use Rack::Codehighlighter,
 unless ENV['RACK_ENV'] == 'production'
   use Rack::ShowExceptions
   use Rack::Nocache
+  map "/evergreen" do
+    run Evergreen::Suite.new(File.dirname(__FILE__)).application
+  end
 else
   use Rack::Rewrite do
     r301 %r{.*}, 'http://harry.me$&', :if => Proc.new {|rack_env|
@@ -41,7 +44,7 @@ toto = Toto::Server.new do
   set :root,        "index"                                   # page to load on /
   set :date,        lambda {|now| now.strftime("%d/%m/%Y") }  # date format for articles
   set :markdown,    :smart                                    # use markdown + smart-mode
-  set :disqus,      "harrisonbrundage"                                     # disqus id, or false
+  set :disqus,      "harris)nbrundage"                                     # disqus id, or false
   set :summary,     :max => 150, :delim => /~\n/              # length of article summary and delimiter
   set :ext,         'md'                                      # file extension for articles
   set :cache,       28800                                     # cache site for 8 hours
@@ -65,4 +68,6 @@ toto = Toto::Server.new do
 
 end
 
-run toto
+map "/" do
+  run toto
+end

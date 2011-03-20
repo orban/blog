@@ -21,4 +21,5 @@ group :development, :test do
   gem 'guard-compass'
   gem 'growl'
   gem "rack-nocache"
+  gem "evergreen", :git => "git@github.com:hornairs/evergreen.git", :submodules => true
 end

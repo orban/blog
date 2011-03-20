@@ -18,11 +18,34 @@ GIT
     textpow (0.10.3)
       spox-plist
 
+GIT
+  remote: git@github.com:hornairs/evergreen.git
+  revision: 021fedea5841d3997fe5a8bb9710520ef9045027
+  submodules: true
+  specs:
+    evergreen (0.4.0)
+      capybara (~> 0.4.0)
+      json_pure (>= 1.0.0)
+      launchy (>= 0.3.5)
+      sinatra (>= 1.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
     archive-tar-minitar (0.5.2)
     builder (3.0.0)
+    capybara (0.4.1.2)
+      celerity (>= 0.7.9)
+      culerity (>= 0.2.4)
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      selenium-webdriver (>= 0.0.27)
+      xpath (~> 0.1.3)
+    celerity (0.8.8)
+    childprocess (0.1.7)
+      ffi (~> 0.6.3)
     coffee-script (2.2.0)
       coffee-script-source
       execjs
@@ -31,7 +54,10 @@ GEM
     compass (0.10.6)
       haml (>= 3.0.4)
     configuration (1.2.0)
+    culerity (0.2.15)
     execjs (0.1.0)
+    ffi (0.6.3)
+      rake (>= 0.8.7)
     growl (1.0.3)
     guard (0.3.0)
       open_gem (~> 1.4.2)
@@ -43,12 +69,14 @@ GEM
       compass (>= 0.10.5)
       guard (>= 0.2.1)
     haml (3.0.25)
+    json_pure (1.5.1)
     kgio (2.3.3)
     launchy (0.3.7)
       configuration (>= 0.0.5)
       rake (>= 0.8.1)
     linecache19 (0.5.11)
       ruby_core_source (>= 0.1.4)
+    mime-types (1.16)
     newrelic_rpm (2.13.4)
     nokogiri (1.4.4)
     open_gem (1.4.2)
@@ -59,6 +87,8 @@ GEM
       rack (>= 1.0.0)
     rack-nocache (0.1.0)
     rack-rewrite (1.0.2)
+    rack-test (0.5.7)
+      rack (>= 1.0)
     rake (0.8.7)
     rdiscount (1.6.8)
     ruby-debug-base19 (0.11.24)
@@ -71,6 +101,15 @@ GEM
       ruby-debug-base19 (>= 0.11.19)
     ruby_core_source (0.1.4)
       archive-tar-minitar (>= 0.5.2)
+    rubyzip (0.9.4)
+    selenium-webdriver (0.1.3)
+      childprocess (~> 0.1.5)
+      ffi (~> 0.6.3)
+      json_pure
+      rubyzip
+    sinatra (1.2.1)
+      rack (~> 1.1)
+      tilt (>= 1.2.2, < 2.0)
     spox-plist (3.0.1)
     spox-textpow (0.10.3)
       spox-plist
@@ -83,12 +122,15 @@ GEM
     unicorn (3.5.0)
       kgio (~> 2.3)
       rack
+    xpath (0.1.3)
+      nokogiri (~> 1.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   compass (= 0.10.6)
+  evergreen!
   growl
   guard
   guard-coffeescript

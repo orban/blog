@@ -1,33 +1,71 @@
 /* line 4, ../../assets/sass/harmonics.sass */
+.sudoku_vis .wheel, .sudoku_vis .game {
+  float: left;
+}
+/* line 7, ../../assets/sass/harmonics.sass */
+.sudoku_vis .game {
+  width: 400px;
+  padding-top: 100px;
+}
+/* line 12, ../../assets/sass/harmonics.sass */
+.sudoku_vis .game table td {
+  text-align: center;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  padding: 4px;
+}
+/* line 17, ../../assets/sass/harmonics.sass */
+.sudoku_vis .game table td.good {
+  background-color: green;
+}
+/* line 19, ../../assets/sass/harmonics.sass */
+.sudoku_vis .game table td.violated {
+  background-color: red;
+}
+/* line 21, ../../assets/sass/harmonics.sass */
+.sudoku_vis .game table td:first-child {
+  border-left: 2px solid black;
+}
+/* line 23, ../../assets/sass/harmonics.sass */
+.sudoku_vis .game table tr:first-of-type td {
+  border-top: 2px solid black;
+}
+/* line 25, ../../assets/sass/harmonics.sass */
+.sudoku_vis .game table tr:nth-child(3n) td {
+  border-bottom: 2px solid black;
+}
+/* line 27, ../../assets/sass/harmonics.sass */
+.sudoku_vis .game table tr td:nth-child(3n) {
+  border-right: 2px solid black;
+}
+/* line 29, ../../assets/sass/harmonics.sass */
+.sudoku_vis .info {
+  width: 100%;
+  clear: both;
+}
+
+/* line 34, ../../assets/sass/harmonics.sass */
 table#searchResults td {
   padding: 1px;
   margin: 0px;
 }
-/* line 7, ../../assets/sass/harmonics.sass */
+/* line 37, ../../assets/sass/harmonics.sass */
 table#searchResults tr.out {
   color: #cccccc;
 }
-
-/* line 10, ../../assets/sass/harmonics.sass */
-tr:not(.out) td:first-child {
+/* line 40, ../../assets/sass/harmonics.sass */
+table#searchResults tr:not(.out) td:first-child {
   border-left: 2px solid red;
 }
-
-/* line 12, ../../assets/sass/harmonics.sass */
-tr:not(.out) td:last-child {
+/* line 42, ../../assets/sass/harmonics.sass */
+table#searchResults tr:not(.out) td:last-child {
   border-right: 2px solid red;
 }
-
-/* line 14, ../../assets/sass/harmonics.sass */
-tr:not(.out):first-of-type {
-  background-color: #dddddd;
-}
-/* line 16, ../../assets/sass/harmonics.sass */
-tr:not(.out):first-of-type td {
+/* line 44, ../../assets/sass/harmonics.sass */
+table#searchResults tr:not(.out):first-of-type td {
   border-top: 2px solid red;
 }
-
-/* line 18, ../../assets/sass/harmonics.sass */
-tr:not(.out):last-of-type td {
+/* line 46, ../../assets/sass/harmonics.sass */
+table#searchResults tr:not(.out):last-of-type td {
   border-bottom: 2px solid red;
 }

@@ -5,6 +5,10 @@ guard 'coffeescript', :output => 'public/js' do
   watch(/^assets\/coffeescripts\/(.*)\.coffee/)
 end
 
+guard 'coffeescript', :output => 'spec/javascripts' do
+  watch(/^spec\/coffeescripts\/(.*)\.coffee/)
+end
+
 guard 'compass' do
   watch(/^assets\/sass\/(.*)\.s[ac]ss/)
 end

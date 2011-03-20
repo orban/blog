@@ -1,10 +1,12 @@
 class Harry.HarmonySearch
   @defaults:
     maxTries: 100
+    iterationMilestone: 100
     targetQuality: Infinity
     harmonyMemorySize: false
     harmonyMemoryConsiderationRate: .95
     pitchAdjustmentRate: .1
+    randomAllocationMultiplier: 3
     instruments: false
     notes: false
     harmonyClass: false
@@ -12,16 +14,26 @@ class Harry.HarmonySearch
     afterInit: ->
     afterInitMemory: ->
     afterNew: ->
+    run: true
   
   constructor: (options) ->
     @options = _.extend {}, HarmonySearch.defaults, options
     @options.notesLength = @options.notes.length
+    @pars = 0
+    @hmcrs = 0
+    @rands = 0
+    @notes = 0
     this.options.afterInit(@options, this)
     
   search: (callback) ->
     # Initialize harmony memory
-    @harmonyMemory = for i in [0..@options.harmonyMemorySize]
+    randoms = for i in [1..@options.harmonyMemorySize*@options.randomAllocationMultiplier]
       this.getRandomHarmony()
+    
+    randoms.sort (a,b) ->
+      return b.quality() - a.quality()
+
+    @harmonyMemory = randoms.slice(0, @options.harmonyMemorySize)
 
     [worstQuality, worstIndex] = this._getWorst()
     [bestQuality, bestIndex] = this._getBest()
@@ -41,10 +53,23 @@ class Harry.HarmonySearch
 
     # Iterate over the search until either the target quality is hit, 
     # or the max iterations condition is passed.
-    iterate = ->
-      ret() and return if tries > @options.maxTries
-      ret() and return if bestQuality > @options.targetQuality
+    iterate = =>
+      if tries > @options.maxTries || bestQuality > @options.targetQuality || !@options.run
+        ret()
+        return true
+      if tries % @options.iterationMilestone == 0
+        [bestQuality, bestIndex] = this._getBest()
+        @options.afterMilestone
+          tries: tries
+          best: @harmonyMemory[bestIndex]
+          worst: @harmonyMemory[worstIndex]
+          pars: @pars
+          hmcrs: @hmcrs
+          rands: @rands
+          notes: @notes
+
       harmony = this.getNextHarmony()
+      #console.log(harmony.quality(), harmony.calculateQualityUniq())
       if harmony.quality() > worstQuality
         # Better than worst harmony. Swap out.
         @harmonyMemory.push(harmony)
@@ -80,8 +105,9 @@ class Harry.HarmonySearch
   # Generate a new harmony based on the HMCR and the PAR
   getNextHarmony: ->
     creationAnnotations = []
-    chord = for i in [1..@options.instruments]
-      annotation = creationAnnotations[i-1] = {}
+    chord = for i in [0..@options.instruments-1]
+      @notes++
+      annotation = creationAnnotations[i] = {}
       if Math.random() < @options.harmonyMemoryConsiderationRate
         # Consider HM. Pick a random harmony, and sample the note at this position in the chord
         harmonyMemoryIndex = Math.floor(Math.random()*@options.harmonyMemorySize)
@@ -89,18 +115,21 @@ class Harry.HarmonySearch
         noteIndex = @harmonyMemory[harmonyMemoryIndex].noteIndicies[i]
         annotation.fromMemory = true
         annotation.memoryIndex = harmonyMemoryIndex
-
+        @hmcrs++
         if Math.random() < @options.pitchAdjustmentRate
           # Adjust the pitch up or down one
           annotation.pitchAdjusted = true
-          noteIndex += if Math.random() > 0.5 then 1 else -1
-          note = @options.notes[(noteIndex+@options.notesLength)  % @options.notesLength]
+          annotation.adjustment = if Math.random() > 0.5 then 1 else -1
+          annotation.oldNoteIndex = noteIndex
+          noteIndex = (noteIndex + annotation.adjustment + @options.notesLength) % @options.notesLength
+          note = @options.notes[noteIndex]
+          @pars++
       else
         # Don't consider the HM. Pick a random note from all possible values.
         noteIndex = Math.floor(Math.random()*@options.notesLength)
         note = @options.notes[noteIndex]
         annotation.random = true
-
+        @rands++
       # Return chosen note for the chord
       [note, noteIndex]
 
