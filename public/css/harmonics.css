@@ -1,0 +1,33 @@
+/* line 4, ../../assets/sass/harmonics.sass */
+table#searchResults td {
+  padding: 1px;
+  margin: 0px;
+}
+/* line 7, ../../assets/sass/harmonics.sass */
+table#searchResults tr.out {
+  color: #cccccc;
+}
+
+/* line 10, ../../assets/sass/harmonics.sass */
+tr:not(.out) td:first-child {
+  border-left: 2px solid red;
+}
+
+/* line 12, ../../assets/sass/harmonics.sass */
+tr:not(.out) td:last-child {
+  border-right: 2px solid red;
+}
+
+/* line 14, ../../assets/sass/harmonics.sass */
+tr:not(.out):first-of-type {
+  background-color: #dddddd;
+}
+/* line 16, ../../assets/sass/harmonics.sass */
+tr:not(.out):first-of-type td {
+  border-top: 2px solid red;
+}
+
+/* line 18, ../../assets/sass/harmonics.sass */
+tr:not(.out):last-of-type td {
+  border-bottom: 2px solid red;
+}

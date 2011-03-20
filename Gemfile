@@ -20,4 +20,5 @@ group :development, :test do
   gem 'guard-coffeescript'
   gem 'guard-compass'
   gem 'growl'
+  gem "rack-nocache"
 end

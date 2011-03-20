@@ -1,0 +1,19 @@
+$hm-border: 2px solid #F00
+
+table#searchResults
+  td
+    padding: 1px
+    margin: 0px
+  tr.out
+    color: #CCC
+
+tr:not(.out) td:first-child
+  border-left: $hm-border
+tr:not(.out) td:last-child
+  border-right: $hm-border  
+tr:not(.out):first-of-type
+  background-color: #DDD
+  td
+    border-top: $hm-border
+tr:not(.out):last-of-type td
+  border-bottom: $hm-border

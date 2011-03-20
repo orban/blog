@@ -23,25 +23,27 @@ GEM
   specs:
     archive-tar-minitar (0.5.2)
     builder (3.0.0)
-    coffee-script (2.1.1)
+    coffee-script (2.2.0)
       coffee-script-source
+      execjs
     coffee-script-source (1.0.1)
     columnize (0.3.2)
     compass (0.10.6)
       haml (>= 3.0.4)
     configuration (1.2.0)
+    execjs (0.1.0)
     growl (1.0.3)
     guard (0.3.0)
       open_gem (~> 1.4.2)
       thor (~> 0.14.6)
-    guard-coffeescript (0.1.7)
-      coffee-script (~> 2.1.1)
+    guard-coffeescript (0.1.8)
+      coffee-script (~> 2.2.0)
       guard (~> 0.3.0)
     guard-compass (0.0.6)
       compass (>= 0.10.5)
       guard (>= 0.2.1)
     haml (3.0.25)
-    kgio (2.1.1)
+    kgio (2.3.3)
     launchy (0.3.7)
       configuration (>= 0.0.5)
       rake (>= 0.8.1)
@@ -51,10 +53,11 @@ GEM
     nokogiri (1.4.4)
     open_gem (1.4.2)
       launchy (~> 0.3.5)
-    rack (1.2.1)
+    rack (1.2.2)
     rack-codehighlighter (0.4.7)
       nokogiri (>= 1.4.1)
       rack (>= 1.0.0)
+    rack-nocache (0.1.0)
     rack-rewrite (1.0.2)
     rake (0.8.7)
     rdiscount (1.6.8)
@@ -77,8 +80,8 @@ GEM
       builder
       rack
       rdiscount
-    unicorn (3.3.1)
-      kgio (~> 2.1)
+    unicorn (3.5.0)
+      kgio (~> 2.3)
       rack
 
 PLATFORMS
@@ -94,6 +97,7 @@ DEPENDENCIES
   newrelic_rpm
   plist!
   rack-codehighlighter
+  rack-nocache
   rack-rewrite
   ruby-debug19
   textpow!

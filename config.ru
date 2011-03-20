@@ -16,6 +16,7 @@ use Rack::Codehighlighter,
 
 unless ENV['RACK_ENV'] == 'production'
   use Rack::ShowExceptions
+  use Rack::Nocache
 else
   use Rack::Rewrite do
     r301 %r{.*}, 'http://harry.me$&', :if => Proc.new {|rack_env|
