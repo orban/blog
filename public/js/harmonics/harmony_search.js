@@ -11,6 +11,7 @@
       randomAllocationMultiplier: 3,
       instruments: false,
       notes: false,
+      notesGlobal: true,
       harmonyClass: false,
       harmonyMemorySize: 10,
       afterInit: function() {},
@@ -59,7 +60,7 @@
       });
       iterate = __bind(function() {
         var harmony, _ref, _ref2;
-        if (tries > this.options.maxTries || bestQuality > this.options.targetQuality || !this.options.run) {
+        if (tries > this.options.maxTries || bestQuality >= this.options.targetQuality || !this.options.run) {
           ret();
           return true;
         }
@@ -108,9 +109,8 @@
       chord = (function() {
         var _ref, _results;
         _results = [];
-        for (i = 1, _ref = this.options.instruments; (1 <= _ref ? i <= _ref : i >= _ref); (1 <= _ref ? i += 1 : i -= 1)) {
-          index = Math.floor(Math.random() * this.options.notesLength);
-          _results.push([this.options.notes[index], index]);
+        for (i = 0, _ref = this.options.instruments - 1; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
+          _results.push(this.options.notesGlobal ? (index = Math.floor(Math.random() * this.options.notesLength), [this.options.notes[index], index]) : (index = Math.floor(Math.random() * this.options.notes[i].length), [this.options.notes[i][index], index]));
         }
         return _results;
       }).call(this);
@@ -136,13 +136,23 @@
               annotation.pitchAdjusted = true;
               annotation.adjustment = Math.random() > 0.5 ? 1 : -1;
               annotation.oldNoteIndex = noteIndex;
-              noteIndex = (noteIndex + annotation.adjustment + this.options.notesLength) % this.options.notesLength;
-              note = this.options.notes[noteIndex];
+              if (this.options.notesGlobal) {
+                noteIndex = (noteIndex + annotation.adjustment + this.options.notesLength) % this.options.notesLength;
+                note = this.options.notes[noteIndex];
+              } else {
+                noteIndex = (noteIndex + annotation.adjustment + this.options.notes[i].length) % this.options.notes[i].length;
+                note = this.options.notes[i][noteIndex];
+              }
               this.pars++;
             }
           } else {
-            noteIndex = Math.floor(Math.random() * this.options.notesLength);
-            note = this.options.notes[noteIndex];
+            if (this.options.notesGlobal) {
+              noteIndex = Math.floor(Math.random() * this.options.notesLength);
+              note = this.options.notes[noteIndex];
+            } else {
+              noteIndex = Math.floor(Math.random() * this.options.notes[i].length);
+              note = this.options.notes[i][noteIndex];
+            }
             annotation.random = true;
             this.rands++;
           }

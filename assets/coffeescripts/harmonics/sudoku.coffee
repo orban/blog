@@ -1,3 +1,3 @@
-$(document).ready ->
-  vis = new Harry.SudokuVisualizer
-    id: 'searchVis'
+#$(document).ready ->
+vis = new Harry.SudokuVisualizer
+  id: 'searchVis'

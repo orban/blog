@@ -21,6 +21,7 @@ See the algorithm in action:
 <script src="/js/protovis-d3.2.js" type="text/javascript"></script>
 <script src="/js/harmonics/harmony.js" type="text/javascript"></script>
 <script src="/js/harmonics/harmony_search.js" type="text/javascript"></script>
+<script src="/js/harmonics/sudoku_puzzle.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku_harmony.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku_visualization.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku.js" type="text/javascript"></script>

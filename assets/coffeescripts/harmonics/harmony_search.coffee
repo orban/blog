@@ -9,13 +9,14 @@ class Harry.HarmonySearch
     randomAllocationMultiplier: 3
     instruments: false
     notes: false
+    notesGlobal: true
     harmonyClass: false
     harmonyMemorySize: 10
     afterInit: ->
     afterInitMemory: ->
     afterNew: ->
     run: true
-  
+
   constructor: (options) ->
     @options = _.extend {}, HarmonySearch.defaults, options
     @options.notesLength = @options.notes.length
@@ -24,12 +25,12 @@ class Harry.HarmonySearch
     @rands = 0
     @notes = 0
     this.options.afterInit(@options, this)
-    
+
   search: (callback) ->
     # Initialize harmony memory
     randoms = for i in [1..@options.harmonyMemorySize*@options.randomAllocationMultiplier]
       this.getRandomHarmony()
-    
+
     randoms.sort (a,b) ->
       return b.quality() - a.quality()
 
@@ -37,7 +38,7 @@ class Harry.HarmonySearch
 
     [worstQuality, worstIndex] = this._getWorst()
     [bestQuality, bestIndex] = this._getBest()
-    
+
     @options.afterInitMemory(@harmonyMemory, this)
     tries = 0
     ret = =>
@@ -51,10 +52,10 @@ class Harry.HarmonySearch
         worst: @harmonyMemory[worstIndex]
         tries: tries
 
-    # Iterate over the search until either the target quality is hit, 
+    # Iterate over the search until either the target quality is hit,
     # or the max iterations condition is passed.
     iterate = =>
-      if tries > @options.maxTries || bestQuality > @options.targetQuality || !@options.run
+      if tries > @options.maxTries || bestQuality >= @options.targetQuality || !@options.run
         ret()
         return true
       if tries % @options.iterationMilestone == 0
@@ -76,6 +77,7 @@ class Harry.HarmonySearch
         @harmonyMemory.splice(worstIndex, 1)
         @options.afterNew(harmony, this)
         delete harmony.creationAnnotations
+
         if harmony.quality() > bestQuality
           bestQuality = harmony.quality()
 
@@ -93,15 +95,19 @@ class Harry.HarmonySearch
 
   _getBest: ->
     this._getComp(((a,b) -> a > b ), 0)
-        
+
   # Generate a totally random harmony
   getRandomHarmony: ->
-    chord = for i in [1..@options.instruments]
-      index = Math.floor(Math.random() * @options.notesLength)
-      [@options.notes[index], index]
+    chord = for i in [0..@options.instruments-1]
+      if @options.notesGlobal
+        index = Math.floor(Math.random() * @options.notesLength)
+        [@options.notes[index], index]
+      else
+        index = Math.floor(Math.random() * @options.notes[i].length)
+        [@options.notes[i][index], index]
 
     new @options.harmonyClass(chord)
-    
+
   # Generate a new harmony based on the HMCR and the PAR
   getNextHarmony: ->
     creationAnnotations = []
@@ -121,13 +127,23 @@ class Harry.HarmonySearch
           annotation.pitchAdjusted = true
           annotation.adjustment = if Math.random() > 0.5 then 1 else -1
           annotation.oldNoteIndex = noteIndex
-          noteIndex = (noteIndex + annotation.adjustment + @options.notesLength) % @options.notesLength
-          note = @options.notes[noteIndex]
+          if @options.notesGlobal
+            noteIndex = (noteIndex + annotation.adjustment + @options.notesLength) % @options.notesLength
+            note = @options.notes[noteIndex]
+          else
+            noteIndex = (noteIndex + annotation.adjustment + @options.notes[i].length) % @options.notes[i].length
+            note = @options.notes[i][noteIndex]
+
           @pars++
       else
         # Don't consider the HM. Pick a random note from all possible values.
-        noteIndex = Math.floor(Math.random()*@options.notesLength)
-        note = @options.notes[noteIndex]
+        if @options.notesGlobal
+          noteIndex = Math.floor(Math.random() * @options.notesLength)
+          note = @options.notes[noteIndex]
+        else
+          noteIndex = Math.floor(Math.random() * @options.notes[i].length)
+          note = @options.notes[i][noteIndex]
+
         annotation.random = true
         @rands++
       # Return chosen note for the chord

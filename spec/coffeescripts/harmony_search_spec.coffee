@@ -1,20 +1,28 @@
 window.Harry = {}
-solved = "164582379725936148839147625378425961651798432942361587296853714587614293413279856"
-almostSolved = "16458237972593614883914762537842596165179843294236158729685371458761429341327985." # missing is 6
-geem = "254316897763985124198427653981753246632849512547261938475692381316578492829134576"
-geem2 = "254316897763985124198427653981743246632859715547261938475692381319578462826134579"
-require "/js/underscore.js", "/js/protovis-d3.2.js", "/js/harmonics/harmony.js", "/js/harmonics/harmony_search.js", "/js/harmonics/sudoku_harmony.js", "/js/harmonics/sudoku_visualization.js", ->
+require "/js/underscore.js", "/js/protovis-d3.2.js", "/js/harmonics/harmony.js", "/js/harmonics/harmony_search.js", "/js/harmonics/sudoku_puzzle.js", "/js/harmonics/sudoku_harmony.js", "/js/harmonics/sudoku_visualization.js", ->
   
+  solved = new Harry.SudokuPuzzle "164582379725936148839147625378425961651798432942361587296853714587614293413279856"
+  almostSolved = new Harry.SudokuPuzzle "16458237972593614883914762537842596165179843294236158729685371458761429341327985." # missing is 6
+  geem = new Harry.SudokuPuzzle "254316897763985124198427653981753246632849512547261938475692381316578492829134576"
+  geem2 = new Harry.SudokuPuzzle "254316897763985124198427653981743246632859715547261938475692381319578462826134579"
+  
+  describe "possibilities finding", ->
+    it "should find no possibilities for a solved game", ->
+      expect(solved.possibilities()).toEqual([])
+    
+    it "should only find one possibility if there is only one", ->
+      expect(almostSolved.possibilities()).toEqual([[6]])
+
   describe "sum scoring", ->
     it "should score a complete game properly", ->
-      klass = Harry.SudokuHarmony.classForPuzzle(solved)
+      klass = solved.harmonyClass()
       expect(klass.unsolvedCount).toEqual(0)
 
       harmony = new klass([])
       expect(harmony.calculateQualitySum()).toEqual(135)
 
     it "should score an almost complete game properly", ->
-      klass = Harry.SudokuHarmony.classForPuzzle(almostSolved)
+      klass = almostSolved.harmonyClass()
       expect(klass.unsolvedCount).toEqual(1)
 
       harmony = new klass([[1,1]])
@@ -24,24 +32,24 @@ require "/js/underscore.js", "/js/protovis-d3.2.js", "/js/harmonics/harmony.js",
       expect(harmony.calculateQualitySum()).toEqual(135)
 
     it "should score with the same ability as Zeem", ->
-      klass = Harry.SudokuHarmony.classForPuzzle(geem)
+      klass = geem.harmonyClass()
       harmony = new klass([])
       expect(harmony.calculateQualitySum()).toEqual(135-21)
 
-      klass = Harry.SudokuHarmony.classForPuzzle(geem2)
+      klass = geem2.harmonyClass()
       harmony = new klass([])
       expect(harmony.calculateQualitySum()).toEqual(135-2)
 
   describe "uniq scoring", ->
     it "should score a complete game properly", ->
-      klass = Harry.SudokuHarmony.classForPuzzle(solved)
+      klass = solved.harmonyClass()
       expect(klass.unsolvedCount).toEqual(0)
 
       harmony = new klass([])
       expect(harmony.calculateQualityUniq()).toEqual(135)
 
     it "should score an almost complete game properly", ->
-      klass = Harry.SudokuHarmony.classForPuzzle(almostSolved)
+      klass = almostSolved.harmonyClass()
       expect(klass.unsolvedCount).toEqual(1)
 
       harmony = new klass([[1,1]])
@@ -55,7 +63,7 @@ require "/js/underscore.js", "/js/protovis-d3.2.js", "/js/harmonics/harmony.js",
   klass = false
   describe "visualizing games", ->
     beforeEach ->
-      klass = Harry.SudokuHarmony.classForPuzzle(almostSolved)
+      klass = almostSolved.harmonyClass()
 
     it "should render violations", ->
       wrong = new klass([[1,1]])

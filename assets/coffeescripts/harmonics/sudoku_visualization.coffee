@@ -1,13 +1,14 @@
 #puzzle = "..4.5..161....4.83.8..3..59..16.2...8...9....2.9..........8.....3.9........5.1..."
 #puzzle = "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5."
 puzzle = ".5.3.6..7....85.24.9842.6.39.1..32.6.3.....1.5.726.9.84.5.9.38..1.57...28..1.4.7."
+#puzzle = "8.1537429743.92865952684371.85241793329876154174.59682217465938.36918247498723516"
 class Harry.SudokuVisualizer
   @defaults:
     width: 500
     height: 500
     thickness: 70
     edgeOffset: 10
-    thicknessScale: 20
+    thicknessScale: 40
     id: false
     maxExtraRows: 0
     colorScale: pv.Scale.linear(0, 125).range('white', 'red')
@@ -32,7 +33,11 @@ class Harry.SudokuVisualizer
         .left(@options.width/2)
         .bottom(@options.height/2)
         .innerRadius(@options.width/2-@options.thickness-@options.edgeOffset)
-        .outerRadius((d) => @options.width/2-@options.edgeOffset-@options.thicknessScale+(d.quality()/125*@options.thicknessScale))
+        .outerRadius((d) =>
+          return @options.width/2-@options.edgeOffset unless @best?
+          size = @options.thicknessScale * (@best.violations()/d.violations())
+          (@options.width/2 - @options.edgeOffset - @options.thickness + size)
+        )
         .angle((d) => -2 * Math.PI / @harmonies.length)
         .fillStyle((d) => @options.colorScale(d.quality()))
         .event("mouseover", (x) => this.showSolution(x))
@@ -63,39 +68,48 @@ class Harry.SudokuVisualizer
        
     @vis.render()
     @best ?= harmony
+    @worst ?= harmony
     if @best.quality() < harmony.quality()
       @best = harmony
       this.showSolution(harmony)
+
+    if @worst.quality() > harmony.quality()
+      @worst = harmony
 
   stop: =>
     @search.options.run = false
 
   start: ->
-    sudokuDefaults =
+    @puzzle = new Harry.SudokuPuzzle(puzzle)
+    @search = new Harry.HarmonySearch
+      # Configure search for sudoku
       maxTries: 1000000
       targetQuality: 135
       harmonyMemoryConsiderationRate: .7
       pitchAdjustmentRate: .1
-      instruments: 9*9
-      notes: i for i in [1..9]
+      notesGlobal: false
+      notes: @puzzle.possibilities()
       harmonyMemorySize: 50
+      harmonyClass: @puzzle.harmonyClass()
+      instruments: @puzzle.unsolvedCount
 
+      # Configure callbacks
       afterInit: (options) =>
-
       afterInitMemory: (harmonies, search) =>
         this.addHarmony(harmony) for harmony in harmonies
       afterNew: (harmony, search) =>
         this.addHarmony(harmony)
       afterMilestone: (attrs) =>
-        @info.html("Try #{attrs.tries}. Best: #{attrs.best.quality()}, Worst: #{attrs.worst.quality()}. HMCRS: #{attrs.hmcrs}, PARS: #{attrs.pars}, RANDS: #{attrs.rands}. HMCRS/TOT: #{attrs.hmcrs/attrs.notes}, RANDS/TOT: #{attrs.rands/attrs.notes}, PARS/HMCRS: #{attrs.pars/attrs.hmcrs}")
+        @info.html("Try #{attrs.tries}. 
+                    Best: #{attrs.best.quality()},
+                    Worst: #{attrs.worst.quality()}. 
+                    HMCRS: #{attrs.hmcrs}, PARS: #{attrs.pars}, RANDS: #{attrs.rands}. 
+                    HMCRS/TOT: #{attrs.hmcrs/attrs.notes}, RANDS/TOT: #{attrs.rands/attrs.notes}, 
+                    PARS/HMCRS: #{attrs.pars/attrs.hmcrs}")
 
-    options = _.extend(sudokuDefaults, {})
-    klass = Harry.SudokuHarmony.classForPuzzle(puzzle)
-    options.harmonyClass = klass
-    options.instruments = klass.unsolvedCount
-    @options.maxRows = options.harmonyMemorySize + @options.maxExtraRows
-    @search = new Harry.HarmonySearch(options)
-    @search.search((results) ->)
+    @options.maxRows = @search.options.harmonyMemorySize
+    # Start search
+    @search.search((results) -> true)
     
   showSolution: (harmony) ->
     @game.html(harmony.showGame())

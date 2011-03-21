@@ -1,23 +1,30 @@
 (function() {
-  var almostSolved, geem, geem2, solved;
   window.Harry = {};
-  solved = "164582379725936148839147625378425961651798432942361587296853714587614293413279856";
-  almostSolved = "16458237972593614883914762537842596165179843294236158729685371458761429341327985.";
-  geem = "254316897763985124198427653981753246632849512547261938475692381316578492829134576";
-  geem2 = "254316897763985124198427653981743246632859715547261938475692381319578462826134579";
-  require("/js/underscore.js", "/js/protovis-d3.2.js", "/js/harmonics/harmony.js", "/js/harmonics/harmony_search.js", "/js/harmonics/sudoku_harmony.js", "/js/harmonics/sudoku_visualization.js", function() {
-    var klass;
+  require("/js/underscore.js", "/js/protovis-d3.2.js", "/js/harmonics/harmony.js", "/js/harmonics/harmony_search.js", "/js/harmonics/sudoku_puzzle.js", "/js/harmonics/sudoku_harmony.js", "/js/harmonics/sudoku_visualization.js", function() {
+    var almostSolved, geem, geem2, klass, solved;
+    solved = new Harry.SudokuPuzzle("164582379725936148839147625378425961651798432942361587296853714587614293413279856");
+    almostSolved = new Harry.SudokuPuzzle("16458237972593614883914762537842596165179843294236158729685371458761429341327985.");
+    geem = new Harry.SudokuPuzzle("254316897763985124198427653981753246632849512547261938475692381316578492829134576");
+    geem2 = new Harry.SudokuPuzzle("254316897763985124198427653981743246632859715547261938475692381319578462826134579");
+    describe("possibilities finding", function() {
+      it("should find no possibilities for a solved game", function() {
+        return expect(solved.possibilities()).toEqual([]);
+      });
+      return it("should only find one possibility if there is only one", function() {
+        return expect(almostSolved.possibilities()).toEqual([[6]]);
+      });
+    });
     describe("sum scoring", function() {
       it("should score a complete game properly", function() {
         var harmony, klass;
-        klass = Harry.SudokuHarmony.classForPuzzle(solved);
+        klass = solved.harmonyClass();
         expect(klass.unsolvedCount).toEqual(0);
         harmony = new klass([]);
         return expect(harmony.calculateQualitySum()).toEqual(135);
       });
       it("should score an almost complete game properly", function() {
         var harmony, klass;
-        klass = Harry.SudokuHarmony.classForPuzzle(almostSolved);
+        klass = almostSolved.harmonyClass();
         expect(klass.unsolvedCount).toEqual(1);
         harmony = new klass([[1, 1]]);
         expect(harmony.calculateQualitySum()).not.toEqual(135);
@@ -26,10 +33,10 @@
       });
       return it("should score with the same ability as Zeem", function() {
         var harmony, klass;
-        klass = Harry.SudokuHarmony.classForPuzzle(geem);
+        klass = geem.harmonyClass();
         harmony = new klass([]);
         expect(harmony.calculateQualitySum()).toEqual(135 - 21);
-        klass = Harry.SudokuHarmony.classForPuzzle(geem2);
+        klass = geem2.harmonyClass();
         harmony = new klass([]);
         return expect(harmony.calculateQualitySum()).toEqual(135 - 2);
       });
@@ -37,14 +44,14 @@
     describe("uniq scoring", function() {
       it("should score a complete game properly", function() {
         var harmony, klass;
-        klass = Harry.SudokuHarmony.classForPuzzle(solved);
+        klass = solved.harmonyClass();
         expect(klass.unsolvedCount).toEqual(0);
         harmony = new klass([]);
         return expect(harmony.calculateQualityUniq()).toEqual(135);
       });
       return it("should score an almost complete game properly", function() {
         var harmony, klass;
-        klass = Harry.SudokuHarmony.classForPuzzle(almostSolved);
+        klass = almostSolved.harmonyClass();
         expect(klass.unsolvedCount).toEqual(1);
         harmony = new klass([[1, 1]]);
         expect(harmony.calculateQualityUniq()).not.toEqual(135);
@@ -56,7 +63,7 @@
     klass = false;
     describe("visualizing games", function() {
       beforeEach(function() {
-        return klass = Harry.SudokuHarmony.classForPuzzle(almostSolved);
+        return klass = almostSolved.harmonyClass();
       });
       it("should render violations", function() {
         var wrong;

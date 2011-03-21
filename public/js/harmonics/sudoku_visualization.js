@@ -8,7 +8,7 @@
       height: 500,
       thickness: 70,
       edgeOffset: 10,
-      thicknessScale: 20,
+      thicknessScale: 40,
       id: false,
       maxExtraRows: 0,
       colorScale: pv.Scale.linear(0, 125).range('white', 'red')
@@ -28,7 +28,12 @@
       this.vis.add(pv.Wedge).data(__bind(function() {
         return this.harmonies;
       }, this)).left(this.options.width / 2).bottom(this.options.height / 2).innerRadius(this.options.width / 2 - this.options.thickness - this.options.edgeOffset).outerRadius(__bind(function(d) {
-        return this.options.width / 2 - this.options.edgeOffset - this.options.thicknessScale + (d.quality() / 125 * this.options.thicknessScale);
+        var size;
+        if (this.best == null) {
+          return this.options.width / 2 - this.options.edgeOffset;
+        }
+        size = this.options.thicknessScale * (this.best.violations() / d.violations());
+        return this.options.width / 2 - this.options.edgeOffset - this.options.thickness + size;
       }, this)).angle(__bind(function(d) {
         return -2 * Math.PI / this.harmonies.length;
       }, this)).fillStyle(__bind(function(d) {
@@ -44,7 +49,7 @@
       this.start();
     }
     SudokuVisualizer.prototype.addHarmony = function(harmony) {
-      var i, minIndex, minQuality, _ref, _ref2;
+      var i, minIndex, minQuality, _ref, _ref2, _ref3;
       this.creationAnnotation = harmony.creationAnnotation;
       this.harmonies.push(harmony);
       if (this.rows > this.options.maxRows) {
@@ -64,31 +69,30 @@
       }
       this.vis.render();
       (_ref2 = this.best) != null ? _ref2 : this.best = harmony;
+      (_ref3 = this.worst) != null ? _ref3 : this.worst = harmony;
       if (this.best.quality() < harmony.quality()) {
         this.best = harmony;
-        return this.showSolution(harmony);
+        this.showSolution(harmony);
+      }
+      if (this.worst.quality() > harmony.quality()) {
+        return this.worst = harmony;
       }
     };
     SudokuVisualizer.prototype.stop = function() {
       return this.search.options.run = false;
     };
     SudokuVisualizer.prototype.start = function() {
-      var i, klass, options, sudokuDefaults;
-      sudokuDefaults = {
+      this.puzzle = new Harry.SudokuPuzzle(puzzle);
+      this.search = new Harry.HarmonySearch({
         maxTries: 1000000,
         targetQuality: 135,
         harmonyMemoryConsiderationRate: .7,
         pitchAdjustmentRate: .1,
-        instruments: 9 * 9,
-        notes: (function() {
-          var _results;
-          _results = [];
-          for (i = 1; i <= 9; i++) {
-            _results.push(i);
-          }
-          return _results;
-        })(),
+        notesGlobal: false,
+        notes: this.puzzle.possibilities(),
         harmonyMemorySize: 50,
+        harmonyClass: this.puzzle.harmonyClass(),
+        instruments: this.puzzle.unsolvedCount,
         afterInit: __bind(function(options) {}, this),
         afterInitMemory: __bind(function(harmonies, search) {
           var harmony, _i, _len, _results;
@@ -103,16 +107,13 @@
           return this.addHarmony(harmony);
         }, this),
         afterMilestone: __bind(function(attrs) {
-          return this.info.html("Try " + attrs.tries + ". Best: " + (attrs.best.quality()) + ", Worst: " + (attrs.worst.quality()) + ". HMCRS: " + attrs.hmcrs + ", PARS: " + attrs.pars + ", RANDS: " + attrs.rands + ". HMCRS/TOT: " + (attrs.hmcrs / attrs.notes) + ", RANDS/TOT: " + (attrs.rands / attrs.notes) + ", PARS/HMCRS: " + (attrs.pars / attrs.hmcrs));
+          return this.info.html("Try " + attrs.tries + ".                     Best: " + (attrs.best.quality()) + ",                    Worst: " + (attrs.worst.quality()) + ".                     HMCRS: " + attrs.hmcrs + ", PARS: " + attrs.pars + ", RANDS: " + attrs.rands + ".                     HMCRS/TOT: " + (attrs.hmcrs / attrs.notes) + ", RANDS/TOT: " + (attrs.rands / attrs.notes) + ",                     PARS/HMCRS: " + (attrs.pars / attrs.hmcrs));
         }, this)
-      };
-      options = _.extend(sudokuDefaults, {});
-      klass = Harry.SudokuHarmony.classForPuzzle(puzzle);
-      options.harmonyClass = klass;
-      options.instruments = klass.unsolvedCount;
-      this.options.maxRows = options.harmonyMemorySize + this.options.maxExtraRows;
-      this.search = new Harry.HarmonySearch(options);
-      return this.search.search(function(results) {});
+      });
+      this.options.maxRows = this.search.options.harmonyMemorySize;
+      return this.search.search(function(results) {
+        return true;
+      });
     };
     SudokuVisualizer.prototype.showSolution = function(harmony) {
       return this.game.html(harmony.showGame());
