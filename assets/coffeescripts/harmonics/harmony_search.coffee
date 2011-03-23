@@ -12,55 +12,63 @@ class Harry.HarmonySearch
     notesGlobal: true
     harmonyClass: false
     harmonyMemorySize: 10
+    popStack: 1
     afterInit: ->
     afterInitMemory: ->
     afterNew: ->
-    run: true
 
   constructor: (options) ->
     @options = _.extend {}, HarmonySearch.defaults, options
     @options.notesLength = @options.notes.length
     this.options.afterInit(@options, this)
+    @running = true
+
+  stop: () ->
+    @running = false
+    clearTimeout(@timer)
+  start: () ->
+    this.search()
 
   search: (callback) ->
     # Initialize harmony memory
-    randoms = for i in [1..@options.harmonyMemorySize*@options.randomAllocationMultiplier]
-      this.getRandomHarmony()
+    @running = true
+    unless @harmonyMemory?
+      randoms = for i in [1..@options.harmonyMemorySize*@options.randomAllocationMultiplier]
+        this.getRandomHarmony()
 
-    randoms.sort (a,b) ->
-      return b.quality() - a.quality()
+      randoms.sort (a,b) ->
+        return b.quality() - a.quality()
 
-    @harmonyMemory = randoms.slice(0, @options.harmonyMemorySize)
+      @harmonyMemory = randoms.slice(0, @options.harmonyMemorySize)
+      @options.afterInitMemory(@harmonyMemory, this)
+      @tries ?= 0
+      @ret = =>
+        [bestQuality, bestIndex] = this._getBest()
+
+        vals =
+          harmonies: @harmonyMemory
+          bestQuality: bestQuality
+          best: @harmonyMemory[bestIndex]
+          worstQuality: worstQuality
+          worst: @harmonyMemory[worstIndex]
+          tries: @tries
+        @options.afterMilestone(vals)
+        callback(vals) if callback?
 
     [worstQuality, worstIndex] = this._getWorst()
     [bestQuality, bestIndex] = this._getBest()
 
-    @options.afterInitMemory(@harmonyMemory, this)
-    tries = 0
-    ret = =>
-       [bestQuality, bestIndex] = this._getBest()
-
-      vals =
-        harmonies: @harmonyMemory
-        bestQuality: bestQuality
-        best: @harmonyMemory[bestIndex]
-        worstQuality: worstQuality
-        worst: @harmonyMemory[worstIndex]
-        tries: tries
-      @options.afterMilestone(vals)
-      callback(vals)
-
-
     # Iterate over the search until either the target quality is hit,
     # or the max iterations condition is passed.
     iterate = =>
-      if tries > @options.maxTries || bestQuality >= @options.targetQuality || !@options.run
-        ret()
+      if @tries > @options.maxTries || bestQuality >= @options.targetQuality
+        @ret()
         return true
-      if tries % @options.iterationMilestone == 0
+      if @tries % @options.iterationMilestone == 0
         [bestQuality, bestIndex] = this._getBest()
+
         @options.afterMilestone
-          tries: tries
+          tries: @tries
           best: @harmonyMemory[bestIndex]
           worst: @harmonyMemory[worstIndex]
 
@@ -77,8 +85,11 @@ class Harry.HarmonySearch
           bestQuality = harmony.quality()
 
         [worstQuality, worstIndex] = this._getWorst()
-      tries++
-      setTimeout(iterate, 0)
+      @tries++
+      if @tries % @options.popStack == 0
+        @timer = setTimeout(iterate, 0)
+      else
+        iterate()
       true
 
     iterate()

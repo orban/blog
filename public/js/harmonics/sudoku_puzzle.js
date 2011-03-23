@@ -24,23 +24,26 @@
           }
         }
       }
+      this.possibilities = this.getPossibilities();
     }
     SudokuPuzzle.prototype.harmonyClass = function() {
-      var PuzzleSolver, c, n;
+      var PuzzleSolver, c, n, p;
       c = this.unsolvedCount;
       n = this.nums;
+      p = this.possibilities;
       PuzzleSolver = (function() {
         function PuzzleSolver() {
           PuzzleSolver.__super__.constructor.apply(this, arguments);
         }
         __extends(PuzzleSolver, Harry.SudokuHarmony);
         PuzzleSolver.unsolvedCount = c;
+        PuzzleSolver.prototype.possibilities = p;
         PuzzleSolver.prototype.unsolved = n;
         return PuzzleSolver;
       })();
       return PuzzleSolver;
     };
-    SudokuPuzzle.prototype.possibilities = function() {
+    SudokuPuzzle.prototype.getPossibilities = function() {
       var acc, block_x, block_y, other_row_val, other_x, other_y, other_y_index, possibility, possible, possible_vals, row, valp, x, y, _ref, _ref2, _ref3, _ref4;
       acc = [];
       _ref = this.nums;

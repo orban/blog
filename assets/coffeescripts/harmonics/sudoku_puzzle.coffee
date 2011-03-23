@@ -14,17 +14,22 @@ class Harry.SudokuPuzzle
           @unsolvedCount++
         else
           @nums[row][col] = parseInt(char)
+
+    @possibilities = this.getPossibilities()
+
     
   harmonyClass: ->
     c = @unsolvedCount
     n = @nums
+    p = @possibilities
     class PuzzleSolver extends Harry.SudokuHarmony
       @unsolvedCount: c
+      possibilities: p
       unsolved: n
 
     return PuzzleSolver
 
-  possibilities: ->
+  getPossibilities: ->
     acc = []
     for y, row of @nums
       y = parseInt(y)
@@ -56,4 +61,3 @@ class Harry.SudokuPuzzle
           acc.push possible_vals
 
     acc
-    

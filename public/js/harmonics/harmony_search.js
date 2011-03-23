@@ -14,58 +14,71 @@
       notesGlobal: true,
       harmonyClass: false,
       harmonyMemorySize: 10,
+      popStack: 1,
       afterInit: function() {},
       afterInitMemory: function() {},
-      afterNew: function() {},
-      run: true
+      afterNew: function() {}
     };
     function HarmonySearch(options) {
       this.options = _.extend({}, HarmonySearch.defaults, options);
       this.options.notesLength = this.options.notes.length;
       this.options.afterInit(this.options, this);
+      this.running = true;
     }
+    HarmonySearch.prototype.stop = function() {
+      this.running = false;
+      return clearTimeout(this.timer);
+    };
+    HarmonySearch.prototype.start = function() {
+      return this.search();
+    };
     HarmonySearch.prototype.search = function(callback) {
-      var bestIndex, bestQuality, i, iterate, randoms, ret, tries, vals, worstIndex, worstQuality, _ref, _ref2;
-      randoms = (function() {
-        var _ref, _results;
-        _results = [];
-        for (i = 1, _ref = this.options.harmonyMemorySize * this.options.randomAllocationMultiplier; (1 <= _ref ? i <= _ref : i >= _ref); (1 <= _ref ? i += 1 : i -= 1)) {
-          _results.push(this.getRandomHarmony());
-        }
-        return _results;
-      }).call(this);
-      randoms.sort(function(a, b) {
-        return b.quality() - a.quality();
-      });
-      this.harmonyMemory = randoms.slice(0, this.options.harmonyMemorySize);
-      _ref = this._getWorst(), worstQuality = _ref[0], worstIndex = _ref[1];
-      _ref2 = this._getBest(), bestQuality = _ref2[0], bestIndex = _ref2[1];
-      this.options.afterInitMemory(this.harmonyMemory, this);
-      tries = 0;
-      ret = __bind(function() {
-        var _ref;
-        return _ref = this._getBest(), bestQuality = _ref[0], bestIndex = _ref[1], _ref;
-      }, this);
-      vals = {
-        harmonies: this.harmonyMemory,
-        bestQuality: bestQuality,
-        best: this.harmonyMemory[bestIndex],
-        worstQuality: worstQuality,
-        worst: this.harmonyMemory[worstIndex],
-        tries: tries
-      };
-      this.options.afterMilestone(vals);
-      callback(vals);
+      var bestIndex, bestQuality, i, iterate, randoms, worstIndex, worstQuality, _ref, _ref2, _ref3;
+      this.running = true;
+      if (this.harmonyMemory == null) {
+        randoms = (function() {
+          var _ref, _results;
+          _results = [];
+          for (i = 1, _ref = this.options.harmonyMemorySize * this.options.randomAllocationMultiplier; (1 <= _ref ? i <= _ref : i >= _ref); (1 <= _ref ? i += 1 : i -= 1)) {
+            _results.push(this.getRandomHarmony());
+          }
+          return _results;
+        }).call(this);
+        randoms.sort(function(a, b) {
+          return b.quality() - a.quality();
+        });
+        this.harmonyMemory = randoms.slice(0, this.options.harmonyMemorySize);
+        this.options.afterInitMemory(this.harmonyMemory, this);
+        (_ref = this.tries) != null ? _ref : this.tries = 0;
+        this.ret = __bind(function() {
+          var bestIndex, bestQuality, vals, _ref;
+          _ref = this._getBest(), bestQuality = _ref[0], bestIndex = _ref[1];
+          vals = {
+            harmonies: this.harmonyMemory,
+            bestQuality: bestQuality,
+            best: this.harmonyMemory[bestIndex],
+            worstQuality: worstQuality,
+            worst: this.harmonyMemory[worstIndex],
+            tries: this.tries
+          };
+          this.options.afterMilestone(vals);
+          if (callback != null) {
+            return callback(vals);
+          }
+        }, this);
+      }
+      _ref2 = this._getWorst(), worstQuality = _ref2[0], worstIndex = _ref2[1];
+      _ref3 = this._getBest(), bestQuality = _ref3[0], bestIndex = _ref3[1];
       iterate = __bind(function() {
         var harmony, _ref, _ref2;
-        if (tries > this.options.maxTries || bestQuality >= this.options.targetQuality || !this.options.run) {
-          ret();
+        if (this.tries > this.options.maxTries || bestQuality >= this.options.targetQuality) {
+          this.ret();
           return true;
         }
-        if (tries % this.options.iterationMilestone === 0) {
+        if (this.tries % this.options.iterationMilestone === 0) {
           _ref = this._getBest(), bestQuality = _ref[0], bestIndex = _ref[1];
           this.options.afterMilestone({
-            tries: tries,
+            tries: this.tries,
             best: this.harmonyMemory[bestIndex],
             worst: this.harmonyMemory[worstIndex]
           });
@@ -81,8 +94,12 @@
           }
           _ref2 = this._getWorst(), worstQuality = _ref2[0], worstIndex = _ref2[1];
         }
-        tries++;
-        setTimeout(iterate, 0);
+        this.tries++;
+        if (this.tries % this.options.popStack === 0) {
+          this.timer = setTimeout(iterate, 0);
+        } else {
+          iterate();
+        }
         return true;
       }, this);
       iterate();

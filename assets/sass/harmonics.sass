@@ -5,11 +5,15 @@ $hm-border: 2px solid #F00
     float: left
 
   .game 
-    width: 400px
-    padding-top: 100px
+    left: 0px
+    width: 230px
+    margin-left: -343px
+    margin-top: 122px
     $game_border: 2px solid #000
     table
       width: auto
+      margin-bottom: 10px
+      background-color: #FFF
       td
         text-align: center
         border-right: 1px solid #000
@@ -20,6 +24,8 @@ $hm-border: 2px solid #F00
           background-color: #A0FF8C
         &.violated
           background-color: #FF988C
+        &.boring
+          background-color: #CCC
       td:first-child
         border-left: $game-border
       tr:first-of-type td
@@ -32,7 +38,7 @@ $hm-border: 2px solid #F00
     width: 100%
     clear: both
 
-#sleepMap
+//#sleepMap
   
 table#searchResults
   td

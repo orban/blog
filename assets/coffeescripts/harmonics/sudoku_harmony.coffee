@@ -133,16 +133,20 @@ class Harry.SudokuHarmony extends Harry.Harmony
         x = parseInt(x)
         # Determine if there is a row violation
         unless this.unsolved[y][x]?
-          unsolvedCount++
-          if violations[y][x]
-            violationsCount++
-            cssClass = "violated"
+          if @possibilities[unsolvedCount].length > 1
+            if violations[y][x]
+              violationsCount++
+              cssClass = "violated"
+            else
+              cssClass = "good"
           else
-            cssClass = "good"
+            cssClass = "boring"
+          unsolvedCount++
         else
           cssClass = "fixed"
+
         s += "<td class=\"#{cssClass}\">#{val}</td>"
       s += "</tr>"
     s += "</table>"
-    s += "Violations: #{violationsCount}/#{unsolvedCount}. Quality: #{this.quality()}"
+    s += "Violations: #{violationsCount}/#{unsolvedCount}. Quality: #{if _.isFunction(this.quality) then this.quality() else this.quality}"
     s

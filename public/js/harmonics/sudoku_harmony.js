@@ -174,13 +174,17 @@
           val = row[x];
           x = parseInt(x);
           if (this.unsolved[y][x] == null) {
-            unsolvedCount++;
-            if (violations[y][x]) {
-              violationsCount++;
-              cssClass = "violated";
+            if (this.possibilities[unsolvedCount].length > 1) {
+              if (violations[y][x]) {
+                violationsCount++;
+                cssClass = "violated";
+              } else {
+                cssClass = "good";
+              }
             } else {
-              cssClass = "good";
+              cssClass = "boring";
             }
+            unsolvedCount++;
           } else {
             cssClass = "fixed";
           }
@@ -189,7 +193,7 @@
         s += "</tr>";
       }
       s += "</table>";
-      s += "Violations: " + violationsCount + "/" + unsolvedCount + ". Quality: " + (this.quality());
+      s += "Violations: " + violationsCount + "/" + unsolvedCount + ". Quality: " + (_.isFunction(this.quality) ? this.quality() : this.quality);
       return s;
     };
     return SudokuHarmony;
