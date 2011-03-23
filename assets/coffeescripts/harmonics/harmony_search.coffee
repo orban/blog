@@ -20,10 +20,6 @@ class Harry.HarmonySearch
   constructor: (options) ->
     @options = _.extend {}, HarmonySearch.defaults, options
     @options.notesLength = @options.notes.length
-    @pars = 0
-    @hmcrs = 0
-    @rands = 0
-    @notes = 0
     this.options.afterInit(@options, this)
 
   search: (callback) ->
@@ -44,13 +40,16 @@ class Harry.HarmonySearch
     ret = =>
        [bestQuality, bestIndex] = this._getBest()
 
-      callback
+      vals =
         harmonies: @harmonyMemory
         bestQuality: bestQuality
         best: @harmonyMemory[bestIndex]
         worstQuality: worstQuality
         worst: @harmonyMemory[worstIndex]
         tries: tries
+      @options.afterMilestone(vals)
+      callback(vals)
+
 
     # Iterate over the search until either the target quality is hit,
     # or the max iterations condition is passed.
@@ -64,10 +63,6 @@ class Harry.HarmonySearch
           tries: tries
           best: @harmonyMemory[bestIndex]
           worst: @harmonyMemory[worstIndex]
-          pars: @pars
-          hmcrs: @hmcrs
-          rands: @rands
-          notes: @notes
 
       harmony = this.getNextHarmony()
       #console.log(harmony.quality(), harmony.calculateQualityUniq())
@@ -112,7 +107,6 @@ class Harry.HarmonySearch
   getNextHarmony: ->
     creationAnnotations = []
     chord = for i in [0..@options.instruments-1]
-      @notes++
       annotation = creationAnnotations[i] = {}
       if Math.random() < @options.harmonyMemoryConsiderationRate
         # Consider HM. Pick a random harmony, and sample the note at this position in the chord
@@ -121,7 +115,6 @@ class Harry.HarmonySearch
         noteIndex = @harmonyMemory[harmonyMemoryIndex].noteIndicies[i]
         annotation.fromMemory = true
         annotation.memoryIndex = harmonyMemoryIndex
-        @hmcrs++
         if Math.random() < @options.pitchAdjustmentRate
           # Adjust the pitch up or down one
           annotation.pitchAdjusted = true
@@ -134,7 +127,6 @@ class Harry.HarmonySearch
             noteIndex = (noteIndex + annotation.adjustment + @options.notes[i].length) % @options.notes[i].length
             note = @options.notes[i][noteIndex]
 
-          @pars++
       else
         # Don't consider the HM. Pick a random note from all possible values.
         if @options.notesGlobal
@@ -145,7 +137,6 @@ class Harry.HarmonySearch
           note = @options.notes[i][noteIndex]
 
         annotation.random = true
-        @rands++
       # Return chosen note for the chord
       [note, noteIndex]
 

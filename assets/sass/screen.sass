@@ -142,16 +142,21 @@ body.bp
     border: 1px solid #CCC
     margin: 10px
     width: 300px
-    img
+    img, div
       width: 300px
     &.small
       width: 200px
-      img
+      img, div
         width: 200px
+    &.big
+      width: 800px
+      img, div
+        width: 800px
     p, figcaption
       font-style: italic
       margin-top: 10px
       text-align: center
+      clear: both
     &.right
       float: right
 

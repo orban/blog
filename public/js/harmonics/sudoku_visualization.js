@@ -7,38 +7,42 @@
       width: 500,
       height: 500,
       thickness: 70,
-      edgeOffset: 10,
-      thicknessScale: 40,
+      edgeOffset: 20,
+      thicknessScale: 30,
+      targetQuality: 135,
       id: false,
-      maxExtraRows: 0,
-      colorScale: pv.Scale.linear(0, 125).range('white', 'red')
+      maxExtraRows: 0
     };
     function SudokuVisualizer(options) {
-      this.stop = __bind(this.stop, this);;      var me, visId;
+      this.stop = __bind(this.stop, this);;      var inner, minimum, visId;
       this.options = _.extend({}, SudokuVisualizer.defaults, options);
       this.harmonies = [];
       this.rows = 0;
-      this.table = $('table#searchResults');
-      this.image = $("img#status");
       this.div = $("#" + this.options.id).addClass("sudoku_vis");
       visId = this.options.id + "_vis";
       this.div.append("<div id=\"" + visId + "\" class=\"wheel\"></div>");
-      me = this;
+      inner = this.options.width / 2 - this.options.thickness - this.options.edgeOffset;
+      minimum = this.options.thickness - this.options.thicknessScale;
+      this.options.colorScale = pv.Scale.linear(this.options.targetQuality / 2, this.options.targetQuality).range('white', 'red');
       this.vis = new pv.Panel().width(this.options.width).height(this.options.height).canvas(visId);
       this.vis.add(pv.Wedge).data(__bind(function() {
         return this.harmonies;
-      }, this)).left(this.options.width / 2).bottom(this.options.height / 2).innerRadius(this.options.width / 2 - this.options.thickness - this.options.edgeOffset).outerRadius(__bind(function(d) {
+      }, this)).left(this.options.width / 2).bottom(this.options.height / 2).innerRadius(inner).outerRadius(__bind(function(d) {
         var size;
-        if (this.best == null) {
-          return this.options.width / 2 - this.options.edgeOffset;
+        if (!(this.best != null) || d.violations() === 0) {
+          return inner + this.options.thickness;
         }
         size = this.options.thicknessScale * (this.best.violations() / d.violations());
-        return this.options.width / 2 - this.options.edgeOffset - this.options.thickness + size;
+        return inner + minimum + size;
       }, this)).angle(__bind(function(d) {
         return -2 * Math.PI / this.harmonies.length;
       }, this)).fillStyle(__bind(function(d) {
-        return this.options.colorScale(d.quality());
-      }, this)).event("mouseover", __bind(function(x) {
+        if (d.quality() === this.options.targetQuality) {
+          return "green";
+        } else {
+          return this.options.colorScale(d.quality());
+        }
+      }, this)).event("click", __bind(function(x) {
         return this.showSolution(x);
       }, this)).anchor("center").add(pv.Label).textAngle(0).text(function(d) {
         return d.quality();
@@ -90,7 +94,7 @@
         pitchAdjustmentRate: .1,
         notesGlobal: false,
         notes: this.puzzle.possibilities(),
-        harmonyMemorySize: 50,
+        harmonyMemorySize: 20,
         harmonyClass: this.puzzle.harmonyClass(),
         instruments: this.puzzle.unsolvedCount,
         afterInit: __bind(function(options) {}, this),
@@ -107,7 +111,7 @@
           return this.addHarmony(harmony);
         }, this),
         afterMilestone: __bind(function(attrs) {
-          return this.info.html("Try " + attrs.tries + ".                     Best: " + (attrs.best.quality()) + ",                    Worst: " + (attrs.worst.quality()) + ".                     HMCRS: " + attrs.hmcrs + ", PARS: " + attrs.pars + ", RANDS: " + attrs.rands + ".                     HMCRS/TOT: " + (attrs.hmcrs / attrs.notes) + ", RANDS/TOT: " + (attrs.rands / attrs.notes) + ",                     PARS/HMCRS: " + (attrs.pars / attrs.hmcrs));
+          return this.info.html("Try " + attrs.tries + ".                     Best: " + (attrs.best.quality()) + ",                    Worst: " + (attrs.worst.quality()) + ".");
         }, this)
       });
       this.options.maxRows = this.search.options.harmonyMemorySize;

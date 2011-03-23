@@ -7,22 +7,28 @@ class Harry.SudokuVisualizer
     width: 500
     height: 500
     thickness: 70
-    edgeOffset: 10
-    thicknessScale: 40
+    edgeOffset: 20
+    thicknessScale: 30
+    targetQuality: 135
     id: false
     maxExtraRows: 0
-    colorScale: pv.Scale.linear(0, 125).range('white', 'red')
 
   constructor: (options)->
+    # Set up options
     @options = _.extend({}, SudokuVisualizer.defaults, options)
+    # Storage for harmonies on display and rows visible
     @harmonies = []
     @rows = 0
-    @table = $('table#searchResults')
-    @image = $("img#status")
+    # Set up elements
     @div = $("##{@options.id}").addClass("sudoku_vis")
     visId = @options.id + "_vis"
     @div.append("<div id=\"#{visId}\" class=\"wheel\"></div>")
-    me = this
+
+    # Set up Protovis wedge
+    inner = @options.width/2 - @options.thickness - @options.edgeOffset
+    minimum = @options.thickness - @options.thicknessScale
+    @options.colorScale = pv.Scale.linear(@options.targetQuality/2, @options.targetQuality).range('white', 'red')
+    
     @vis = new pv.Panel()
         .width(@options.width)
         .height(@options.height)
@@ -32,15 +38,20 @@ class Harry.SudokuVisualizer
         .data(=> @harmonies)
         .left(@options.width/2)
         .bottom(@options.height/2)
-        .innerRadius(@options.width/2-@options.thickness-@options.edgeOffset)
+        .innerRadius(inner)
         .outerRadius((d) =>
-          return @options.width/2-@options.edgeOffset unless @best?
-          size = @options.thicknessScale * (@best.violations()/d.violations())
-          (@options.width/2 - @options.edgeOffset - @options.thickness + size)
+          return inner + @options.thickness if !@best? || d.violations() == 0
+          size = @options.thicknessScale * (@best.violations() / d.violations())
+          return inner + minimum + size
         )
         .angle((d) => -2 * Math.PI / @harmonies.length)
-        .fillStyle((d) => @options.colorScale(d.quality()))
-        .event("mouseover", (x) => this.showSolution(x))
+        .fillStyle((d) =>
+          if d.quality() == @options.targetQuality
+            "green"
+          else
+            @options.colorScale(d.quality())
+        )
+        .event("click", (x) => this.showSolution(x))
       .anchor("center").add(pv.Label)
         .textAngle(0)
         .text((d) -> d.quality())
@@ -89,7 +100,7 @@ class Harry.SudokuVisualizer
       pitchAdjustmentRate: .1
       notesGlobal: false
       notes: @puzzle.possibilities()
-      harmonyMemorySize: 50
+      harmonyMemorySize: 20
       harmonyClass: @puzzle.harmonyClass()
       instruments: @puzzle.unsolvedCount
 
@@ -102,10 +113,7 @@ class Harry.SudokuVisualizer
       afterMilestone: (attrs) =>
         @info.html("Try #{attrs.tries}. 
                     Best: #{attrs.best.quality()},
-                    Worst: #{attrs.worst.quality()}. 
-                    HMCRS: #{attrs.hmcrs}, PARS: #{attrs.pars}, RANDS: #{attrs.rands}. 
-                    HMCRS/TOT: #{attrs.hmcrs/attrs.notes}, RANDS/TOT: #{attrs.rands/attrs.notes}, 
-                    PARS/HMCRS: #{attrs.pars/attrs.hmcrs}")
+                    Worst: #{attrs.worst.quality()}.")
 
     @options.maxRows = @search.options.harmonyMemorySize
     # Start search

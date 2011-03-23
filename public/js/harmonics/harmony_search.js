@@ -22,14 +22,10 @@
     function HarmonySearch(options) {
       this.options = _.extend({}, HarmonySearch.defaults, options);
       this.options.notesLength = this.options.notes.length;
-      this.pars = 0;
-      this.hmcrs = 0;
-      this.rands = 0;
-      this.notes = 0;
       this.options.afterInit(this.options, this);
     }
     HarmonySearch.prototype.search = function(callback) {
-      var bestIndex, bestQuality, i, iterate, randoms, ret, tries, worstIndex, worstQuality, _ref, _ref2;
+      var bestIndex, bestQuality, i, iterate, randoms, ret, tries, vals, worstIndex, worstQuality, _ref, _ref2;
       randoms = (function() {
         var _ref, _results;
         _results = [];
@@ -50,14 +46,16 @@
         var _ref;
         return _ref = this._getBest(), bestQuality = _ref[0], bestIndex = _ref[1], _ref;
       }, this);
-      callback({
+      vals = {
         harmonies: this.harmonyMemory,
         bestQuality: bestQuality,
         best: this.harmonyMemory[bestIndex],
         worstQuality: worstQuality,
         worst: this.harmonyMemory[worstIndex],
         tries: tries
-      });
+      };
+      this.options.afterMilestone(vals);
+      callback(vals);
       iterate = __bind(function() {
         var harmony, _ref, _ref2;
         if (tries > this.options.maxTries || bestQuality >= this.options.targetQuality || !this.options.run) {
@@ -69,11 +67,7 @@
           this.options.afterMilestone({
             tries: tries,
             best: this.harmonyMemory[bestIndex],
-            worst: this.harmonyMemory[worstIndex],
-            pars: this.pars,
-            hmcrs: this.hmcrs,
-            rands: this.rands,
-            notes: this.notes
+            worst: this.harmonyMemory[worstIndex]
           });
         }
         harmony = this.getNextHarmony();
@@ -123,7 +117,6 @@
         var _ref, _results;
         _results = [];
         for (i = 0, _ref = this.options.instruments - 1; (0 <= _ref ? i <= _ref : i >= _ref); (0 <= _ref ? i += 1 : i -= 1)) {
-          this.notes++;
           annotation = creationAnnotations[i] = {};
           if (Math.random() < this.options.harmonyMemoryConsiderationRate) {
             harmonyMemoryIndex = Math.floor(Math.random() * this.options.harmonyMemorySize);
@@ -131,7 +124,6 @@
             noteIndex = this.harmonyMemory[harmonyMemoryIndex].noteIndicies[i];
             annotation.fromMemory = true;
             annotation.memoryIndex = harmonyMemoryIndex;
-            this.hmcrs++;
             if (Math.random() < this.options.pitchAdjustmentRate) {
               annotation.pitchAdjusted = true;
               annotation.adjustment = Math.random() > 0.5 ? 1 : -1;
@@ -143,7 +135,6 @@
                 noteIndex = (noteIndex + annotation.adjustment + this.options.notes[i].length) % this.options.notes[i].length;
                 note = this.options.notes[i][noteIndex];
               }
-              this.pars++;
             }
           } else {
             if (this.options.notesGlobal) {
@@ -154,7 +145,6 @@
               note = this.options.notes[i][noteIndex];
             }
             annotation.random = true;
-            this.rands++;
           }
           _results.push([note, noteIndex]);
         }

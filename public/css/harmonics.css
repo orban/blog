@@ -16,7 +16,7 @@
   text-align: center;
   border-right: 1px solid black;
   border-bottom: 1px solid black;
-  padding: 2px 4px;
+  padding: 0px 5px;
   font-size: 16px;
 }
 /* line 19, ../../assets/sass/harmonics.sass */
@@ -49,28 +49,28 @@
   clear: both;
 }
 
-/* line 36, ../../assets/sass/harmonics.sass */
+/* line 38, ../../assets/sass/harmonics.sass */
 table#searchResults td {
   padding: 1px;
   margin: 0px;
 }
-/* line 39, ../../assets/sass/harmonics.sass */
+/* line 41, ../../assets/sass/harmonics.sass */
 table#searchResults tr.out {
   color: #cccccc;
 }
-/* line 42, ../../assets/sass/harmonics.sass */
+/* line 44, ../../assets/sass/harmonics.sass */
 table#searchResults tr:not(.out) td:first-child {
   border-left: 2px solid red;
 }
-/* line 44, ../../assets/sass/harmonics.sass */
+/* line 46, ../../assets/sass/harmonics.sass */
 table#searchResults tr:not(.out) td:last-child {
   border-right: 2px solid red;
 }
-/* line 46, ../../assets/sass/harmonics.sass */
+/* line 48, ../../assets/sass/harmonics.sass */
 table#searchResults tr:not(.out):first-of-type td {
   border-top: 2px solid red;
 }
-/* line 48, ../../assets/sass/harmonics.sass */
+/* line 50, ../../assets/sass/harmonics.sass */
 table#searchResults tr:not(.out):last-of-type td {
   border-bottom: 2px solid red;
 }
