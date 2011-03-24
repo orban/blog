@@ -13,10 +13,6 @@
     var options;
     switch (data.type) {
       case "init":
-        $.send({
-          type: "message",
-          message: "Starting."
-        });
         puzzle = new Harry.SudokuPuzzle(data.options.puzzle);
         options = _.extend(data.options, {
           popStack: 100,

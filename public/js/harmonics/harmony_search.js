@@ -162,6 +162,7 @@
               note = this.options.notes[i][noteIndex];
             }
             annotation.random = true;
+            annotation.pick = note;
           }
           _results.push([note, noteIndex]);
         }

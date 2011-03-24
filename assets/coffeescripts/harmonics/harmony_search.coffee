@@ -73,7 +73,6 @@ class Harry.HarmonySearch
           worst: @harmonyMemory[worstIndex]
 
       harmony = this.getNextHarmony()
-      #console.log(harmony.quality(), harmony.calculateQualityUniq())
       if harmony.quality() > worstQuality
         # Better than worst harmony. Swap out.
         @harmonyMemory.push(harmony)
@@ -148,6 +147,7 @@ class Harry.HarmonySearch
           note = @options.notes[i][noteIndex]
 
         annotation.random = true
+        annotation.pick = note
       # Return chosen note for the chord
       [note, noteIndex]
 

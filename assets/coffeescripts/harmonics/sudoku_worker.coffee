@@ -10,10 +10,6 @@ prepareHarmony = (harmony) ->
 $ (data) ->
   switch data.type
     when "init"
-      $.send
-        type: "message"
-        message: "Starting."
-
       puzzle = new Harry.SudokuPuzzle(data.options.puzzle)
       
       options = _.extend data.options,
