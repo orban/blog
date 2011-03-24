@@ -2,6 +2,7 @@
   var puzzle;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   puzzle = "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5.";
+  Modernizr.webworkers = false;
   Harry.SudokuVisualizer = (function() {
     SudokuVisualizer.defaults = {
       width: 500,

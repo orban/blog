@@ -16,11 +16,14 @@ use Rack::Codehighlighter,
 
 unless ENV['RACK_ENV'] == 'production'
   use Rack::ShowExceptions
-  eval(IO.read('./development.rb'), binding)
+  use Rack::Nocache
+  map "/evergreen" do
+    run Evergreen::Suite.new(File.dirname(__FILE__)).application
+  end
 else
   use Rack::Rewrite do
     r301 %r{.*}, 'http://harry.me$&', :if => Proc.new {|rack_env|
-      rack_env['SERVER_NAME'] != 'harry.me'
+      ['harry.me', 'stage.harry.me'].none? {|name| name == rack_env['SERVER_NAME']}
     }
   end
   require 'newrelic_rpm'
