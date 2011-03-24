@@ -2,8 +2,24 @@
 puzzle = "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5."
 #puzzle = ".5.3.6..7....85.24.9842.6.39.1..32.6.3.....1.5.726.9.84.5.9.38..1.57...28..1.4.7."
 #puzzle = "8...37429743.9286..52..4371.8524.7933..87615..74.5968...7465938.369..2474987..516"
-Modernizr.webworkers = false
 class Harry.SudokuVisualizer
+  @computationModes:
+    "light":
+      workers: false
+      timer: 150
+      milestoneInterval: 10
+    "medium":
+      workers: false
+      timer: 40
+      milestoneInterval: 60
+    "heavy":
+      workers: false
+      timer: 0
+      milestoneInterval: 100
+    "poutine":
+      workers: true
+      milestoneInterval: 1000
+
   @defaults:
     width: 500
     height: 500
@@ -13,22 +29,25 @@ class Harry.SudokuVisualizer
     targetQuality: 135
     id: false
     maxExtraRows: 0
-    startOnInit: true
+    startOnInit: false
+    computationMode: "light"
 
   constructor: (options)->
     # Set up options
     @options = _.extend({}, SudokuVisualizer.defaults, options)
-
+    @options.computationMode = SudokuVisualizer.computationModes[@options.computationMode]
     # Set up elements
     @div = $("##{@options.id}").addClass("sudoku_vis")
     @visId = @options.id + "_vis"
     @vis2Id = @options.id + "_vis2"
+    @controls = $("<div class=\"controls\"></div>").appendTo(@div)
+    @info = $("<div class=\"info\"></div>").appendTo(@controls)
     @div.append("<div id=\"#{@visId}\" class=\"wheel\"></div>")
     @game = $("<div class=\"game\"></div>").appendTo(@div)
     @div.append("<div id=\"#{@vis2Id}\" class=\"create\"></div>")
-    @info = $("<div class=\"info\"></div>").appendTo(@div)
-
-    @startstop = $('<button class="awesome">Stop</button>').appendTo(@div).click =>
+  
+    # Create startstop button which pauses or resumes computation
+    @startstop = $("<button class=\"awesome\">#{if @options.startOnInit then "Stop" else "Start"}</button>").appendTo(@controls).click =>
       if @running
         this.stop()
         @startstop.html("Start")
@@ -36,10 +55,11 @@ class Harry.SudokuVisualizer
         this.start()
         @startstop.html("Stop")
 
-    startVis = () =>
+    # Starts and restarts the vis
+    restartVis = () =>
       # Storage for harmonies on display and rows visible
-      if @running?
-        if Modernizr.webworkers
+      if @running
+        if @options.computationMode.webworkers
           @hive.terminate()
         else
           @search.stop()
@@ -51,12 +71,29 @@ class Harry.SudokuVisualizer
       this._initializeSearch()
       this._initializeMemoryVisualization()
       this._initializeCreationVisualization()
-      this.start() if @options.startOnInit
 
-    @reset = $('<button class="awesome">Reset</button>').appendTo(@div).click ->
-     startVis()
+    # Create reset button
+    @reset = $('<button class="awesome">Reset</button>').appendTo(@controls).click =>
+     restartVis()
+     this.start()
 
-    startVis()
+    # Create mode select button and register change event
+    @controls.append("Computation Intensity: ")
+    @modeSelect = $('<select class="mode"></select>')
+    for name, mode of SudokuVisualizer.computationModes
+      @modeSelect.append("<option #{if name == @options.computationMode then "selected" else ""}>#{name}</option>")
+    @modeSelect.appendTo(@controls).change (e) =>
+      @options.computationMode = SudokuVisualizer.computationModes[@modeSelect.val()]
+      restartVis()
+      this.start() if @running
+      
+      true
+    # Activity Indicator
+    @activityIndicator = $('<img class="working" src="/images/working.gif">').hide().appendTo(@controls)
+    
+    restartVis()
+    this.start() if @options.startOnInit
+    
 
   addHarmony: (harmony) ->
     @harmonies.push harmony
@@ -86,26 +123,29 @@ class Harry.SudokuVisualizer
     this.render()
 
   stop: ->
-    if Modernizr.webworkers
+    if @options.computationMode.workers
       @hive.send
         type: "stop"
     else
       @search.stop()
     @running = false
+    @activityIndicator.hide()
     true
 
   start: ->
-    if Modernizr.webworkers
+    if @options.computationMode.workers
       @hive.send
         type: "start"
     else
       @search.search()
     @running = true
+    @activityIndicator.show()
     true
 
-  showSolution: (harmony) ->
+  showSolution: (harmony, forceRender = false) ->
     @showing = harmony
     @game.html(harmony.showGame())
+    this.render() if forceRender
 
   showInfo: (attrs) ->
     @info.html("Try #{attrs.tries}.
@@ -129,11 +169,15 @@ class Harry.SudokuVisualizer
       notes: @puzzle.possibilities
       harmonyMemorySize: 16
       instruments: @puzzle.unsolvedCount
+      # Pull out the user selected values
+      timer: @options.computationMode.timer || 0
+      iterationMilestone: @options.computationMode.milestoneInterval
+
     @harmonyClass = @puzzle.harmonyClass()
     @options.maxRows = options.harmonyMemorySize
 
     # Set up the jQuery.Hive webworker messaging bus if supported
-    if Modernizr.webworkers
+    if @options.computationMode.workers
       getHarmony = (data) =>
         harmony = new @harmonyClass(_.zip(data.notes, data.noteIndicies))
         harmony._quality = data.wire_quality
@@ -232,7 +276,7 @@ class Harry.SudokuVisualizer
           1
       )
       # Show a harmony's game when clicked
-      .event("click", (x) => this.showSolution(x))
+      .event("click", (x) => this.showSolution(x, true))
     .anchor("center").add(pv.Label)
       .font("8pt Droid Sans")
       .textAngle(0)

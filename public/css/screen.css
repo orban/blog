@@ -573,8 +573,9 @@ code {
   font-weight: bold;
   line-height: 1;
   text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.25);
+  margin-right: 3px;
 }
-/* line 50, ../../assets/sass/screen.sass */
+/* line 51, ../../assets/sass/screen.sass */
 .awesome, .awesome .awesome:visited {
   background: #222222 url(/images/alert-overlay.png) repeat-x;
   display: inline-block;
@@ -590,61 +591,61 @@ code {
   position: relative;
   cursor: pointer;
 }
-/* line 64, ../../assets/sass/screen.sass */
+/* line 65, ../../assets/sass/screen.sass */
 .awesome:hover {
   background-color: #111111;
   color: white;
 }
-/* line 67, ../../assets/sass/screen.sass */
+/* line 68, ../../assets/sass/screen.sass */
 .awesome:active {
   top: 1px;
 }
 
-/* line 70, ../../assets/sass/screen.sass */
+/* line 71, ../../assets/sass/screen.sass */
 nav {
   margin-top: 13px;
   float: right;
   width: 400px;
 }
-/* line 74, ../../assets/sass/screen.sass */
+/* line 75, ../../assets/sass/screen.sass */
 nav a, nav p {
   display: block;
   float: left;
   padding-left: 15px;
 }
 
-/* line 79, ../../assets/sass/screen.sass */
+/* line 80, ../../assets/sass/screen.sass */
 #by {
   font-style: italic;
   margin-right: 5px;
   font-size: 28px;
 }
 
-/* line 84, ../../assets/sass/screen.sass */
+/* line 85, ../../assets/sass/screen.sass */
 #caption {
   position: absolute;
   font-size: 24px;
   margin: -135px 0 0 70px;
 }
 
-/* line 89, ../../assets/sass/screen.sass */
+/* line 90, ../../assets/sass/screen.sass */
 #path {
   color: #b53131;
 }
 
-/* line 92, ../../assets/sass/screen.sass */
+/* line 93, ../../assets/sass/screen.sass */
 #articles, .clear {
   clear: both;
 }
 
-/* line 96, ../../assets/sass/screen.sass */
+/* line 97, ../../assets/sass/screen.sass */
 #programs ul {
   padding: 0px;
   margin: 10px;
   overflow: hidden;
   list-style-type: none;
 }
-/* line 101, ../../assets/sass/screen.sass */
+/* line 102, ../../assets/sass/screen.sass */
 #programs li {
   list-style-type: none;
   width: 30%;
@@ -657,26 +658,26 @@ nav a, nav p {
   padding-bottom: 2000px;
 }
 
-/* line 112, ../../assets/sass/screen.sass */
+/* line 113, ../../assets/sass/screen.sass */
 .date {
   font-style: italic;
   float: right;
   line-height: 43px;
   margin-right: 30px;
 }
-/* line 117, ../../assets/sass/screen.sass */
+/* line 118, ../../assets/sass/screen.sass */
 h1 .date {
   font-size: 14px;
   font-weight: normal;
   font-family: "Droid Sans", arial, serif;
 }
 
-/* line 122, ../../assets/sass/screen.sass */
+/* line 123, ../../assets/sass/screen.sass */
 .post header, .page header {
   margin-bottom: 10px;
 }
 
-/* line 126, ../../assets/sass/screen.sass */
+/* line 127, ../../assets/sass/screen.sass */
 .content p code {
   background: #e7e7e7;
   padding: 0.2em;
@@ -688,27 +689,27 @@ h1 .date {
   border-radius: 4px;
 }
 
-/* line 131, ../../assets/sass/screen.sass */
+/* line 132, ../../assets/sass/screen.sass */
 .post {
   margin-bottom: 30px;
 }
-/* line 133, ../../assets/sass/screen.sass */
+/* line 134, ../../assets/sass/screen.sass */
 .post .body p:first-child {
   margin-top: 0;
 }
-/* line 135, ../../assets/sass/screen.sass */
+/* line 136, ../../assets/sass/screen.sass */
 .post .body p:last-child {
   margin-bottom: 0;
 }
-/* line 138, ../../assets/sass/screen.sass */
+/* line 139, ../../assets/sass/screen.sass */
 .post:last-child {
   margin-bottom: 10px;
 }
-/* line 140, ../../assets/sass/screen.sass */
+/* line 141, ../../assets/sass/screen.sass */
 .post p {
   margin: 10px 0;
 }
-/* line 142, ../../assets/sass/screen.sass */
+/* line 143, ../../assets/sass/screen.sass */
 .post .more {
   margin-top: -10px;
   margin-right: 30px;
@@ -716,23 +717,23 @@ h1 .date {
   text-align: right;
 }
 
-/* line 148, ../../assets/sass/screen.sass */
+/* line 149, ../../assets/sass/screen.sass */
 .more a {
   text-decoration: none;
 }
-/* line 150, ../../assets/sass/screen.sass */
+/* line 151, ../../assets/sass/screen.sass */
 .more a:hover {
   text-decoration: underline;
 }
 
-/* line 153, ../../assets/sass/screen.sass */
+/* line 154, ../../assets/sass/screen.sass */
 #more_articles {
   font-style: italic;
   text-align: right;
   margin-right: 30px;
 }
 
-/* line 160, ../../assets/sass/screen.sass */
+/* line 161, ../../assets/sass/screen.sass */
 body.bp pre.sunburst {
   width: 95%;
   margin: 1em auto;
@@ -744,8 +745,9 @@ body.bp pre.sunburst {
   border-radius: 8px;
   padding: 1em;
   font-size: 17px;
+  line-height: 1.4;
 }
-/* line 167, ../../assets/sass/screen.sass */
+/* line 169, ../../assets/sass/screen.sass */
 body.bp .pleasant, body.bp figure {
   float: left;
   padding: 10px;
@@ -753,46 +755,46 @@ body.bp .pleasant, body.bp figure {
   margin: 10px;
   width: 300px;
 }
-/* line 173, ../../assets/sass/screen.sass */
+/* line 175, ../../assets/sass/screen.sass */
 body.bp .pleasant img, body.bp .pleasant div, body.bp figure img, body.bp figure div {
   width: 300px;
 }
-/* line 175, ../../assets/sass/screen.sass */
+/* line 177, ../../assets/sass/screen.sass */
 body.bp .pleasant.small, body.bp figure.small {
   width: 200px;
 }
-/* line 177, ../../assets/sass/screen.sass */
+/* line 179, ../../assets/sass/screen.sass */
 body.bp .pleasant.small img, body.bp .pleasant.small div, body.bp figure.small img, body.bp figure.small div {
   width: 200px;
 }
-/* line 179, ../../assets/sass/screen.sass */
+/* line 181, ../../assets/sass/screen.sass */
 body.bp .pleasant.big, body.bp figure.big {
   width: auto;
 }
-/* line 181, ../../assets/sass/screen.sass */
+/* line 183, ../../assets/sass/screen.sass */
 body.bp .pleasant.big img, body.bp .pleasant.big div, body.bp figure.big img, body.bp figure.big div {
   width: auto;
 }
-/* line 183, ../../assets/sass/screen.sass */
+/* line 185, ../../assets/sass/screen.sass */
 body.bp .pleasant p, body.bp .pleasant figcaption, body.bp figure p, body.bp figure figcaption {
   font-style: italic;
   margin-top: 10px;
   text-align: center;
   clear: both;
 }
-/* line 188, ../../assets/sass/screen.sass */
+/* line 190, ../../assets/sass/screen.sass */
 body.bp .pleasant.right, body.bp figure.right {
   float: right;
 }
 
-/* line 191, ../../assets/sass/screen.sass */
+/* line 193, ../../assets/sass/screen.sass */
 #header {
   padding-top: 10px;
   margin-bottom: 20px;
   height: 60px;
   border-bottom: 2px solid #cccccc;
 }
-/* line 196, ../../assets/sass/screen.sass */
+/* line 198, ../../assets/sass/screen.sass */
 #header h1 {
   margin: 10px 20px;
   float: left;
@@ -800,29 +802,29 @@ body.bp .pleasant.right, body.bp figure.right {
   font-size: 2.25em;
   text-shadow: #666666 1px 1px 1px;
 }
-/* line 202, ../../assets/sass/screen.sass */
+/* line 204, ../../assets/sass/screen.sass */
 #header h1 a {
   color: black;
   text-decoration: none;
 }
-/* line 205, ../../assets/sass/screen.sass */
+/* line 207, ../../assets/sass/screen.sass */
 #header h1 a:hover {
   text-decoration: underline;
 }
 
-/* line 208, ../../assets/sass/screen.sass */
+/* line 210, ../../assets/sass/screen.sass */
 #footer {
   position: relative;
   margin-bottom: 5px;
   height: 20px;
 }
-/* line 212, ../../assets/sass/screen.sass */
+/* line 214, ../../assets/sass/screen.sass */
 #footer img.cc {
   position: relative;
   top: 50%;
 }
 
-/* line 217, ../../assets/sass/screen.sass */
+/* line 219, ../../assets/sass/screen.sass */
 body.index #header {
   background: none;
   height: auto;
@@ -831,7 +833,7 @@ body.index #header {
   border: none;
   position: relative;
 }
-/* line 218, ../../assets/sass/screen.sass */
+/* line 220, ../../assets/sass/screen.sass */
 body.index #header h1 {
   padding-left: 30px;
   font-size: 201px;
@@ -842,53 +844,53 @@ body.index #header h1 {
   width: auto;
   text-shadow: #444444 2px 2px 5px;
 }
-/* line 227, ../../assets/sass/screen.sass */
+/* line 229, ../../assets/sass/screen.sass */
 body.index #header h1 a {
   color: auto;
   text-decoration: none;
 }
-/* line 230, ../../assets/sass/screen.sass */
+/* line 232, ../../assets/sass/screen.sass */
 body.index #header h1 a:hover {
   color: auto;
   text-decoration: none;
 }
-/* line 233, ../../assets/sass/screen.sass */
+/* line 235, ../../assets/sass/screen.sass */
 body.index #header h1 a:visted {
   color: auto;
 }
-/* line 242, ../../assets/sass/screen.sass */
+/* line 244, ../../assets/sass/screen.sass */
 body.index nav {
   position: absolute;
   margin: -20px 0 0 0;
   padding-left: 30px;
   width: 720px;
 }
-/* line 247, ../../assets/sass/screen.sass */
+/* line 249, ../../assets/sass/screen.sass */
 body.index nav a {
   text-shadow: none;
 }
-/* line 250, ../../assets/sass/screen.sass */
+/* line 252, ../../assets/sass/screen.sass */
 body.index section > h3, body.index div > h3 {
   border-bottom: 1px dashed #dddddd;
   padding-bottom: 2px;
   margin-bottom: 10px;
 }
-/* line 255, ../../assets/sass/screen.sass */
+/* line 257, ../../assets/sass/screen.sass */
 body.index section > h3 + a.small, body.index div > h3 + a.small {
   margin: -30px 10px 0px 0px;
   float: right;
   padding-left: 10px;
 }
-/* line 260, ../../assets/sass/screen.sass */
+/* line 262, ../../assets/sass/screen.sass */
 body.index #featured {
   padding-bottom: 10px;
 }
-/* line 263, ../../assets/sass/screen.sass */
+/* line 265, ../../assets/sass/screen.sass */
 body.index #tweets, body.index #songs {
   padding-bottom: 10px;
   font-size: 16px;
 }
-/* line 267, ../../assets/sass/screen.sass */
+/* line 269, ../../assets/sass/screen.sass */
 body.index #tweets {
   display: inline;
   float: left;
@@ -899,16 +901,16 @@ body.index #tweets {
 * html body.index #tweets {
   overflow-x: hidden;
 }
-/* line 269, ../../assets/sass/screen.sass */
+/* line 271, ../../assets/sass/screen.sass */
 body.index #tweets ul {
   margin: 0px;
   padding: 0px 4px 0px 4px;
 }
-/* line 272, ../../assets/sass/screen.sass */
+/* line 274, ../../assets/sass/screen.sass */
 body.index #tweets ul li {
   padding-bottom: 10px;
 }
-/* line 275, ../../assets/sass/screen.sass */
+/* line 277, ../../assets/sass/screen.sass */
 body.index #songs {
   display: inline;
   float: left;
@@ -919,12 +921,12 @@ body.index #songs {
 * html body.index #songs {
   overflow-x: hidden;
 }
-/* line 277, ../../assets/sass/screen.sass */
+/* line 279, ../../assets/sass/screen.sass */
 body.index #songs ol {
   padding: 0px 4px 0px 4px;
   margin: 0px;
 }
-/* line 281, ../../assets/sass/screen.sass */
+/* line 283, ../../assets/sass/screen.sass */
 body.index #articles {
   clear: both;
 }

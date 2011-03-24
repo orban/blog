@@ -15,6 +15,7 @@
       harmonyClass: false,
       harmonyMemorySize: 10,
       popStack: 1,
+      timer: 0,
       afterInit: function() {},
       afterInitMemory: function() {},
       afterNew: function() {}
@@ -96,7 +97,7 @@
         }
         this.tries++;
         if (this.tries % this.options.popStack === 0) {
-          this.timer = setTimeout(iterate, 0);
+          this.timer = setTimeout(iterate, this.options.timer);
         } else {
           iterate();
         }

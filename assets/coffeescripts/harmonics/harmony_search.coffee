@@ -13,6 +13,7 @@ class Harry.HarmonySearch
     harmonyClass: false
     harmonyMemorySize: 10
     popStack: 1
+    timer: 0
     afterInit: ->
     afterInitMemory: ->
     afterNew: ->
@@ -26,6 +27,7 @@ class Harry.HarmonySearch
   stop: () ->
     @running = false
     clearTimeout(@timer)
+
   start: () ->
     this.search()
 
@@ -86,7 +88,7 @@ class Harry.HarmonySearch
         [worstQuality, worstIndex] = this._getWorst()
       @tries++
       if @tries % @options.popStack == 0
-        @timer = setTimeout(iterate, 0)
+        @timer = setTimeout(iterate, @options.timer)
       else
         iterate()
       true

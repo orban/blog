@@ -32,7 +32,7 @@
   x = pv.Scale.linear().domain(0, 10).range(0, w * ratio);
   y = pv.Scale.linear().domain(0, 10).range(0, h * ratio);
   heat = pv.Scale.linear().domain(min, 0, max / 5, 2 * max / 5, 3 * max / 5, 4 * max / 5, max).range("#000", "#0a0", "#6c0", "#ee0", "#eb4", "#eb9", "#fff").by(Heatmap);
-  heatmap = new pv.Panel().canvas(id).width(w * ratio).height(h * ratio).margin(32).strokeStyle("#aaa").lineWidth(2).antialias(false);
+  heatmap = new pv.Panel().canvas(id).width(w * ratio).height(h * ratio).margin(32).top(16).strokeStyle("#aaa").lineWidth(2).antialias(false);
   heatmap.add(pv.Image).imageWidth(w).imageHeight(h).image(heat);
   heatmap.add(pv.Rule).data(x.ticks()).strokeStyle("").left(x).anchor("bottom").add(pv.Label).text(x.tickFormat).font("8pt Droid Sans");
   heatmap.add(pv.Rule).data(y.ticks()).strokeStyle("").bottom(y).anchor("left").add(pv.Label).text(y.tickFormat).font("8pt Droid Sans");

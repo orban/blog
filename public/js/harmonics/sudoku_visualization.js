@@ -2,8 +2,28 @@
   var puzzle;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   puzzle = "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5.";
-  Modernizr.webworkers = false;
   Harry.SudokuVisualizer = (function() {
+    SudokuVisualizer.computationModes = {
+      "light": {
+        workers: false,
+        timer: 150,
+        milestoneInterval: 10
+      },
+      "medium": {
+        workers: false,
+        timer: 40,
+        milestoneInterval: 60
+      },
+      "heavy": {
+        workers: false,
+        timer: 0,
+        milestoneInterval: 100
+      },
+      "poutine": {
+        workers: true,
+        milestoneInterval: 1000
+      }
+    };
     SudokuVisualizer.defaults = {
       width: 500,
       height: 500,
@@ -13,19 +33,22 @@
       targetQuality: 135,
       id: false,
       maxExtraRows: 0,
-      startOnInit: true
+      startOnInit: false,
+      computationMode: "light"
     };
     function SudokuVisualizer(options) {
-      var startVis;
+      var mode, name, restartVis, _ref;
       this.options = _.extend({}, SudokuVisualizer.defaults, options);
+      this.options.computationMode = SudokuVisualizer.computationModes[this.options.computationMode];
       this.div = $("#" + this.options.id).addClass("sudoku_vis");
       this.visId = this.options.id + "_vis";
       this.vis2Id = this.options.id + "_vis2";
+      this.controls = $("<div class=\"controls\"></div>").appendTo(this.div);
+      this.info = $("<div class=\"info\"></div>").appendTo(this.controls);
       this.div.append("<div id=\"" + this.visId + "\" class=\"wheel\"></div>");
       this.game = $("<div class=\"game\"></div>").appendTo(this.div);
       this.div.append("<div id=\"" + this.vis2Id + "\" class=\"create\"></div>");
-      this.info = $("<div class=\"info\"></div>").appendTo(this.div);
-      this.startstop = $('<button class="awesome">Stop</button>').appendTo(this.div).click(__bind(function() {
+      this.startstop = $("<button class=\"awesome\">" + (this.options.startOnInit ? "Stop" : "Start") + "</button>").appendTo(this.controls).click(__bind(function() {
         if (this.running) {
           this.stop();
           return this.startstop.html("Start");
@@ -34,9 +57,9 @@
           return this.startstop.html("Stop");
         }
       }, this));
-      startVis = __bind(function() {
-        if (this.running != null) {
-          if (Modernizr.webworkers) {
+      restartVis = __bind(function() {
+        if (this.running) {
+          if (this.options.computationMode.webworkers) {
             this.hive.terminate();
           } else {
             this.search.stop();
@@ -48,15 +71,32 @@
         this.rows = 0;
         this._initializeSearch();
         this._initializeMemoryVisualization();
-        this._initializeCreationVisualization();
-        if (this.options.startOnInit) {
-          return this.start();
-        }
+        return this._initializeCreationVisualization();
       }, this);
-      this.reset = $('<button class="awesome">Reset</button>').appendTo(this.div).click(function() {
-        return startVis();
-      });
-      startVis();
+      this.reset = $('<button class="awesome">Reset</button>').appendTo(this.controls).click(__bind(function() {
+        restartVis();
+        return this.start();
+      }, this));
+      this.controls.append("Computation Intensity: ");
+      this.modeSelect = $('<select class="mode"></select>');
+      _ref = SudokuVisualizer.computationModes;
+      for (name in _ref) {
+        mode = _ref[name];
+        this.modeSelect.append("<option " + (name === this.options.computationMode ? "selected" : "") + ">" + name + "</option>");
+      }
+      this.modeSelect.appendTo(this.controls).change(__bind(function(e) {
+        this.options.computationMode = SudokuVisualizer.computationModes[this.modeSelect.val()];
+        restartVis();
+        if (this.running) {
+          this.start();
+        }
+        return true;
+      }, this));
+      this.activityIndicator = $('<img class="working" src="/images/working.gif">').hide().appendTo(this.controls);
+      restartVis();
+      if (this.options.startOnInit) {
+        this.start();
+      }
     }
     SudokuVisualizer.prototype.addHarmony = function(harmony) {
       var i, minIndex, minQuality, _ref, _ref2, _ref3;
@@ -88,7 +128,7 @@
       return this.render();
     };
     SudokuVisualizer.prototype.stop = function() {
-      if (Modernizr.webworkers) {
+      if (this.options.computationMode.workers) {
         this.hive.send({
           type: "stop"
         });
@@ -96,10 +136,11 @@
         this.search.stop();
       }
       this.running = false;
+      this.activityIndicator.hide();
       return true;
     };
     SudokuVisualizer.prototype.start = function() {
-      if (Modernizr.webworkers) {
+      if (this.options.computationMode.workers) {
         this.hive.send({
           type: "start"
         });
@@ -107,11 +148,18 @@
         this.search.search();
       }
       this.running = true;
+      this.activityIndicator.show();
       return true;
     };
-    SudokuVisualizer.prototype.showSolution = function(harmony) {
+    SudokuVisualizer.prototype.showSolution = function(harmony, forceRender) {
+      if (forceRender == null) {
+        forceRender = false;
+      }
       this.showing = harmony;
-      return this.game.html(harmony.showGame());
+      this.game.html(harmony.showGame());
+      if (forceRender) {
+        return this.render();
+      }
     };
     SudokuVisualizer.prototype.showInfo = function(attrs) {
       return this.info.html("Try " + attrs.tries + ".            Best: " + attrs.best._quality + ",            Worst: " + attrs.worst._quality + ".");
@@ -131,11 +179,13 @@
         notesGlobal: false,
         notes: this.puzzle.possibilities,
         harmonyMemorySize: 16,
-        instruments: this.puzzle.unsolvedCount
+        instruments: this.puzzle.unsolvedCount,
+        timer: this.options.computationMode.timer || 0,
+        iterationMilestone: this.options.computationMode.milestoneInterval
       };
       this.harmonyClass = this.puzzle.harmonyClass();
       this.options.maxRows = options.harmonyMemorySize;
-      if (Modernizr.webworkers) {
+      if (this.options.computationMode.workers) {
         getHarmony = __bind(function(data) {
           var harmony;
           harmony = new this.harmonyClass(_.zip(data.notes, data.noteIndicies));
@@ -240,7 +290,7 @@
           return 1;
         }
       }, this)).event("click", __bind(function(x) {
-        return this.showSolution(x);
+        return this.showSolution(x, true);
       }, this)).anchor("center").add(pv.Label).font("8pt Droid Sans").textAngle(0).text(function(d) {
         return d._quality;
       });
