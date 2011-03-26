@@ -8,17 +8,24 @@ class Harry.SudokuVisualizer
       workers: false
       timer: 150
       milestoneInterval: 10
+      enabled: true
+
     "medium":
       workers: false
       timer: 40
       milestoneInterval: 60
+      enabled: true
+
     "heavy":
       workers: false
       timer: 0
       milestoneInterval: 100
+      enabled: true
+
     "poutine":
       workers: true
       milestoneInterval: 1000
+      enabled: Modernizr.webworkers
 
   @defaults:
     width: 500
@@ -47,13 +54,13 @@ class Harry.SudokuVisualizer
     @div.append("<div id=\"#{@vis2Id}\" class=\"create\"></div>")
   
     # Create startstop button which pauses or resumes computation
-    @startstop = $("<button class=\"awesome\">#{if @options.startOnInit then "Stop" else "Start"}</button>").appendTo(@controls).click =>
+    @startstop = $("<button class=\"awesome\">#{if @options.startOnInit then "Pause" else "Start"}</button>").appendTo(@controls).click =>
       if @running
         this.stop()
         @startstop.html("Start")
       else
         this.start()
-        @startstop.html("Stop")
+        @startstop.html("Pause")
 
     # Starts and restarts the vis
     restartVis = () =>
@@ -81,7 +88,9 @@ class Harry.SudokuVisualizer
     @controls.append("Computation Intensity: ")
     @modeSelect = $('<select class="mode"></select>')
     for name, mode of SudokuVisualizer.computationModes
-      @modeSelect.append("<option #{if name == @options.computationMode then "selected" else ""}>#{name}</option>")
+      if mode.enabled
+        @modeSelect.append("<option #{if name == @options.computationMode then "selected" else ""}>#{name}</option>")
+
     @modeSelect.appendTo(@controls).change (e) =>
       @options.computationMode = SudokuVisualizer.computationModes[@modeSelect.val()]
       restartVis()

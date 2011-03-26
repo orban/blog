@@ -7,21 +7,25 @@
       "light": {
         workers: false,
         timer: 150,
-        milestoneInterval: 10
+        milestoneInterval: 10,
+        enabled: true
       },
       "medium": {
         workers: false,
         timer: 40,
-        milestoneInterval: 60
+        milestoneInterval: 60,
+        enabled: true
       },
       "heavy": {
         workers: false,
         timer: 0,
-        milestoneInterval: 100
+        milestoneInterval: 100,
+        enabled: true
       },
       "poutine": {
         workers: true,
-        milestoneInterval: 1000
+        milestoneInterval: 1000,
+        enabled: Modernizr.webworkers
       }
     };
     SudokuVisualizer.defaults = {
@@ -48,13 +52,13 @@
       this.div.append("<div id=\"" + this.visId + "\" class=\"wheel\"></div>");
       this.game = $("<div class=\"game\"></div>").appendTo(this.div);
       this.div.append("<div id=\"" + this.vis2Id + "\" class=\"create\"></div>");
-      this.startstop = $("<button class=\"awesome\">" + (this.options.startOnInit ? "Stop" : "Start") + "</button>").appendTo(this.controls).click(__bind(function() {
+      this.startstop = $("<button class=\"awesome\">" + (this.options.startOnInit ? "Pause" : "Start") + "</button>").appendTo(this.controls).click(__bind(function() {
         if (this.running) {
           this.stop();
           return this.startstop.html("Start");
         } else {
           this.start();
-          return this.startstop.html("Stop");
+          return this.startstop.html("Pause");
         }
       }, this));
       restartVis = __bind(function() {
@@ -82,7 +86,9 @@
       _ref = SudokuVisualizer.computationModes;
       for (name in _ref) {
         mode = _ref[name];
-        this.modeSelect.append("<option " + (name === this.options.computationMode ? "selected" : "") + ">" + name + "</option>");
+        if (mode.enabled) {
+          this.modeSelect.append("<option " + (name === this.options.computationMode ? "selected" : "") + ">" + name + "</option>");
+        }
       }
       this.modeSelect.appendTo(this.controls).change(__bind(function(e) {
         this.options.computationMode = SudokuVisualizer.computationModes[this.modeSelect.val()];

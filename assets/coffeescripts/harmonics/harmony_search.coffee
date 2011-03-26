@@ -120,38 +120,44 @@ class Harry.HarmonySearch
     creationAnnotations = []
     chord = for i in [0..@options.instruments-1]
       annotation = creationAnnotations[i] = {}
-      if Math.random() < @options.harmonyMemoryConsiderationRate
-        # Consider HM. Pick a random harmony, and sample the note at this position in the chord
-        harmonyMemoryIndex = Math.floor(Math.random()*@options.harmonyMemorySize)
-        note = @harmonyMemory[harmonyMemoryIndex].notes[i]
-        noteIndex = @harmonyMemory[harmonyMemoryIndex].noteIndicies[i]
-        annotation.fromMemory = true
-        annotation.memoryIndex = harmonyMemoryIndex
-        if Math.random() < @options.pitchAdjustmentRate
-          # Adjust the pitch up or down one
-          annotation.pitchAdjusted = true
-          annotation.adjustment = if Math.random() > 0.5 then 1 else -1
-          annotation.oldNoteIndex = noteIndex
+
+      # Quick check for simple cases
+      if @options.notesGlobal and @options.notes[i].length == 1
+        [@options.notes[i][0], 0]
+      else
+        # Not simple, do HMCR & PAR
+        if Math.random() < @options.harmonyMemoryConsiderationRate
+          # Consider HM. Pick a random harmony, and sample the note at this position in the chord
+          harmonyMemoryIndex = Math.floor(Math.random()*@options.harmonyMemorySize)
+          note = @harmonyMemory[harmonyMemoryIndex].notes[i]
+          noteIndex = @harmonyMemory[harmonyMemoryIndex].noteIndicies[i]
+          annotation.fromMemory = true
+          annotation.memoryIndex = harmonyMemoryIndex
+          if Math.random() < @options.pitchAdjustmentRate
+            # Adjust the pitch up or down one
+            annotation.pitchAdjusted = true
+            annotation.adjustment = if Math.random() > 0.5 then 1 else -1
+            annotation.oldNoteIndex = noteIndex
+            if @options.notesGlobal
+              noteIndex = (noteIndex + annotation.adjustment + @options.notesLength) % @options.notesLength
+              note = @options.notes[noteIndex]
+            else
+              noteIndex = (noteIndex + annotation.adjustment + @options.notes[i].length) % @options.notes[i].length
+              note = @options.notes[i][noteIndex]
+
+        else
+          # Don't consider the HM. Pick a random note from all possible values.
           if @options.notesGlobal
-            noteIndex = (noteIndex + annotation.adjustment + @options.notesLength) % @options.notesLength
+            noteIndex = Math.floor(Math.random() * @options.notesLength)
             note = @options.notes[noteIndex]
           else
-            noteIndex = (noteIndex + annotation.adjustment + @options.notes[i].length) % @options.notes[i].length
+            noteIndex = Math.floor(Math.random() * @options.notes[i].length)
             note = @options.notes[i][noteIndex]
 
-      else
-        # Don't consider the HM. Pick a random note from all possible values.
-        if @options.notesGlobal
-          noteIndex = Math.floor(Math.random() * @options.notesLength)
-          note = @options.notes[noteIndex]
-        else
-          noteIndex = Math.floor(Math.random() * @options.notes[i].length)
-          note = @options.notes[i][noteIndex]
-
-        annotation.random = true
-        annotation.pick = note
-      # Return chosen note for the chord
-      [note, noteIndex]
+          annotation.random = true
+          annotation.pick = note
+        # Return chosen note for the chord
+        [note, noteIndex]
 
     harmony = new @options.harmonyClass(chord)
     harmony.creationAnnotations = creationAnnotations
