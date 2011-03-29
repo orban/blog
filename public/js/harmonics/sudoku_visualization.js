@@ -106,20 +106,23 @@
       }
     }
     SudokuVisualizer.prototype.addHarmony = function(harmony) {
-      var i, minIndex, minQuality, _ref, _ref2, _ref3;
+      var i, minIndex, minQuality, secondMinIndex, _ref, _ref2, _ref3;
       this.harmonies.push(harmony);
       if (this.rows > this.options.maxRows) {
         minIndex = 0;
+        secondMinIndex = 0;
         minQuality = this.harmonies[0]._quality;
         _ref = this.harmonies;
         for (i in _ref) {
           harmony = _ref[i];
-          if (harmony._quality < minQuality) {
+          if (harmony._quality <= minQuality) {
+            secondMinIndex = minIndex;
             minQuality = harmony._quality;
             minIndex = i;
           }
         }
         this.harmonies.splice(minIndex, 1);
+        this.worst = this.harmonies[secondMinIndex];
       } else {
         this.rows++;
       }
@@ -132,7 +135,10 @@
       if (this.bestViolations.violations() > harmony.violations()) {
         this.bestViolations = harmony;
       }
-      return this.render();
+      this.render();
+      if (this.best._quality === this.options.targetQuality) {
+        return this.finished();
+      }
     };
     SudokuVisualizer.prototype.stop = function() {
       if (this.options.computationMode.workers) {
@@ -157,6 +163,9 @@
       this.running = true;
       this.activityIndicator.show();
       return true;
+    };
+    SudokuVisualizer.prototype.finished = function() {
+      return this.stop();
     };
     SudokuVisualizer.prototype.showSolution = function(harmony, forceRender) {
       if (forceRender == null) {
@@ -265,7 +274,7 @@
       var inner, minimum;
       inner = this.options.width / 2 - this.options.thickness - this.options.edgeOffset;
       minimum = this.options.thickness - this.options.thicknessScale;
-      this.options.colorScale = pv.Scale.linear(this.options.targetQuality / 2, this.options.targetQuality).range('white', 'red');
+      this.options.colorScale = pv.Scale.linear(2 * this.options.targetQuality / 3, this.options.targetQuality).range('white', 'purple');
       this.vis = new pv.Panel().width(this.options.width).height(this.options.height).canvas(this.visId);
       this.vis.add(pv.Wedge).data(__bind(function() {
         return this.harmonies;
@@ -284,24 +293,12 @@
         } else {
           return this.options.colorScale(d._quality);
         }
-      }, this)).strokeStyle(__bind(function(d) {
-        if ((this.best != null) && d._quality === this.best._quality) {
-          return "green";
-        } else {
-          return "white";
-        }
-      }, this)).lineWidth(__bind(function(d) {
-        if ((this.best != null) && d._quality === this.best._quality) {
-          return 2;
-        } else {
-          return 1;
-        }
-      }, this)).event("click", __bind(function(x) {
+      }, this)).strokeStyle("white").lineWidth(1).event("click", __bind(function(x) {
         return this.showSolution(x, true);
       }, this)).anchor("center").add(pv.Label).font("8pt Droid Sans").textAngle(0).text(function(d) {
         return d._quality;
       });
-      return this.vis.add(pv.Wedge).data(__bind(function() {
+      this.vis.add(pv.Wedge).data(__bind(function() {
         return this.harmonies;
       }, this)).left(this.options.width / 2).bottom(this.options.height / 2).outerRadius(inner - 1).innerRadius(__bind(function(d) {
         if ((this.showing != null) && d === this.showing) {
@@ -312,13 +309,37 @@
       }, this)).angle(__bind(function(d) {
         return -2 * Math.PI / this.harmonies.length;
       }, this)).fillStyle("#CCC");
+      return this.vis.add(pv.Wedge).data(__bind(function() {
+        return this.harmonies;
+      }, this)).left(this.options.width / 2).bottom(this.options.height / 2).angle(__bind(function(d) {
+        return -2 * Math.PI / this.harmonies.length;
+      }, this)).outerRadius(inner - 1).innerRadius(__bind(function(d) {
+        if (((this.best != null) && d._quality === this.best._quality) || ((this.worst != null) && d._quality === this.worst._quality)) {
+          return inner - 5;
+        } else {
+          return inner - 1;
+        }
+      }, this)).fillStyle(__bind(function(d) {
+        if ((this.best != null) && d._quality === this.best._quality) {
+          return "green";
+        } else if ((this.worst != null) && d._quality === this.worst._quality) {
+          return "red";
+        } else {
+          return "white";
+        }
+      }, this));
     };
     SudokuVisualizer.prototype._initializeCreationVisualization = function() {
-      var boxPadding, cellWidth, colorScale, i, proto, row, rowHeight, rows, search, textColorScale;
+      var boxPadding, cellWidth, colorScale, maxCols, maxPossibilities, proto, randoms, randomsRowHeight, row, rowHeight, rows, search, textColorScale;
       rowHeight = 28;
       cellWidth = 12;
-      boxPadding = 40;
-      rows = 16;
+      maxCols = 33;
+      randomsRowHeight = 20;
+      maxPossibilities = _(this.puzzle.possibilities.slice(0, (maxCols + 1) || 9e9)).chain().map(function(x) {
+        return x.length;
+      }).max().value();
+      boxPadding = maxPossibilities * randomsRowHeight + 10;
+      rows = 14;
       colorScale = pv.Scale.linear(0, rows - 1).range("#000", "#666");
       this.vis2 = new pv.Panel().width(450).height(500).canvas(this.vis2Id);
       row = this.vis2.add(pv.Panel).data(__bind(function() {
@@ -326,7 +347,7 @@
       }, this)).height(rowHeight - 3).top(function() {
         return this.index * rowHeight + boxPadding;
       }).strokeStyle("#CCC").lineWidth(1);
-      proto = new pv.Label().font("10pt Droid Sans").textBaseline("top").textStyle("#000").top(6);
+      proto = new pv.Label().top(6).font("10pt Droid Sans").textBaseline("top").textStyle("#000");
       row.add(pv.Label).extend(proto).data(function(harmony) {
         return [harmony._quality];
       }).left(0).text(function(d) {
@@ -335,7 +356,7 @@
       search = this;
       textColorScale = pv.Scale.linear(0, rows).range("#000", "#AAA");
       row.add(pv.Label).extend(proto).data(function(harmony) {
-        return harmony.notes.slice(0, 34);
+        return harmony.notes.slice(0, (maxCols + 1) || 9e9);
       }).left(function() {
         return 30 + this.index * cellWidth;
       }).font(function(d) {
@@ -362,16 +383,23 @@
         }
         return textColorScale(this.parent.index);
       });
-      this.vis2.add(pv.Label).extend(proto).data((function() {
-        var _results;
-        _results = [];
-        for (i = 1; i <= 9; i++) {
-          _results.push(i);
+      randoms = this.vis2.add(pv.Panel).data(this.puzzle.possibilities.slice(0, (maxCols + 1) || 9e9)).width(cellWidth).height(maxPossibilities * randomsRowHeight).top(0).left(function() {
+        return 30 + this.index * cellWidth;
+      });
+      randoms.add(pv.Label).data(function(possibilities) {
+        return possibilities;
+      }).font(function(d) {
+        var extra, x;
+        extra = "";
+        if (x = search.harmonies[search.harmonies.length - 1].creationAnnotations) {
+          if (x[this.parent.index].random && x[this.parent.index].noteIndex === this.index) {
+            extra = "bold ";
+          }
         }
-        return _results;
-      })()).left(function() {
-        return 80 + this.index * cellWidth * 3;
-      }).top(4);
+        return "" + extra + "10pt Droid Sans";
+      }).textStyle("#000").left(0).height(rowHeight).bottom(function(d) {
+        return this.index * randomsRowHeight;
+      });
       return this.vis2.add(pv.Panel).data(__bind(function() {
         var x;
         if ((x = this.harmonies[this.harmonies.length - 1].creationAnnotations)) {
@@ -381,11 +409,7 @@
         }
       }, this)).left(function() {
         return 30 + this.index * cellWidth + 7;
-      }).add(pv.Wedge).def("pointx", function(d) {
-        return 80 + (d.pick - 1) * cellWidth * 3 - this.parent.left() + 7;
-      }).def("pointy", function(d) {
-        return boxPadding + 4 - 18;
-      }).strokeStyle(function(d) {
+      }).add(pv.Wedge).strokeStyle(function(d) {
         if (d.fromMemory) {
           if (d.pitchAdjusted) {
             return "rgba(0,0,255,0.5)";
@@ -399,16 +423,11 @@
         if (d.fromMemory) {
           return d.memoryIndex * rowHeight + 14;
         } else {
-          return Math.sqrt(Math.pow(this.pointx(), 2) + Math.pow(this.pointy(), 2));
+          return d.noteIndex * randomsRowHeight + 16;
         }
       }).startAngle(function(d) {
-        var angle;
         if (!d.fromMemory) {
-          angle = Math.atan(this.pointy() / this.pointx());
-          if (angle < 0) {
-            angle += Math.PI;
-          }
-          return -1 * angle;
+          return Math.PI / -2;
         } else {
           return Math.PI / 2;
         }

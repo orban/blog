@@ -52,7 +52,7 @@ class Harry.SudokuVisualizer
     @div.append("<div id=\"#{@visId}\" class=\"wheel\"></div>")
     @game = $("<div class=\"game\"></div>").appendTo(@div)
     @div.append("<div id=\"#{@vis2Id}\" class=\"create\"></div>")
-  
+
     # Create startstop button which pauses or resumes computation
     @startstop = $("<button class=\"awesome\">#{if @options.startOnInit then "Pause" else "Start"}</button>").appendTo(@controls).click =>
       if @running
@@ -95,31 +95,36 @@ class Harry.SudokuVisualizer
       @options.computationMode = SudokuVisualizer.computationModes[@modeSelect.val()]
       restartVis()
       this.start() if @running
-      
+
       true
     # Activity Indicator
     @activityIndicator = $('<img class="working" src="/images/working.gif">').hide().appendTo(@controls)
-    
+
     restartVis()
 
     # Start the algo so the vis shows up, but stop it right after
-    this.start() 
+    this.start()
     unless @options.startOnInit
       this.stop()
-    
 
+  # Callback for the search class to add a harmony to the vis
   addHarmony: (harmony) ->
     @harmonies.push harmony
 
     # Unseat the worst of the bunch to be replaced by this one
     if @rows > @options.maxRows
       minIndex = 0
+      secondMinIndex = 0
       minQuality = @harmonies[0]._quality
+
       for i, harmony of @harmonies
-        if harmony._quality < minQuality
+        if harmony._quality <= minQuality
+          secondMinIndex = minIndex
           minQuality = harmony._quality
           minIndex = i
+
       @harmonies.splice(minIndex, 1)
+      @worst = @harmonies[secondMinIndex] # Track the worst harmony quality wise
     else
       @rows++
 
@@ -134,6 +139,9 @@ class Harry.SudokuVisualizer
     if @bestViolations.violations() > harmony.violations()
       @bestViolations = harmony
     this.render()
+
+    if @best._quality == @options.targetQuality
+      this.finished()
 
   stop: ->
     if @options.computationMode.workers
@@ -154,6 +162,9 @@ class Harry.SudokuVisualizer
     @running = true
     @activityIndicator.show()
     true
+  
+  finished: ->
+    this.stop()
 
   showSolution: (harmony, forceRender = false) ->
     @showing = harmony
@@ -247,7 +258,7 @@ class Harry.SudokuVisualizer
     # Set up Protovis wedge display
     inner = @options.width/2 - @options.thickness - @options.edgeOffset
     minimum = @options.thickness - @options.thicknessScale
-    @options.colorScale = pv.Scale.linear(@options.targetQuality/2, @options.targetQuality).range('white', 'red')
+    @options.colorScale = pv.Scale.linear(2*@options.targetQuality/3, @options.targetQuality).range('white', 'purple')
 
     @vis = new pv.Panel()
       .width(@options.width)
@@ -275,19 +286,8 @@ class Harry.SudokuVisualizer
         else
           @options.colorScale(d._quality)
       )
-      # Highlight the best wedges
-      .strokeStyle((d) =>
-        if @best? and d._quality == @best._quality
-          "green"
-        else
-          "white"
-      )
-      .lineWidth((d) =>
-        if @best? and d._quality == @best._quality
-          2
-        else
-          1
-      )
+      .strokeStyle("white")
+      .lineWidth(1)
       # Show a harmony's game when clicked
       .event("click", (x) => this.showSolution(x, true))
     .anchor("center").add(pv.Label)
@@ -310,11 +310,43 @@ class Harry.SudokuVisualizer
       .angle((d) => -2 * Math.PI / @harmonies.length)
       .fillStyle("#CCC")
 
+    # Wedge which shows the current best and worst
+    # Ring of wedges showing harmony memory
+    @vis.add(pv.Wedge)
+      .data(=> @harmonies)
+      .left(@options.width/2)
+      .bottom(@options.height/2)
+      .angle((d) => -2 * Math.PI / @harmonies.length)
+      .outerRadius(inner-1)
+      .innerRadius((d) =>
+        if (@best? and d._quality == @best._quality) or (@worst? and d._quality == @worst._quality)
+          inner-5
+        else
+          inner-1
+      )
+      # Highlight the best wedges
+      .fillStyle((d) =>
+        if @best? and d._quality == @best._quality
+          "green"
+        else if @worst? and d._quality == @worst._quality
+          "red"
+        else
+          "white"
+      )
+
   _initializeCreationVisualization: () ->
+    # Each row has a height
     rowHeight = 28
+    # Each column has a width
     cellWidth = 12
-    boxPadding = 40
-    rows = 16
+    # The table is only so wide
+    maxCols = 33
+    
+    # The rows start far enough down for the random selections at the top to fit
+    randomsRowHeight = 20
+    maxPossibilities = _(@puzzle.possibilities[0..maxCols]).chain().map((x) -> x.length).max().value()
+    boxPadding = maxPossibilities * randomsRowHeight + 10
+    rows = 14
     colorScale = pv.Scale.linear(0, rows-1).range("#000", "#666")
 
     @vis2 = new pv.Panel()
@@ -331,10 +363,10 @@ class Harry.SudokuVisualizer
           .lineWidth(1)
 
     proto = new pv.Label()
+      .top(6)
       .font("10pt Droid Sans")
       .textBaseline("top")
       .textStyle("#000")
-      .top(6)
 
     # Labels at the start of each row for the quality
     row.add(pv.Label)
@@ -342,13 +374,13 @@ class Harry.SudokuVisualizer
       .data((harmony) -> [harmony._quality])
       .left(0)
       .text((d) -> "#{d}:")
-    
+
     # Labels in the row for the value of each note
     search = this
     textColorScale = pv.Scale.linear(0, rows).range("#000", "#AAA")
     row.add(pv.Label)
       .extend(proto)
-      .data((harmony) -> harmony.notes[0..33])
+      .data((harmony) -> harmony.notes[0..maxCols])
       .left(-> 30 + this.index * cellWidth)
       .font((d) ->
         extra = ""
@@ -368,12 +400,28 @@ class Harry.SudokuVisualizer
       )
 
     # Fixed labels at the top for the random lines to point to
-    @vis2.add(pv.Label)
-      .extend(proto)
-      .data(i for i in [1..9])
-      .left(-> 80 + this.index*cellWidth*3)
-      .top(4)
-    
+    randoms = @vis2.add(pv.Panel)
+      .data(@puzzle.possibilities[0..maxCols])
+      .width(cellWidth)
+      .height(maxPossibilities * randomsRowHeight)
+      .top(0)
+      .left(-> 30 + this.index * cellWidth)
+
+    randoms.add(pv.Label)
+      .data((possibilities) -> possibilities)
+      .font((d) ->
+        extra = ""
+        if x = search.harmonies[search.harmonies.length-1].creationAnnotations
+          if x[this.parent.index].random && x[this.parent.index].noteIndex == this.index
+            extra = "bold "
+        "#{extra}10pt Droid Sans"
+      )
+      .textStyle("#000")
+      .left(0)
+      .height(rowHeight)
+      .bottom((d) -> this.index * randomsRowHeight)
+
+
     # Lines pointing from the first row's notes to the (pitch adjusted) notes they came from or the random one that was picked
     @vis2.add(pv.Panel)
       .data(=>
@@ -384,8 +432,6 @@ class Harry.SudokuVisualizer
       )
       .left(-> 30 + this.index * cellWidth + 7)
       .add(pv.Wedge)
-        .def("pointx", (d) -> 80 + (d.pick-1) * cellWidth * 3 - this.parent.left()+7)
-        .def("pointy", (d) -> boxPadding+4-18)
         .strokeStyle( (d) ->
           if d.fromMemory
             if d.pitchAdjusted
@@ -399,14 +445,11 @@ class Harry.SudokuVisualizer
           if d.fromMemory
             d.memoryIndex * rowHeight + 14
           else
-            Math.sqrt(Math.pow(this.pointx(), 2) + Math.pow(this.pointy(), 2))
+            d.noteIndex * randomsRowHeight + 16
         )
         .startAngle((d) ->
           unless d.fromMemory
-            angle = Math.atan(this.pointy()/this.pointx())
-            if angle < 0
-              angle += Math.PI
-            -1 * angle
+            Math.PI/-2
           else
             Math.PI/2
         )

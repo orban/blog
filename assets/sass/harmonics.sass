@@ -4,6 +4,9 @@ $hm-border: 2px solid #F00
 $game_border: 2px solid #000
 
 body.bp 
+  figure .sudoku_game
+    margin: 0 auto
+
   ul.sudoku_legend
     float: left
     width: 530px
@@ -24,57 +27,57 @@ body.bp
         border: 1px solid #CCC
     
 
-table.sudoku_game
-  width: auto
-  margin-bottom: 10px
-  background-color: #FFF
-  td
-    text-align: center
-    border-right: 1px solid #000
-    border-bottom: 1px solid #000
-    padding: 0px 5px
-    font-size: 16px
-    &.good
-      background-color: #A0FF8C
-    &.violated
-      background-color: #FF988C
-    &.boring
-      background-color: #CCC
-  td:first-child
-    border-left: $game-border
-  tr:first-of-type td
-    border-top: $game-border
-  tr:nth-child(3n) td
-    border-bottom: $game-border 
-  tr td:nth-child(3n)
-    border-right: $game-border   
+  table.sudoku_game
+    width: auto
+    margin-bottom: 10px
+    background-color: #FFF
+    td
+      text-align: center
+      border-right: 1px solid #000
+      border-bottom: 1px solid #000
+      padding: 0px 5px
+      font-size: 16px
+      &.good
+        background-color: #A0FF8C
+      &.violated
+        background-color: #FF988C
+      &.boring
+        background-color: #CCC
+    td:first-child
+      border-left: $game-border
+    tr:first-of-type td
+      border-top: $game-border
+    tr:nth-child(3n) td
+      border-bottom: $game-border 
+    tr td:nth-child(3n)
+      border-right: $game-border   
 
-.sudoku_vis
-  position: relative
-  .wheel, .create
-    float: left
-  .game
-    position: absolute
-    left: 157px
-    top: 165px
-  .info
-    width: 100%
-    clear: both
+  .sudoku_vis
+    position: relative
+    .wheel, .create
+      float: left
+    .game
+      position: absolute
+      left: 157px
+      top: 170px
+    .info
+      width: 100%
+      clear: both
 
-//#sleepMap
-  
-table#searchResults
-  td
-    padding: 1px
-    margin: 0px
-  tr.out
-    color: #CCC
+  //#sleepMap
+    
+  table#searchResults
+    td
+      padding: 1px
+      margin: 0px
+    tr.out
+      color: #CCC
 
-  tr:not(.out) td:first-child
-    border-left: $hm-border
-  tr:not(.out) td:last-child
-    border-right: $hm-border  
-  tr:not(.out):first-of-type td
-    border-top: $hm-border
-  tr:not(.out):last-of-type td
-    border-bottom: $hm-border
+    tr:not(.out) td:first-child
+      border-left: $hm-border
+    tr:not(.out) td:last-child
+      border-right: $hm-border  
+    tr:not(.out):first-of-type td
+      border-top: $hm-border
+    tr:not(.out):last-of-type td
+      border-bottom: $hm-border

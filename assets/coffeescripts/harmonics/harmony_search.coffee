@@ -156,6 +156,7 @@ class Harry.HarmonySearch
 
           annotation.random = true
           annotation.pick = note
+        annotation.noteIndex = noteIndex
         # Return chosen note for the chord
         [note, noteIndex]
 

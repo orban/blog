@@ -297,6 +297,19 @@ Next is the quality heuristic for a given solution to a sudoku. The most obvious
 
 The above heuristic gives a more detailed measure of a solutions quality. It works by taking the sum of each row and subtracting 45, which is the sum of the numbers from 1 to 9. If a particular row has two 1s instead of a 1 and a two, the sum of the numbers in the row won't be 45, and \\( Q \\) won't be minimal. A correct solution for a sudoku would have \\( Q = 0 \\). As noted in [1], its important to see that the sum of a row may be 45 even though the numbers in it are not the sought after set from 1 to 9, and just happen to sum to 45, for example \\( sum\\ \\{ 1,2,2,5,5,6,7,8,9 \\} = 45 \\). However, if this case occurs in one row, then the sum for the columns which hold incorrect values, or the sum for one of the boxes containing the row won't be 45, moving the final value of \\( Q \\) away from 0, and thus denoting a sub optimal quality as desired.
 
+In summary, the notes for a harmony are the set of values for the unknown cells, and the quality of the harmony is the evaluation of the function \\( Q \\) on the generated sudoku puzzle. With these two decisions made, we can now use harmony search to find a solution (if one exists) to a given sudoku puzzle.
+
+## Code
+
+The code for the sudoku example is boring and unfortunately long, but you can see it on Github if you'd like here.
+
+## Discussion
+
+- why don't my results agree with Geem's at all?
+- why do I have to precompute the possible sets
+- why sudoku is a bad example
+- shame for not dealing with unsolvable solutions
+
 # Conclusion
 
 <img src="/images/working.gif" id="status" style="display:none;">
@@ -307,9 +320,6 @@ The above heuristic gives a more detailed measure of a solutions quality. It wor
 ### References
 
  1. Geem, Z.W.: Harmony Search Algorithm for Solving Sudoku. Knowledge-Based Intelligent Information and Engineering Systems. <http://dx.doi.org/10.1007/978-3-540-74819-9_46>
- 2. 
-
-
 
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 <script src="/js/jquery.hive.js" type="text/javascript"></script>
