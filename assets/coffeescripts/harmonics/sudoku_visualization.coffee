@@ -1,7 +1,3 @@
-#puzzle = "..4.5..161....4.83.8..3..59..16.2...8...9....2.9..........8.....3.9........5.1..."
-#puzzle = "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5."
-puzzle = ".5.3.6..7....85.24.9842.6.39.1..32.6.3.....1.5.726.9.84.5.9.38..1.57...28..1.4.7."
-#puzzle = "8...37429743.9286..52..4371.8524.7933..87615..74.5968...7465938.369..2474987..516"
 class Harry.SudokuVisualizer
   @computationModes:
     "light":
@@ -38,11 +34,20 @@ class Harry.SudokuVisualizer
     maxExtraRows: 0
     startOnInit: false
     computationMode: "light"
+    puzzle: "geem"
+
+  @puzzles:
+    "stupid easy": "8...37429743.9286..52..4371.8524.7933..87615..74.5968...7465938.369..2474987..516"
+    "easy": ".6...14.98......7...16.93..43...7..22..9....7.18......1...2........4..........8.."
+    "geem": ".5.3.6..7....85.24.9842.6.39.1..32.6.3.....1.5.726.9.84.5.9.38..1.57...28..1.4.7."
+    "hard": "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5."
+    "starburst": "9..1.4..2.8..6..7..........4.......1.7.....3.3.......7..........3..7..8.1..2.9..4"
 
   constructor: (options)->
     # Set up options
     @options = _.extend({}, SudokuVisualizer.defaults, options)
     @options.computationMode = SudokuVisualizer.computationModes[@options.computationMode]
+    @options.puzzle = SudokuVisualizer.puzzles[@options.puzzle]
     # Set up elements
     @div = $("##{@options.id}").addClass("sudoku_vis")
     @visId = @options.id + "_vis"
@@ -70,8 +75,9 @@ class Harry.SudokuVisualizer
           @hive.terminate()
         else
           @search.stop()
-        delete @best
-        delete @bestViolations
+      delete @best
+      delete @worst
+      delete @bestViolations
 
       @harmonies = []
       @rows = 0
@@ -89,23 +95,37 @@ class Harry.SudokuVisualizer
     @modeSelect = $('<select class="mode"></select>')
     for name, mode of SudokuVisualizer.computationModes
       if mode.enabled
-        @modeSelect.append("<option #{if name == @options.computationMode then "selected" else ""}>#{name}</option>")
+        @modeSelect.append("<option #{if mode == @options.computationMode then "selected" else ""}>#{name}</option>")
 
     @modeSelect.appendTo(@controls).change (e) =>
       @options.computationMode = SudokuVisualizer.computationModes[@modeSelect.val()]
       restartVis()
       this.start() if @running
-
       true
+
+    # Create puzzle select button and register change event
+    @controls.append("Puzzle: ")
+    @puzzleSelect = $('<select class="puzzle"></select>')
+    for name, puzzle of SudokuVisualizer.puzzles
+      @puzzleSelect.append("<option #{if puzzle == @options.puzzle then "selected" else ""} value=\"#{puzzle}\">#{name}</option>")
+
+    @puzzleSelect.appendTo(@controls).change (e) =>
+      @options.puzzle = @puzzleSelect.val()
+      restartVis()
+      this.start() if @running
+      true
+
     # Activity Indicator
     @activityIndicator = $('<img class="working" src="/images/working.gif">').hide().appendTo(@controls)
 
+    # Init vis
     restartVis()
 
-    # Start the algo so the vis shows up, but stop it right after
+    # Start the algo so the vis shows up, but stop it right after unless asked to start
     this.start()
     unless @options.startOnInit
       this.stop()
+    true
 
   # Callback for the search class to add a harmony to the vis
   addHarmony: (harmony) ->
@@ -162,7 +182,7 @@ class Harry.SudokuVisualizer
     @running = true
     @activityIndicator.show()
     true
-  
+
   finished: ->
     this.stop()
 
@@ -182,7 +202,7 @@ class Harry.SudokuVisualizer
 
   _initializeSearch: ->
     # Set up search
-    @puzzle = new Harry.SudokuPuzzle(puzzle)
+    @puzzle = new Harry.SudokuPuzzle(@options.puzzle)
     options =
       # Configure search for sudoku
       maxTries: 1000000
@@ -216,7 +236,7 @@ class Harry.SudokuVisualizer
             type: "init"
             options: _.extend(options,
               maxTries: 100000000 # wooohoooo
-              puzzle: puzzle # raw text that the worker parses into its own Harry.Puzzle
+              puzzle: @options.puzzle # raw text that the worker parses into its own Harry.Puzzle
               iterationMilestone: 1000
               popStack: 500
             )
@@ -335,23 +355,27 @@ class Harry.SudokuVisualizer
       )
 
   _initializeCreationVisualization: () ->
+    # Height
+    height = 500
     # Each row has a height
     rowHeight = 28
     # Each column has a width
     cellWidth = 12
     # The table is only so wide
     maxCols = 33
-    
+
     # The rows start far enough down for the random selections at the top to fit
     randomsRowHeight = 20
     maxPossibilities = _(@puzzle.possibilities[0..maxCols]).chain().map((x) -> x.length).max().value()
     boxPadding = maxPossibilities * randomsRowHeight + 10
-    rows = 14
+
+    # Max rows that will fit
+    rows = Math.floor( (height - boxPadding) / rowHeight )
     colorScale = pv.Scale.linear(0, rows-1).range("#000", "#666")
 
     @vis2 = new pv.Panel()
       .width(450)
-      .height(500)
+      .height(height)
       .canvas(@vis2Id)
 
     # Add rows for each harmony in the memory
@@ -460,3 +484,4 @@ class Harry.SudokuVisualizer
           else
             boxPadding + 6
         )
+

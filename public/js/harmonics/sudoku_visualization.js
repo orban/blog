@@ -1,7 +1,5 @@
 (function() {
-  var puzzle;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-  puzzle = ".5.3.6..7....85.24.9842.6.39.1..32.6.3.....1.5.726.9.84.5.9.38..1.57...28..1.4.7.";
   Harry.SudokuVisualizer = (function() {
     SudokuVisualizer.computationModes = {
       "light": {
@@ -38,12 +36,21 @@
       id: false,
       maxExtraRows: 0,
       startOnInit: false,
-      computationMode: "light"
+      computationMode: "light",
+      puzzle: "geem"
+    };
+    SudokuVisualizer.puzzles = {
+      "stupid easy": "8...37429743.9286..52..4371.8524.7933..87615..74.5968...7465938.369..2474987..516",
+      "easy": ".6...14.98......7...16.93..43...7..22..9....7.18......1...2........4..........8..",
+      "geem": ".5.3.6..7....85.24.9842.6.39.1..32.6.3.....1.5.726.9.84.5.9.38..1.57...28..1.4.7.",
+      "hard": "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5.",
+      "starburst": "9..1.4..2.8..6..7..........4.......1.7.....3.3.......7..........3..7..8.1..2.9..4"
     };
     function SudokuVisualizer(options) {
-      var mode, name, restartVis, _ref;
+      var mode, name, puzzle, restartVis, _ref, _ref2;
       this.options = _.extend({}, SudokuVisualizer.defaults, options);
       this.options.computationMode = SudokuVisualizer.computationModes[this.options.computationMode];
+      this.options.puzzle = SudokuVisualizer.puzzles[this.options.puzzle];
       this.div = $("#" + this.options.id).addClass("sudoku_vis");
       this.visId = this.options.id + "_vis";
       this.vis2Id = this.options.id + "_vis2";
@@ -68,9 +75,10 @@
           } else {
             this.search.stop();
           }
-          delete this.best;
-          delete this.bestViolations;
         }
+        delete this.best;
+        delete this.worst;
+        delete this.bestViolations;
         this.harmonies = [];
         this.rows = 0;
         this._initializeSearch();
@@ -87,11 +95,26 @@
       for (name in _ref) {
         mode = _ref[name];
         if (mode.enabled) {
-          this.modeSelect.append("<option " + (name === this.options.computationMode ? "selected" : "") + ">" + name + "</option>");
+          this.modeSelect.append("<option " + (mode === this.options.computationMode ? "selected" : "") + ">" + name + "</option>");
         }
       }
       this.modeSelect.appendTo(this.controls).change(__bind(function(e) {
         this.options.computationMode = SudokuVisualizer.computationModes[this.modeSelect.val()];
+        restartVis();
+        if (this.running) {
+          this.start();
+        }
+        return true;
+      }, this));
+      this.controls.append("Puzzle: ");
+      this.puzzleSelect = $('<select class="puzzle"></select>');
+      _ref2 = SudokuVisualizer.puzzles;
+      for (name in _ref2) {
+        puzzle = _ref2[name];
+        this.puzzleSelect.append("<option " + (puzzle === this.options.puzzle ? "selected" : "") + " value=\"" + puzzle + "\">" + name + "</option>");
+      }
+      this.puzzleSelect.appendTo(this.controls).change(__bind(function(e) {
+        this.options.puzzle = this.puzzleSelect.val();
         restartVis();
         if (this.running) {
           this.start();
@@ -104,6 +127,7 @@
       if (!this.options.startOnInit) {
         this.stop();
       }
+      true;
     }
     SudokuVisualizer.prototype.addHarmony = function(harmony) {
       var i, minIndex, minQuality, secondMinIndex, _ref, _ref2, _ref3;
@@ -186,7 +210,7 @@
     };
     SudokuVisualizer.prototype._initializeSearch = function() {
       var getHarmony, options;
-      this.puzzle = new Harry.SudokuPuzzle(puzzle);
+      this.puzzle = new Harry.SudokuPuzzle(this.options.puzzle);
       options = {
         maxTries: 1000000,
         targetQuality: 135,
@@ -217,7 +241,7 @@
               type: "init",
               options: _.extend(options, {
                 maxTries: 100000000,
-                puzzle: puzzle,
+                puzzle: this.options.puzzle,
                 iterationMilestone: 1000,
                 popStack: 500
               })
@@ -330,7 +354,8 @@
       }, this));
     };
     SudokuVisualizer.prototype._initializeCreationVisualization = function() {
-      var boxPadding, cellWidth, colorScale, maxCols, maxPossibilities, proto, randoms, randomsRowHeight, row, rowHeight, rows, search, textColorScale;
+      var boxPadding, cellWidth, colorScale, height, maxCols, maxPossibilities, proto, randoms, randomsRowHeight, row, rowHeight, rows, search, textColorScale;
+      height = 500;
       rowHeight = 28;
       cellWidth = 12;
       maxCols = 33;
@@ -339,9 +364,9 @@
         return x.length;
       }).max().value();
       boxPadding = maxPossibilities * randomsRowHeight + 10;
-      rows = 14;
+      rows = Math.floor((height - boxPadding) / rowHeight);
       colorScale = pv.Scale.linear(0, rows - 1).range("#000", "#666");
-      this.vis2 = new pv.Panel().width(450).height(500).canvas(this.vis2Id);
+      this.vis2 = new pv.Panel().width(450).height(height).canvas(this.vis2Id);
       row = this.vis2.add(pv.Panel).data(__bind(function() {
         return this.harmonies.slice().reverse().slice(0, (rows - 1 + 1) || 9e9);
       }, this)).height(rowHeight - 3).top(function() {
