@@ -89,7 +89,6 @@
           this.harmonyMemory.push(harmony);
           this.harmonyMemory.splice(worstIndex, 1);
           this.options.afterNew(harmony, this);
-          delete harmony.creationAnnotations;
           if (harmony.quality() > bestQuality) {
             bestQuality = harmony.quality();
           }

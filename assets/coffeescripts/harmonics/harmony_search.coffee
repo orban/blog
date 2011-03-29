@@ -80,7 +80,7 @@ class Harry.HarmonySearch
         @harmonyMemory.push(harmony)
         @harmonyMemory.splice(worstIndex, 1)
         @options.afterNew(harmony, this)
-        delete harmony.creationAnnotations
+        #delete harmony.creationAnnotations
 
         if harmony.quality() > bestQuality
           bestQuality = harmony.quality()

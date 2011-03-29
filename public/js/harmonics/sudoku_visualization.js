@@ -1,7 +1,7 @@
 (function() {
   var puzzle;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-  puzzle = "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5.";
+  puzzle = ".5.3.6..7....85.24.9842.6.39.1..32.6.3.....1.5.726.9.84.5.9.38..1.57...28..1.4.7.";
   Harry.SudokuVisualizer = (function() {
     SudokuVisualizer.computationModes = {
       "light": {
@@ -100,8 +100,9 @@
       }, this));
       this.activityIndicator = $('<img class="working" src="/images/working.gif">').hide().appendTo(this.controls);
       restartVis();
-      if (this.options.startOnInit) {
-        this.start();
+      this.start();
+      if (!this.options.startOnInit) {
+        this.stop();
       }
     }
     SudokuVisualizer.prototype.addHarmony = function(harmony) {
@@ -313,7 +314,7 @@
       }, this)).fillStyle("#CCC");
     };
     SudokuVisualizer.prototype._initializeCreationVisualization = function() {
-      var boxPadding, cellWidth, colorScale, i, proto, row, rowHeight, rows, search;
+      var boxPadding, cellWidth, colorScale, i, proto, row, rowHeight, rows, search, textColorScale;
       rowHeight = 28;
       cellWidth = 12;
       boxPadding = 40;
@@ -332,6 +333,7 @@
         return "" + d + ":";
       });
       search = this;
+      textColorScale = pv.Scale.linear(0, rows).range("#000", "#AAA");
       row.add(pv.Label).extend(proto).data(function(harmony) {
         return harmony.notes.slice(0, 34);
       }).left(function() {
@@ -348,6 +350,17 @@
           extra = "bold ";
         }
         return "" + extra + "10pt Droid Sans";
+      }).textStyle(function(d) {
+        var x;
+        if (x = search.harmonies[search.harmonies.length - 1].creationAnnotations) {
+          if (x[this.index].fromMemory && x[this.index].memoryIndex === this.parent.index - 1) {
+            return "#000";
+          }
+        }
+        if (this.parent.index === 0) {
+          return "#000";
+        }
+        return textColorScale(this.parent.index);
       });
       this.vis2.add(pv.Label).extend(proto).data((function() {
         var _results;
@@ -380,7 +393,7 @@
             return "rgba(0,0,0,0.5)";
           }
         } else {
-          return "rgba(0,255,0,0.5)";
+          return "rgba(155,0,155,0.5)";
         }
       }).outerRadius(function(d) {
         if (d.fromMemory) {

@@ -1,39 +1,62 @@
+@import 'compass/css3'
+@import 'compass/utilities/general/clearfix'
 $hm-border: 2px solid #F00
+$game_border: 2px solid #000
+
+body.bp 
+  ul.sudoku_legend
+    float: left
+    width: 530px
+    //padding-left: 20px
+    //margin: 0px
+    li
+      padding-bottom: 2px
+    span
+      padding: 2px
+      +border-radius(3px)
+      &.good
+        background-color: #A0FF8C
+      &.violated
+        background-color: #FF988C
+      &.boring
+        background-color: #CCC
+      &.clue
+        border: 1px solid #CCC
+    
+
+table.sudoku_game
+  width: auto
+  margin-bottom: 10px
+  background-color: #FFF
+  td
+    text-align: center
+    border-right: 1px solid #000
+    border-bottom: 1px solid #000
+    padding: 0px 5px
+    font-size: 16px
+    &.good
+      background-color: #A0FF8C
+    &.violated
+      background-color: #FF988C
+    &.boring
+      background-color: #CCC
+  td:first-child
+    border-left: $game-border
+  tr:first-of-type td
+    border-top: $game-border
+  tr:nth-child(3n) td
+    border-bottom: $game-border 
+  tr td:nth-child(3n)
+    border-right: $game-border   
 
 .sudoku_vis
-  .wheel, .game, .create
+  position: relative
+  .wheel, .create
     float: left
-
-  .game 
-    left: 0px
-    width: 230px
-    margin-left: -343px
-    margin-top: 122px
-    $game_border: 2px solid #000
-    table
-      width: auto
-      margin-bottom: 10px
-      background-color: #FFF
-      td
-        text-align: center
-        border-right: 1px solid #000
-        border-bottom: 1px solid #000
-        padding: 0px 5px
-        font-size: 16px
-        &.good
-          background-color: #A0FF8C
-        &.violated
-          background-color: #FF988C
-        &.boring
-          background-color: #CCC
-      td:first-child
-        border-left: $game-border
-      tr:first-of-type td
-        border-top: $game-border
-      tr:nth-child(3n) td
-        border-bottom: $game-border 
-      tr td:nth-child(3n)
-        border-right: $game-border   
+  .game
+    position: absolute
+    left: 157px
+    top: 165px
   .info
     width: 100%
     clear: both

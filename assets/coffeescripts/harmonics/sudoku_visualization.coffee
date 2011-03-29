@@ -1,6 +1,6 @@
 #puzzle = "..4.5..161....4.83.8..3..59..16.2...8...9....2.9..........8.....3.9........5.1..."
-puzzle = "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5."
-#puzzle = ".5.3.6..7....85.24.9842.6.39.1..32.6.3.....1.5.726.9.84.5.9.38..1.57...28..1.4.7."
+#puzzle = "164....79....3......9...6.53...2...1......432....6.....96.53.....7..4........9.5."
+puzzle = ".5.3.6..7....85.24.9842.6.39.1..32.6.3.....1.5.726.9.84.5.9.38..1.57...28..1.4.7."
 #puzzle = "8...37429743.9286..52..4371.8524.7933..87615..74.5968...7465938.369..2474987..516"
 class Harry.SudokuVisualizer
   @computationModes:
@@ -101,7 +101,11 @@ class Harry.SudokuVisualizer
     @activityIndicator = $('<img class="working" src="/images/working.gif">').hide().appendTo(@controls)
     
     restartVis()
-    this.start() if @options.startOnInit
+
+    # Start the algo so the vis shows up, but stop it right after
+    this.start() 
+    unless @options.startOnInit
+      this.stop()
     
 
   addHarmony: (harmony) ->
@@ -341,6 +345,7 @@ class Harry.SudokuVisualizer
     
     # Labels in the row for the value of each note
     search = this
+    textColorScale = pv.Scale.linear(0, rows).range("#000", "#AAA")
     row.add(pv.Label)
       .extend(proto)
       .data((harmony) -> harmony.notes[0..33])
@@ -353,6 +358,13 @@ class Harry.SudokuVisualizer
         if this.parent.index == 0
           extra = "bold "
         "#{extra}10pt Droid Sans"
+      ).textStyle((d) ->
+        if x = search.harmonies[search.harmonies.length-1].creationAnnotations
+          if x[this.index].fromMemory && x[this.index].memoryIndex == this.parent.index - 1
+            return "#000"
+        if this.parent.index == 0
+          return "#000"
+        return textColorScale(this.parent.index)
       )
 
     # Fixed labels at the top for the random lines to point to
@@ -381,7 +393,7 @@ class Harry.SudokuVisualizer
             else
               "rgba(0,0,0,0.5)"
           else
-            "rgba(0,255,0,0.5)"
+            "rgba(155,0,155,0.5)"
         )
         .outerRadius((d) ->
           if d.fromMemory

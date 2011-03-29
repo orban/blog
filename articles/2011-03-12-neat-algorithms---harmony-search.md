@@ -2,16 +2,19 @@
 title: Neat Algorithms - Harmony Search
 date: 12/03/2011
 
-Here I'll try and demonstrate a neat optimization algorithm based on the principles of performing jazz musicians. 
+Here I'll try and demonstrate a neat optimization algorithm based on the principles of performing jazz musicians by applying it to solve Sudoku puzzles.
 
-Harmony Search (often abbreviated HS) is a [metaheuristic optimization](http://en.wikipedia.org/wiki/Metaheuristic) algorithm. Such algorithms use some sort of strategy to find the optimal input to a problem which minimizes or maximizes some measure of quality. Other metaheuristic algorithms include random search, simulated annealing, genetic algorithms, and tabu search. 
+Harmony Search (often abbreviated HS) is a [metaheuristic optimization](http://en.wikipedia.org/wiki/Metaheuristic) algorithm. Such algorithms use some sort of strategy to find the optimal input to a problem which minimizes or maximizes some measure of quality. Harmony search has been successfully applied to a vast array of problems suitable for optimization algorithms like it, such as the Travelling Salesman problem, water network design, and actual algorithmic music generation.
+
+Other metaheuristic algorithms include random search, simulated annealing, genetic algorithms, and tabu search. 
 
 See the algorithm in action:
+
 <div id="searchVis"></div>
 
 # About this page
 
-This page features interactive demos and code examples, all written in [Coffeescript](http://coffeescript.org/). If you haven't seen it before, it shouldn't be too hard to pick up, but visit that page if you want a quick primer on the syntax. The example code you see in the post is also a distilled, unoptimized, nuance-lacking version which gets rid of the boring stuff for your benefit, so don't make fun if it seems slow.
+This page features interactive demos and code examples, all written in [Coffeescript](http://coffeescript.org/). If you haven't seen it before, it shouldn't be too hard to pick up, but visit that page if you want a quick primer on the syntax. If thats too much to  ask, know that `@` symbols signify instance variables and the last value of a block is the implicit return value, and you should be good. The example code you see in the post is also a distilled, unoptimized, nuance-lacking version which gets rid of the boring stuff for your benefit, so don't make fun if it seems slow.
 
 Also, the computationally intense demos have an intensity setting you can pick. Pick `poutine` mode only if you run Chrome or want to watch your browser get crushed. The first three settings defer to the UI thread often enough to stay responsive, but `poutine` mode uses WebWorkers to their fullest advantage and destroys FF3, FF4, and Opera on my machine faster than you can say "higgitus figgitus". `Poutine` mode is called as such because the browser gobbles up CPU power like I gobble up the aforementioned artery clogger at 3 AM on a Saturday night. Very quickly.
 
@@ -23,7 +26,7 @@ The central idea is that when trying to solve some given optimization problem, y
 
 ## A Basic Example
 
-Say I have a killer exam tomorrow, and I have function which represents what mark I'll get depending on how much time I spend studying and how much time I spend sleeping. The problem is I get burned out if I study too much, but I won't pass if I don't study enough. I'll be groggy during the exam I sleep too much, or be slow and weary if I don't sleep enough. How do I balance the time before the exam appropriately? 
+Say I have a killer exam tomorrow, and I have function which represents what mark I'll get depending on how much time I spend studying and how much time I spend sleeping. For the sake of the example, we'll say that I can spend a maximum of 10 hours doing either activity, and any time I don't spend doing either activity will be filled by normal day to day activities. The problem is I'll get burned out if I study too much, but I won't pass if I don't study enough. I'll also be groggy during the exam I sleep too much, or be weary and slow if I don't sleep enough. How do I balance the time before the exam appropriately, given that I have this magical function which predicts the future?
 
 <figure class="big">
   <figcaption>The problem space shown as a heat map.</figcaption>
@@ -237,7 +240,7 @@ Consider the exam mark problem shown above. Suppose the mysterious exam mark equ
 
 We're trying to find the global optimum to this equation. To model this in harmony search, we ask how many instruments there are, what notes each of them can play, and how to determine the quality of the harmony produced. 
 
-In this case, the `Exam.mark` equation is the one we are trying to optimize, so we model its input arguments as notes, and use harmonies composed of different combinations in the algorithm. There are two instruments, one for each argument to the function, and each instrument can "play" any number between 0 and 10, which are the bounds as outlined in the problem. A harmony's quality is the mark achieved using it's two notes, so just the evaluation of the `Exam.mark` function.
+In this case, the `Exam.mark` equation is the one we are trying to optimize. We model its input arguments as notes, and use harmonies composed of different combinations of times. There are two instruments, one for each argument to the function, and each instrument can "play" any number between 0 and 10, which are the bounds as outlined in the problem. A harmony's quality is the mark achieved when the time is spent in it's particular allotment, which we model as the evaluation of the `Exam.mark` function for the twonotes.
 
 The harmony class we'd use for this problem would look like this:
 
@@ -246,13 +249,69 @@ The harmony class we'd use for this problem would look like this:
       
       quality: -> Exam.mark[@notes[0], @notes[1]]
 
-That's not so bad right?
+That's not so bad right? We'd then run the search for some sufficiently large number of iterations and look at the output.
+
+    :::coffeescript
+    search = new HarmonySearch {
+      harmonyClass: ExamHarmony
+      notes: [0,1,2,3,4,5,6,7,8,9,10]
+      instruments: 2
+      targetQuality: 100
+      maxIterations: 2000
+    }
+    results = search.search()
+
+# Sudoku Example
+
+Harmony search can be applied to more complex problems than simple functions like the above. Sudoku is an interesting problem, which is a specific case of the graph coloring problem, one of [Karp's 21 NP-complete problems](http://en.wikipedia.org/wiki/Karp%E2%80%99s_21_NP-complete_problems). In other words, its hard enough to brute force the solution to a sudoku by just trying random numbers and seeing if they work. There are excellent algorithms that often run faster than harmony search or any of its metaheuristic brethren which solve the sudoku using intelligent, problem aware methods and guess when needed. 
+
+These "smart" solvers are I'm sure the algorithms employed by true Sudoku software, but they rely on intimate knowledge of the Sudoku solving process and an understanding of the techniques used. We have to encode our knowledge of how to solve sudokus into a program, implementing the guessing feature, the backtracking, and all the methods for eliminating possibilities for a particular cell. Instead of developing an algorithm like this, we can use a search method to find us a solution as long as we have a heuristic to tell the quality of a given solution. By solving them in this way, we don't need to concern ourselves with finding a general method or exploring edge cases or algorithmic nuances, and we let the search algorithm figure these things out on its own. We are able to lift the burden of understanding the relationship between the input variables from our own shoulders, and instead allow the algorithm to explore these relationships itself.
+
+Sudoku isn't a stellar example, but hopefully you can see the advantage of using a search algorithm for problems where the smart, human written implementation is hard or impossible to create. If we have some measure of quality for a solution, and thus a way to tell when a solution is optimal, we can let the search algorithm, well, search.
+
+## The Sudoku Model
+
+Let's solve a particular Sudoku puzzle using harmony search. First, let us identify what the notes of a harmony are, and after, how to calculate the quality of one.
+
+First off, notice that for any solution to be considered as such, each cell must have a value. Some of the values are given by the puzzle, and some must be decided by us. We model the value of each one of these unknown cells as one note in a harmony, and thus orient a harmony's notes as a one dimensional array of choices from `1` to `9`. The order the array of notes is entered into the puzzle doesn't really matter all that much, as long as it is consistent the algorithm will work just the same.
+
+<figure><table class="sudoku_game"><tr><td class="violated">2</td><td class="fixed">5</td><td class="good">4</td><td class="fixed">3</td><td class="boring">1</td><td class="fixed">6</td><td class="good">8</td><td class="boring">9</td><td class="fixed">7</td></tr><tr><td class="good">7</td><td class="violated">6</td><td class="good">3</td><td class="good">9</td><td class="fixed">8</td><td class="fixed">5</td><td class="boring">1</td><td class="fixed">2</td><td class="fixed">4</td></tr><tr><td class="good">1</td><td class="fixed">9</td><td class="fixed">8</td><td class="fixed">4</td><td class="fixed">2</td><td class="good">7</td><td class="fixed">6</td><td class="boring">5</td><td class="fixed">3</td></tr><tr><td class="fixed">9</td><td class="good">8</td><td class="fixed">1</td><td class="violated">7</td><td class="violated">5</td><td class="fixed">3</td><td class="fixed">2</td><td class="violated">5</td><td class="fixed">6</td></tr><tr><td class="violated">2</td><td class="fixed">3</td><td class="violated">2</td><td class="violated">7</td><td class="good">4</td><td class="violated">8</td><td class="violated">7</td><td class="fixed">1</td><td class="boring">5</td></tr><tr><td class="fixed">5</td><td class="boring">4</td><td class="fixed">7</td><td class="fixed">2</td><td class="fixed">6</td><td class="boring">1</td><td class="fixed">9</td><td class="good">3</td><td class="fixed">8</td></tr><tr><td class="fixed">4</td><td class="violated">6</td><td class="fixed">5</td><td class="boring">6</td><td class="fixed">9</td><td class="boring">2</td><td class="fixed">3</td><td class="fixed">8</td><td class="boring">1</td></tr><tr><td class="good">3</td><td class="fixed">1</td><td class="violated">6</td><td class="fixed">5</td><td class="fixed">7</td><td class="boring">8</td><td class="boring">4</td><td class="violated">9</td><td class="fixed">2</td></tr><tr><td class="fixed">8</td><td class="good">2</td><td class="violated">6</td><td class="fixed">1</td><td class="boring">3</td><td class="fixed">4</td><td class="boring">5</td><td class="fixed">7</td><td class="violated">9</td></tr></table><figcaption>A sudoku puzzle in the process of being solved.</figcaption></figure>
+
+To the left is an example solution proposed in an early iteration of harmony search.
+
+ <ul class="sudoku_legend"><li><span class="good">Green</span> cells don't violate any rules</li><li><span class="violated">Red</span> cells violate either row, column, or block rules</li><li><span class="boring">Grey</span> cells have only one possible value based on the clues</li><li><span class="clue">White</span> cells are given in the puzzle (a "clue" cell)</li></ul>
+
+The harmony is composed of choices for all of the unknown cells, which are represented as green, grey, or red cells. 
+
+Next is the quality heuristic for a given solution to a sudoku. The most obvious one is just a count of the violations in the puzzle, which you can see is just a count of the red cells in the solution. In my tests this heuristic worked a tad less effectively than a slightly different heuristic proposed by Dr Zong Woo Geem in [1]. The optimal solution is the global minimum of \\(Q\\), where
+
+<div class="math">
+  $$ 
+  Q = \sum\limits_{i = 1}^9 \left| \sum\limits_{j = 1}^9  S_{i,j}  - 45 \right|
+  + \sum\limits_{j = 1}^9 \left| \sum\limits_{i = 1}^9  S_{i,j}  - 45 \right|
+  + \sum\limits_{k = 1}^9 \left| \sum_{ (i,j) \in B_k}  S_{i,j}  - 45 \right|
+  $$
+
+  where \( S_{i,j} \) is the cell \(i\) spaces over from the left and \(j\) spaces down from the top, and  \(B_k\) is all the cells in the kth box.
+</div>
+
+The above heuristic gives a more detailed measure of a solutions quality. It works by taking the sum of each row and subtracting 45, which is the sum of the numbers from 1 to 9. If a particular row has two 1s instead of a 1 and a two, the sum of the numbers in the row won't be 45, and \\( Q \\) won't be minimal. A correct solution for a sudoku would have \\( Q = 0 \\). As noted in [1], its important to see that the sum of a row may be 45 even though the numbers in it are not the sought after set from 1 to 9, and just happen to sum to 45, for example \\( sum\\ \\{ 1,2,2,5,5,6,7,8,9 \\} = 45 \\). However, if this case occurs in one row, then the sum for the columns which hold incorrect values, or the sum for one of the boxes containing the row won't be 45, moving the final value of \\( Q \\) away from 0, and thus denoting a sub optimal quality as desired.
+
+# Conclusion
 
 <img src="/images/working.gif" id="status" style="display:none;">
 <script type="text/javascript">
   var Harry = {};
 </script>
 
+### References
+
+ 1. Geem, Z.W.: Harmony Search Algorithm for Solving Sudoku. Knowledge-Based Intelligent Information and Engineering Systems. <http://dx.doi.org/10.1007/978-3-540-74819-9_46>
+ 2. 
+
+
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
 <script src="/js/jquery.hive.js" type="text/javascript"></script>
 <script src="/js/underscore.js" type="text/javascript"></script>
 <script src="/js/protovis-d3.2.js" type="text/javascript"></script>
