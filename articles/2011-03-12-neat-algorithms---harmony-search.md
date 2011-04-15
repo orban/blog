@@ -6,7 +6,6 @@ Here I'll try and demonstrate a neat optimization algorithm based on the princip
 
 Harmony Search (often abbreviated HS) is a [metaheuristic optimization](http://en.wikipedia.org/wiki/Metaheuristic) algorithm. Such algorithms use some sort of strategy to find the optimal input to a problem which minimizes or maximizes some measure of quality. Harmony search has been successfully applied to a vast array of problems suitable for optimization algorithms like it, such as the Travelling Salesman problem, water network design, and actual algorithmic music generation.
 
-Other metaheuristic algorithms include random search, simulated annealing, genetic algorithms, and tabu search. 
 
 See the algorithm in action:
 
@@ -39,7 +38,7 @@ The task of an optimization algorithm is to do exactly what we do with our eyes 
 
 # Enter Harmony Search
 
-Harmony search is one such strategy for finding an optimal set of inputs to an often complicated quality function. It works by imitating the activity of musicians while improvising. The choice of which note to play next while playing as part of a trio or quartet is something which takes years to learn to do effectively, because its hard to know what notes your accompaniment might play, and its hard to know what notes might sound good or great in tandem with the others. Musicians can be seen as trying to play some set of notes simultaneously to produce a _fantastic harmony_, although this is a somewhat naive take on the whole thing, so don't let me ruin the magic for you.
+Harmony search is one such strategy for finding an optimal set of inputs to an often complicated quality function, among others like random search, simulated annealing, genetic algorithms, and tabu search. It works by imitating the activity of musicians while improvising. The choice of which note to play next while playing as part of a trio or quartet is something which takes years to learn to do effectively, because its hard to know what notes your accompaniment might play, and its hard to know what notes might sound good or great in tandem with the others. Musicians can be seen as trying to play some set of notes simultaneously to produce a _fantastic harmony_, although this is a somewhat naive take on the whole thing, so don't let me ruin the magic for you.
 
 Each musician in the ensemble is often faced with the problem of picking the next note. To do so they can reference their knowledge of the notes in the key they are playing in (what notes sound good in the context of the song), as well as the notes they've played previously (what notes sound good in the recent context). The notes they played recently most likely sounded alright, so often these are a good choice. Also, it can be wise to pick a particular note that the audience might expect and adjust the pitch of it away from the expected note to create an artistic effect and a new, potentially better, harmony.
 
@@ -54,7 +53,6 @@ Harmony search continues to use the musician metaphor to iteratively improve its
 ## Getting better
 
 Each iteration a new harmony is generated, its quality is calculated, and if it makes the cut it's "included" in the musician's memory. This way, iteration by iteration, old, poor quality harmonies are kicked out and replaced by better ones. The average quality of the set of harmonies in this memory as a whole gradually increases as these new harmonies replace poor ones. The brilliance of the algorithm comes from this: the new harmonies that are generated, which you may recall often reference notes from the memory, start to use notes belonging to known high-quality harmonies. Thus, the newly generated harmonies use good notes, and often have higher qualities because of it. This process repeats, where the increasing the quality of individual harmonies generated increases the average quality of the memory, which increases the quality of the individual generated harmonies, and so on and so forth. At some point (it is hoped), the algorithm generates a harmony which meets the "fantastic" quality hoped for.
-
 
 Thats it! Harmony search isn't too complicated, but its a neat algorithm inspired by some everyday natural phenomena. Read on for the code and an example application. 
 
@@ -75,8 +73,8 @@ First, lets more formally define some terms.
  1. Initialize the Parameters for Problem and Algorithm. 
  2. Initialize the Harmony Memory (HM). 
  3. Improvise a New Harmony. 
- 4. Update the Harmony Memory.
- 5. Check the stopping criterion.
+ 4. Update the Harmony Memory if the new harmony is better than the worst harmony in the memory.
+ 5. Check the stopping criterion, and if we can continue, go back to 3.
 
 ## The Parts
 
@@ -90,8 +88,8 @@ I chose to encapsulate the generator and the search algorithm into a `HarmonySea
 
 Next, we'll define the formal parameters for the algorithm:
 
- + __Harmony Memory Consideration Rate__ or HMCR: the probability that when generating a new harmony, a note from the harmony memory will be picked
- + __Pitch Adjustment Rate__ or PAR: the probability of randomly shifting a chosen note up or down
+ + __Harmony Memory Consideration Rate__ or HMCR: the probability that when generating notes for a new harmony, a note from the harmony memory will be picked, instead of just picking a random one out of the possible notes
+ + __Pitch Adjustment Rate__ or PAR: the probability of randomly shifting a note up or down once it has been chosen
 
 ## The skeleton
 
@@ -111,6 +109,8 @@ Here's the skeleton for the `HarmonySearch` class:
 
       constructor: (options) ->
         @options = _.extend {}, HarmonySearch.defaults, options
+
+All this does is define the defaults for the algorithm.
 
 Here's the basic, extendable `Harmony` class:
 
@@ -133,11 +133,11 @@ Here's the basic, extendable `Harmony` class:
       calculateQuality: ->
         throw "Extend this class to define how a harmony's quality is evaluated"
 
-Again, the above class manages the generic parts of the search, but requires a use to define a quality calculation which suits the problem at hand. Below we'll apply it to the exam mark problem mentioned above, and then a less trivial sudoku problem at the end.
+The above class manages the generic parts of the search. To apply it to a particular optimisation problem, we subclass `Harmony` and define a quality calculation which suits the problem at hand. Below we'll apply it to the exam mark problem mentioned above, and then after a less trivial sudoku problem.
 
 ## The Harmony Generator
 
-This is the first component of the `HarmonySearch` class, responsible for spitting out new harmonies based upon those stored in the harmony memory.
+This is the first component of the `HarmonySearch` class, responsible for spitting out new harmonies based upon those stored in the harmony memory, as well as the HMCR and the PAR.
 
     :::coffeescript
     class HarmonySearch
@@ -176,7 +176,7 @@ This is the first component of the `HarmonySearch` class, responsible for spitti
 
         new @options.harmonyClass(chord)
 
-Hopefully all this other, secondary stuff isn't too confusing, but if it is, the next section brings it all together and will hopefully make it all clear.
+Hopefully all this secondary stuff isn't too confusing, but if it is, the next section brings it all together and hopefully will make it all clear.
 
 Also note that each `Harmony` class stores both an array of notes and an array of note indices, which seems a tad odd. This is because in the above code the pitch adjustment portion needs access to the original index of the note in the array of possible notes, so it can find the next or previous index to adjust to. Thats why the `Harmony` class constructor accepts the `[[note, index], [note2, index2], ...]` style arguments, and the above accumulator returns `[note, noteIndex]`, instead of just doing arrays of notes.
 
@@ -224,7 +224,7 @@ Below is the core of the search algorithm, which actually executes the whole sea
         [bestQuality, bestIndex] = this._getBest()
         return @harmonyMemory[bestIndex]
 
-Thats about it! Feeling ok? Read on for a couple examples.
+Thats about it! Feeling ok? Read on for a couple examples to gel all of this.
 
 # Exam Mark Example
 
@@ -246,8 +246,7 @@ The harmony class we'd use for this problem would look like this:
 
     :::coffeescript
     class ExamHarmony extends Harmony
-      
-      quality: -> Exam.mark[@notes[0], @notes[1]]
+      quality: -> Exam.mark(@notes[0], @notes[1])
 
 That's not so bad right? We'd then run the search for some sufficiently large number of iterations and look at the output.
 
@@ -260,6 +259,12 @@ That's not so bad right? We'd then run the search for some sufficiently large nu
       maxIterations: 2000
     }
     results = search.search()
+
+After this, results should hold the best quality `Harmony` found.
+
+## Demo
+
+<div id="examsearchVis"></div>
 
 # Sudoku Example
 
@@ -308,12 +313,22 @@ Also, a quick side note: the `HarmonySearch` class tries to _maximize_ a given q
 
 ## Discussion
 
-- why don't my results agree with Geem's at all?
-- why do I have to precompute the possible sets
-- why sudoku is a bad example
-- shame for not dealing with unsolvable solutions
+The demo at the very top of the page implements Harmony Search in an attempt to solve a sudoku. I tried quite hard to achieve similar results to those to Geem's [1], but I was downright stumped. Geem managed to solve the default sudoku (the one called 'geem' in my simulation) in "285 improvisations", which to me is just absurdly low. It takes my implementation anywhere from 5000 to 50000 improvisations to find a valid solution, which is an awful lot more than 285. So I think I either made a serious mistake when implementing, a serious mistake when interpreting Geem's results, or discovered some academic fraud. I trust the inventor of the algorithm to be better at implementing it than I am, so I am pretty sure I made a blunder at some point or another.
+
+The puzzle in question has 41 unsolved cells, giving a search space with 9^41 different solutions. That number has 40 digits. Its big. It's big enough that finding a solution after only 235 tries is really, really impressive. In an attempt to get my numbers down to at least the same order of magnitude, I tried precomputing the possible choices for each cell instead of letting each one be any number from 1 to 9. This is silly because it shows we don't need to use HS to solve this problem at all, because the algorithm to determine the possible choices for each cell is one that we could use to just solve the puzzle. If we can get the possible choices for a cell using some algorithm, we can just pick one choice, see if the solution works,and if not, pick the next choice, and repeat. We are implementing only the first step of the smart solving algorithm in order to make the dumb one just a tad smarter. If its possible for us to come up with an algorithm which can solve a sudoku deterministically instead of using a heuristic to search, we should most probably take the former approach.
+
+In any case, adding in this precomputation step got the numbers down as expected because it drastically reduces the size of the search space, but still no where close to Geems. I don't know why this is the case, and I've spent an obscene amount of time trying to figure it out, but alas, I have been unable. If you can figure it out by looking at the code or just based on my (perhaps incorrect) description of the algorithm, do tell me so I can put this to rest.
+
+Lastly, the above issues demonstrate that sudoku isn't really that good an example for a metaheuristic algorithms. We know that there are more efficient algorithms which solve them in itty bitty tiny amount of time, and unfortunately this solver algorithm isn't really that far from the quality heuristic we already have to write for HS. I also included no real strategy for dealing with unsolvable sudokus, which is a whole other class of [problem](http://en.wikipedia.org/wiki/Halting_problem). Shame on me for not dealing with these, but with this class of algorithm in particular its extraordinarily difficult. When using HS, there is no way to know if a solution doesn't exist or not until all possible harmonies have been tried, which would take a very very long time. If our tries count reaches some user-defined ceiling (the stopping condition used now) we don't know if a solution wasn't found because it doesn't exist, or because we just haven't waited long enough. It could really be the 10000001st harmony tried, but we ask the algorithm to stop once its tried 10000000 harmonies, and assume that the solution doesn't exist. 
 
 # Conclusion
+
+Hopefully this has been an exciting journey through the world of metaheuristic optimisation algorithms, and you learned a thing or two. I sure did. The takeaways are:
+
+ + Metaheuristic optimisation algorithms are useful for finding the optimal solution to some function which describes its arguments' "quality" or "fitness".
+ + Harmony search is a neat example of these algorithms which attempts to optimize a solution based on the principles of jazz musicians
+ + HS and company are applicable to a very wide range of problems, including solving puzzles like sudoku.
+ + Sudoku isn't really a good testbed for these algorithms because its easy enough to write a solving algorithm, and you have to write most of that algorithm to apply HS to sudoku anyways.
 
 <img src="/images/working.gif" id="status" style="display:none;">
 <script type="text/javascript">
@@ -332,6 +347,8 @@ Also, a quick side note: the `HarmonySearch` class tries to _maximize_ a given q
 <script src="/js/harmonics/harmony_search.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku_puzzle.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku_harmony.js" type="text/javascript"></script>
+<script src="/js/harmonics/visualization.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku_visualization.js" type="text/javascript"></script>
+<script src="/js/harmonics/exam_visualization.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku.js" type="text/javascript"></script>
 <link href='/css/harmonics.css' rel='stylesheet' type='text/css' /> 
