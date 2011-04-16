@@ -80,46 +80,50 @@ body.bp table.sudoku_game tr td:nth-child(3n) {
   border-right: 2px solid black;
 }
 /* line 55, ../../assets/sass/harmonics.sass */
+body.bp .game .sudoku_game {
+  width: 100%;
+}
+/* line 58, ../../assets/sass/harmonics.sass */
 body.bp .sudoku_vis {
   position: relative;
 }
-/* line 57, ../../assets/sass/harmonics.sass */
+/* line 60, ../../assets/sass/harmonics.sass */
 body.bp .sudoku_vis .wheel, body.bp .sudoku_vis .create {
   float: left;
 }
-/* line 59, ../../assets/sass/harmonics.sass */
+/* line 62, ../../assets/sass/harmonics.sass */
 body.bp .sudoku_vis .game {
   position: absolute;
-  left: 157px;
+  left: 150px;
   top: 170px;
 }
-/* line 63, ../../assets/sass/harmonics.sass */
+/* line 66, ../../assets/sass/harmonics.sass */
 body.bp .sudoku_vis .info {
   width: 100%;
   clear: both;
 }
-/* line 70, ../../assets/sass/harmonics.sass */
+/* line 73, ../../assets/sass/harmonics.sass */
 body.bp table#searchResults td {
   padding: 1px;
   margin: 0px;
 }
-/* line 73, ../../assets/sass/harmonics.sass */
+/* line 76, ../../assets/sass/harmonics.sass */
 body.bp table#searchResults tr.out {
   color: #cccccc;
 }
-/* line 76, ../../assets/sass/harmonics.sass */
+/* line 79, ../../assets/sass/harmonics.sass */
 body.bp table#searchResults tr:not(.out) td:first-child {
   border-left: 2px solid red;
 }
-/* line 78, ../../assets/sass/harmonics.sass */
+/* line 81, ../../assets/sass/harmonics.sass */
 body.bp table#searchResults tr:not(.out) td:last-child {
   border-right: 2px solid red;
 }
-/* line 80, ../../assets/sass/harmonics.sass */
+/* line 83, ../../assets/sass/harmonics.sass */
 body.bp table#searchResults tr:not(.out):first-of-type td {
   border-top: 2px solid red;
 }
-/* line 82, ../../assets/sass/harmonics.sass */
+/* line 85, ../../assets/sass/harmonics.sass */
 body.bp table#searchResults tr:not(.out):last-of-type td {
   border-bottom: 2px solid red;
 }

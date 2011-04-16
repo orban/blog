@@ -11,7 +11,7 @@
       this.controls = $("<div class=\"controls\"></div>").appendTo(this.div);
       this.info = $("<div class=\"info\"></div>").appendTo(this.controls);
       this.div.append("<div id=\"" + this.visId + "\" class=\"wheel\"></div>");
-      this.game = $("<div class=\"game\"></div>").appendTo(this.div);
+      this.game = $("<div id=\"" + this.options.id + "_game\" class=\"game\"></div>").appendTo(this.div);
       this.div.append("<div id=\"" + this.vis2Id + "\" class=\"create\"></div>");
       this.startstop = $("<button class=\"awesome\">" + (this.options.startOnInit ? "Pause" : "Start") + "</button>").appendTo(this.controls).click(__bind(function() {
         if (this.running) {

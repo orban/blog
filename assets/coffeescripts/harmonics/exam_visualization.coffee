@@ -13,7 +13,7 @@ window.Exam =
 
   impl_max: -Infinity
   impl_min: Infinity
-  
+
   max: 100
   min: 1
   mark: (x, y) ->
@@ -31,74 +31,85 @@ for x in [0..100]
 class Harry.HeatmapVisualizer
   w: 100
   h: 100
-  max: Exam.max 
+  max: Exam.max
   min: Exam.min + 10
   ratio: 4
   id: "sleepMap"
-
+  labels: true
+  highlight: [-1, -1]
+  
   constructor: (options = {})->
-    @options = _.extend(this, HeatmapVisualizer.defaults, options)
+    _.extend(this, options)
 
     @x = pv.Scale.linear().domain(0, 10).range(0, @w*@ratio)
     @y = pv.Scale.linear().domain(0, 10).range(0, @h*@ratio)
 
     k = @max - @min
     @heat = pv.Scale.linear()
-        .domain(@min, @min + k/6, @min + 2*k/6, @min + 3*k/6, @min + 4*k/6, @min + 5*k/6, @max)
-        .range("#000", "#0a0", "#6c0", "#ee0", "#eb4", "#eb9", "#fff")
-        .by(Exam.mark)
+        .domain(Exam.min-1, Exam.min, @min, @min + k/6, @min + 2*k/6, @min + 3*k/6, @min + 4*k/6, @min + 5*k/6, @max)
+        .range("#F00", "#000", "#000", "#0a0", "#6c0", "#ee0", "#eb4", "#eb9", "#fff")
+        .by (x, y) =>
+          if (Math.abs(x - @highlight[0]) + Math.abs(y - @highlight[1])) < 2
+            Exam.min - 1
+          else
+            Exam.mark(x,y)
 
     @heatmap = new pv.Panel()
       .canvas(@id)
       .width(@w * @ratio)
       .height(@h * @ratio)
-      .margin(32)
       .top(16)
       .strokeStyle("#aaa")
       .lineWidth(2)
       .antialias(false)
+
+    @heatmap.margin(32) if @labels
 
     @heatmap.add(pv.Image)
       .imageWidth(@w)
       .imageHeight(@h)
       .image(@heat)
 
-    @heatmap.add(pv.Rule)
-        .data(@x.ticks())
-        .strokeStyle("")
-        .left(@x)
-      .anchor("bottom").add(pv.Label)
-        .text(@x.tickFormat)
-        .font("8pt Droid Sans")
+    if @labels
+      @heatmap.add(pv.Rule)
+          .data(@x.ticks())
+          .strokeStyle("")
+          .left(@x)
+        .anchor("bottom").add(pv.Label)
+          .text(@x.tickFormat)
+          .font("8pt Droid Sans")
 
-    @heatmap.add(pv.Rule)
-        .data(@y.ticks())
-        .strokeStyle("")
-        .bottom(@y)
-      .anchor("left").add(pv.Label)
-        .text(@y.tickFormat)
-        .font("8pt Droid Sans")
+      @heatmap.add(pv.Rule)
+          .data(@y.ticks())
+          .strokeStyle("")
+          .bottom(@y)
+        .anchor("left").add(pv.Label)
+          .text(@y.tickFormat)
+          .font("8pt Droid Sans")
 
-    @heatmap.add(pv.Label)
-      .data(["Hours spent asleep"])
-      .left(-15)
-      .bottom(@h*@ratio/2)
-      .textAlign("center")
-      .textAngle(-Math.PI/2)
-      .font("11pt Droid Sans")
+      @heatmap.add(pv.Label)
+        .data(["Hours spent asleep"])
+        .left(-15)
+        .bottom(@h*@ratio/2)
+        .textAlign("center")
+        .textAngle(-Math.PI/2)
+        .font("11pt Droid Sans")
 
 
-    @heatmap.add(pv.Label)
-      .data(["Hours spent studying"])
-      .left(@w*@ratio/2)
-      .bottom(-30)
-      .textAlign("center")
-      .font("11pt Droid Sans")
+      @heatmap.add(pv.Label)
+        .data(["Hours spent studying"])
+        .left(@w*@ratio/2)
+        .bottom(-30)
+        .textAlign("center")
+        .font("11pt Droid Sans")
 
     @heatmap.render()
     $("##{@id} canvas").css
       width: @w * @ratio
       height: @h * @ratio
+    
+  render: () ->
+    @heatmap.render()
 
 class Harry.ExamHarmony extends Harry.Harmony
   quality: -> Exam.mark(@notes[0]*10, @notes[1]*10)
@@ -125,6 +136,12 @@ class Harry.HeatmapSearchVisualizer extends Harry.HarmonySearchVisualizer
     # Set up options
     @options = _.extend({}, HeatmapSearchVisualizer.defaults, options)
     super
+    @game.css
+      "padding-top": "10px"
+    @heatmap = new Harry.HeatmapVisualizer
+      id: @options.id + "_game"
+      ratio: 2
+      labels: false
 
     # Start the algo so the vis shows up, but stop it right after unless asked to start
     this.start()
@@ -134,7 +151,12 @@ class Harry.HeatmapSearchVisualizer extends Harry.HarmonySearchVisualizer
 
   showSolution: (harmony, forceRender = false) ->
     @showing = harmony
-    console.log(harmony)
+    @heatmap.highlight = _(harmony.notes).map (x) -> x*10
+    this.render()
+  
+  render: () ->
+    super
+    @heatmap.render()
 
   _initializeSearch: ->
     # Set up search

@@ -11,7 +11,7 @@ class Harry.HarmonySearchVisualizer
     @controls = $("<div class=\"controls\"></div>").appendTo(@div)
     @info = $("<div class=\"info\"></div>").appendTo(@controls)
     @div.append("<div id=\"#{@visId}\" class=\"wheel\"></div>")
-    @game = $("<div class=\"game\"></div>").appendTo(@div)
+    @game = $("<div id=\"#{@options.id}_game\" class=\"game\"></div>").appendTo(@div)
     @div.append("<div id=\"#{@vis2Id}\" class=\"create\"></div>")
 
     # Create startstop button which pauses or resumes computation

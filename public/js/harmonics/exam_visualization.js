@@ -1,13 +1,13 @@
 (function() {
   var n, x, y;
-  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
     ctor.prototype = parent.prototype;
     child.prototype = new ctor;
     child.__super__ = parent.prototype;
     return child;
-  }, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  };
   window.Exam = {
     impl_mark: function(x, y) {
       var a;
@@ -48,28 +48,44 @@
     HeatmapVisualizer.prototype.min = Exam.min + 10;
     HeatmapVisualizer.prototype.ratio = 4;
     HeatmapVisualizer.prototype.id = "sleepMap";
+    HeatmapVisualizer.prototype.labels = true;
+    HeatmapVisualizer.prototype.highlight = [-1, -1];
     function HeatmapVisualizer(options) {
       var k;
       if (options == null) {
         options = {};
       }
-      this.options = _.extend(this, HeatmapVisualizer.defaults, options);
+      _.extend(this, options);
       this.x = pv.Scale.linear().domain(0, 10).range(0, this.w * this.ratio);
       this.y = pv.Scale.linear().domain(0, 10).range(0, this.h * this.ratio);
       k = this.max - this.min;
-      this.heat = pv.Scale.linear().domain(this.min, this.min + k / 6, this.min + 2 * k / 6, this.min + 3 * k / 6, this.min + 4 * k / 6, this.min + 5 * k / 6, this.max).range("#000", "#0a0", "#6c0", "#ee0", "#eb4", "#eb9", "#fff").by(Exam.mark);
-      this.heatmap = new pv.Panel().canvas(this.id).width(this.w * this.ratio).height(this.h * this.ratio).margin(32).top(16).strokeStyle("#aaa").lineWidth(2).antialias(false);
+      this.heat = pv.Scale.linear().domain(Exam.min - 1, Exam.min, this.min, this.min + k / 6, this.min + 2 * k / 6, this.min + 3 * k / 6, this.min + 4 * k / 6, this.min + 5 * k / 6, this.max).range("#F00", "#000", "#000", "#0a0", "#6c0", "#ee0", "#eb4", "#eb9", "#fff").by(__bind(function(x, y) {
+        if ((Math.abs(x - this.highlight[0]) + Math.abs(y - this.highlight[1])) < 2) {
+          return Exam.min - 1;
+        } else {
+          return Exam.mark(x, y);
+        }
+      }, this));
+      this.heatmap = new pv.Panel().canvas(this.id).width(this.w * this.ratio).height(this.h * this.ratio).top(16).strokeStyle("#aaa").lineWidth(2).antialias(false);
+      if (this.labels) {
+        this.heatmap.margin(32);
+      }
       this.heatmap.add(pv.Image).imageWidth(this.w).imageHeight(this.h).image(this.heat);
-      this.heatmap.add(pv.Rule).data(this.x.ticks()).strokeStyle("").left(this.x).anchor("bottom").add(pv.Label).text(this.x.tickFormat).font("8pt Droid Sans");
-      this.heatmap.add(pv.Rule).data(this.y.ticks()).strokeStyle("").bottom(this.y).anchor("left").add(pv.Label).text(this.y.tickFormat).font("8pt Droid Sans");
-      this.heatmap.add(pv.Label).data(["Hours spent asleep"]).left(-15).bottom(this.h * this.ratio / 2).textAlign("center").textAngle(-Math.PI / 2).font("11pt Droid Sans");
-      this.heatmap.add(pv.Label).data(["Hours spent studying"]).left(this.w * this.ratio / 2).bottom(-30).textAlign("center").font("11pt Droid Sans");
+      if (this.labels) {
+        this.heatmap.add(pv.Rule).data(this.x.ticks()).strokeStyle("").left(this.x).anchor("bottom").add(pv.Label).text(this.x.tickFormat).font("8pt Droid Sans");
+        this.heatmap.add(pv.Rule).data(this.y.ticks()).strokeStyle("").bottom(this.y).anchor("left").add(pv.Label).text(this.y.tickFormat).font("8pt Droid Sans");
+        this.heatmap.add(pv.Label).data(["Hours spent asleep"]).left(-15).bottom(this.h * this.ratio / 2).textAlign("center").textAngle(-Math.PI / 2).font("11pt Droid Sans");
+        this.heatmap.add(pv.Label).data(["Hours spent studying"]).left(this.w * this.ratio / 2).bottom(-30).textAlign("center").font("11pt Droid Sans");
+      }
       this.heatmap.render();
       $("#" + this.id + " canvas").css({
         width: this.w * this.ratio,
         height: this.h * this.ratio
       });
     }
+    HeatmapVisualizer.prototype.render = function() {
+      return this.heatmap.render();
+    };
     return HeatmapVisualizer;
   })();
   Harry.ExamHarmony = (function() {
@@ -105,6 +121,14 @@
     function HeatmapSearchVisualizer(options) {
       this.options = _.extend({}, HeatmapSearchVisualizer.defaults, options);
       HeatmapSearchVisualizer.__super__.constructor.apply(this, arguments);
+      this.game.css({
+        "padding-top": "10px"
+      });
+      this.heatmap = new Harry.HeatmapVisualizer({
+        id: this.options.id + "_game",
+        ratio: 2,
+        labels: false
+      });
       this.start();
       if (!this.options.startOnInit) {
         this.stop();
@@ -116,7 +140,14 @@
         forceRender = false;
       }
       this.showing = harmony;
-      return console.log(harmony);
+      this.heatmap.highlight = _(harmony.notes).map(function(x) {
+        return x * 10;
+      });
+      return this.render();
+    };
+    HeatmapSearchVisualizer.prototype.render = function() {
+      HeatmapSearchVisualizer.__super__.render.apply(this, arguments);
+      return this.heatmap.render();
     };
     HeatmapSearchVisualizer.prototype._initializeSearch = function() {
       var fmtquality, i, notes, options;
