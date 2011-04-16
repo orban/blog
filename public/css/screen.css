@@ -816,15 +816,9 @@ body.bp .pleasant.right, body.bp figure.right {
 #footer {
   position: relative;
   margin-bottom: 5px;
-  height: 20px;
-}
-/* line 214, ../../assets/sass/screen.sass */
-#footer img.cc {
-  position: relative;
-  top: 50%;
 }
 
-/* line 219, ../../assets/sass/screen.sass */
+/* line 215, ../../assets/sass/screen.sass */
 body.index #header {
   background: none;
   height: auto;
@@ -833,7 +827,7 @@ body.index #header {
   border: none;
   position: relative;
 }
-/* line 220, ../../assets/sass/screen.sass */
+/* line 216, ../../assets/sass/screen.sass */
 body.index #header h1 {
   padding-left: 30px;
   font-size: 201px;
@@ -844,53 +838,53 @@ body.index #header h1 {
   width: auto;
   text-shadow: #444444 2px 2px 5px;
 }
-/* line 229, ../../assets/sass/screen.sass */
+/* line 225, ../../assets/sass/screen.sass */
 body.index #header h1 a {
   color: auto;
   text-decoration: none;
 }
-/* line 232, ../../assets/sass/screen.sass */
+/* line 228, ../../assets/sass/screen.sass */
 body.index #header h1 a:hover {
   color: auto;
   text-decoration: none;
 }
-/* line 235, ../../assets/sass/screen.sass */
+/* line 231, ../../assets/sass/screen.sass */
 body.index #header h1 a:visted {
   color: auto;
 }
-/* line 244, ../../assets/sass/screen.sass */
+/* line 240, ../../assets/sass/screen.sass */
 body.index nav {
   position: absolute;
   margin: -20px 0 0 0;
   padding-left: 30px;
   width: 720px;
 }
-/* line 249, ../../assets/sass/screen.sass */
+/* line 245, ../../assets/sass/screen.sass */
 body.index nav a {
   text-shadow: none;
 }
-/* line 252, ../../assets/sass/screen.sass */
+/* line 248, ../../assets/sass/screen.sass */
 body.index section > h3, body.index div > h3 {
   border-bottom: 1px dashed #dddddd;
   padding-bottom: 2px;
   margin-bottom: 10px;
 }
-/* line 257, ../../assets/sass/screen.sass */
+/* line 253, ../../assets/sass/screen.sass */
 body.index section > h3 + a.small, body.index div > h3 + a.small {
   margin: -30px 10px 0px 0px;
   float: right;
   padding-left: 10px;
 }
-/* line 262, ../../assets/sass/screen.sass */
+/* line 258, ../../assets/sass/screen.sass */
 body.index #featured {
   padding-bottom: 10px;
 }
-/* line 265, ../../assets/sass/screen.sass */
+/* line 261, ../../assets/sass/screen.sass */
 body.index #tweets, body.index #songs {
   padding-bottom: 10px;
   font-size: 16px;
 }
-/* line 269, ../../assets/sass/screen.sass */
+/* line 265, ../../assets/sass/screen.sass */
 body.index #tweets {
   display: inline;
   float: left;
@@ -901,16 +895,16 @@ body.index #tweets {
 * html body.index #tweets {
   overflow-x: hidden;
 }
-/* line 271, ../../assets/sass/screen.sass */
+/* line 267, ../../assets/sass/screen.sass */
 body.index #tweets ul {
   margin: 0px;
   padding: 0px 4px 0px 4px;
 }
-/* line 274, ../../assets/sass/screen.sass */
+/* line 270, ../../assets/sass/screen.sass */
 body.index #tweets ul li {
   padding-bottom: 10px;
 }
-/* line 277, ../../assets/sass/screen.sass */
+/* line 273, ../../assets/sass/screen.sass */
 body.index #songs {
   display: inline;
   float: left;
@@ -921,12 +915,12 @@ body.index #songs {
 * html body.index #songs {
   overflow-x: hidden;
 }
-/* line 279, ../../assets/sass/screen.sass */
+/* line 275, ../../assets/sass/screen.sass */
 body.index #songs ol {
   padding: 0px 4px 0px 4px;
   margin: 0px;
 }
-/* line 283, ../../assets/sass/screen.sass */
+/* line 279, ../../assets/sass/screen.sass */
 body.index #articles {
   clear: both;
 }
