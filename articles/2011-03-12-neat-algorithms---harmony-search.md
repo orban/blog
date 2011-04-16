@@ -268,17 +268,19 @@ After this, results should hold the best quality `Harmony` found.
 
 # Sudoku Example
 
-Harmony search can be applied to more complex problems than simple functions like the above. Sudoku is an interesting problem, which is a specific case of the graph coloring problem, one of [Karp's 21 NP-complete problems](http://en.wikipedia.org/wiki/Karp%E2%80%99s_21_NP-complete_problems). In other words, its hard enough to brute force the solution to a sudoku by just trying random numbers and seeing if they work. There are excellent algorithms that often run faster than harmony search or any of its metaheuristic brethren which solve the sudoku using intelligent, problem aware methods and guess when needed. 
+Harmony search can be applied to more complex problems than simple functions like the above. Sudoku is a specific case of the graph coloring problem, one of [Karp's 21 NP-complete problems](http://en.wikipedia.org/wiki/Karp%E2%80%99s_21_NP-complete_problems). In other words, its very time consuming to brute force the solution to a sudoku by just trying random numbers and seeing if they work. There are excellent algorithms that often run faster than harmony search or any of its metaheuristic brethren which solve the sudoku using intelligent, problem aware methods and guess when needed. 
 
 These "smart" solvers are I'm sure the algorithms employed by true Sudoku software, but they rely on intimate knowledge of the Sudoku solving process and an understanding of the techniques used. We have to encode our knowledge of how to solve sudokus into a program, implementing the guessing feature, the backtracking, and all the methods for eliminating possibilities for a particular cell. Instead of developing an algorithm like this, we can use a search method to find us a solution as long as we have a heuristic to tell the quality of a given solution. By solving them in this way, we don't need to concern ourselves with finding a general method or exploring edge cases or algorithmic nuances, and we let the search algorithm figure these things out on its own. We are able to lift the burden of understanding the relationship between the input variables from our own shoulders, and instead allow the algorithm to explore these relationships itself.
 
-Sudoku isn't a stellar example, but hopefully you can see the advantage of using a search algorithm for problems where the smart, human written implementation is hard or impossible to create. If we have some measure of quality for a solution, and thus a way to tell when a solution is optimal, we can let the search algorithm, well, search.
+Hopefully you can see the advantage of using a search algorithm for problems where the smart, human written implementation is hard or impossible to create. If we have some measure of quality for a solution, and thus a way to tell when a solution is optimal, we can let the search algorithm, well, search.
 
 ## The Sudoku Model
 
 Let's solve a particular Sudoku puzzle using harmony search. First, let us identify what the notes of a harmony are, and after, how to calculate the quality of one.
 
-First off, notice that for any solution to be considered as such, each cell must have a value. Some of the values are given by the puzzle, and some must be decided by us. We model the value of each one of these unknown cells as one note in a harmony, and thus orient a harmony's notes as a one dimensional array of choices from `1` to `9`. The order the array of notes is entered into the puzzle doesn't really matter all that much, as long as it is consistent the algorithm will work just the same. The number of instruments is the count of unsolved cells.
+First off, notice that for any solution to be considered as such, each cell must have a value. Some of the values are given by the puzzle, and some must be decided by us. We seek a choice for each cell such that there are no conflicts, or in other words, the optimal solution to a sudoku is one which has all the cells filled in and breaks no rules. 
+
+We model the value of each one of the unknown cells as one note in a harmony, with the note's value being an integer between 1 and 9. The harmony is the chord struck when we insert each of these choices into the puzzle, and the quality of the solution is how close to a valid filled-in puzzle this solution is. The order the array of notes is entered into the puzzle doesn't really matter all that much, as long as it is consistent the algorithm will work just the same. The number of instruments is the count of unsolved cells.
 
 <figure><table class="sudoku_game"><tr><td class="violated">2</td><td class="fixed">5</td><td class="good">4</td><td class="fixed">3</td><td class="boring">1</td><td class="fixed">6</td><td class="good">8</td><td class="boring">9</td><td class="fixed">7</td></tr><tr><td class="good">7</td><td class="violated">6</td><td class="good">3</td><td class="good">9</td><td class="fixed">8</td><td class="fixed">5</td><td class="boring">1</td><td class="fixed">2</td><td class="fixed">4</td></tr><tr><td class="good">1</td><td class="fixed">9</td><td class="fixed">8</td><td class="fixed">4</td><td class="fixed">2</td><td class="good">7</td><td class="fixed">6</td><td class="boring">5</td><td class="fixed">3</td></tr><tr><td class="fixed">9</td><td class="good">8</td><td class="fixed">1</td><td class="violated">7</td><td class="violated">5</td><td class="fixed">3</td><td class="fixed">2</td><td class="violated">5</td><td class="fixed">6</td></tr><tr><td class="violated">2</td><td class="fixed">3</td><td class="violated">2</td><td class="violated">7</td><td class="good">4</td><td class="violated">8</td><td class="violated">7</td><td class="fixed">1</td><td class="boring">5</td></tr><tr><td class="fixed">5</td><td class="boring">4</td><td class="fixed">7</td><td class="fixed">2</td><td class="fixed">6</td><td class="boring">1</td><td class="fixed">9</td><td class="good">3</td><td class="fixed">8</td></tr><tr><td class="fixed">4</td><td class="violated">6</td><td class="fixed">5</td><td class="boring">6</td><td class="fixed">9</td><td class="boring">2</td><td class="fixed">3</td><td class="fixed">8</td><td class="boring">1</td></tr><tr><td class="good">3</td><td class="fixed">1</td><td class="violated">6</td><td class="fixed">5</td><td class="fixed">7</td><td class="boring">8</td><td class="boring">4</td><td class="violated">9</td><td class="fixed">2</td></tr><tr><td class="fixed">8</td><td class="good">2</td><td class="violated">6</td><td class="fixed">1</td><td class="boring">3</td><td class="fixed">4</td><td class="boring">5</td><td class="fixed">7</td><td class="violated">9</td></tr></table><figcaption>A sudoku puzzle in the process of being solved.</figcaption></figure>
 
@@ -286,9 +288,9 @@ To the left is an example solution proposed in an early iteration of harmony sea
 
  <ul class="sudoku_legend"><li><span class="good">Green</span> cells don't violate any rules</li><li><span class="violated">Red</span> cells violate either row, column, or block rules</li><li><span class="boring">Grey</span> cells have only one possible value based on the clues</li><li><span class="clue">White</span> cells are given in the puzzle (a "clue" cell)</li></ul>
 
-The harmony is composed of choices for all of the unknown cells, which are represented as green, grey, or red cells. 
+The green, grey, and red cells represent the choices for all of the unknown cells. 
 
-Next is the quality heuristic for a given solution to a sudoku. The most obvious one is just a count of the violations in the puzzle, which you can see is just a count of the red cells in the solution. In my tests this heuristic worked a tad less effectively than a slightly different heuristic proposed by Dr Zong Woo Geem in [1]. The optimal solution is the global minimum of \\(Q\\), where
+Next, we decide how to evaluate the quality of a given solution. The most obvious algorithm is just a count of the violations in the puzzle, which is just a count of the red cells in the solution. In my tests this heuristic worked a tad less effectively than a slightly different heuristic proposed by Dr Zong Woo Geem in [1]. The optimal solution is the global minimum of \\( Q\\), where
 
 <div class="math">
   $$ 
@@ -297,19 +299,18 @@ Next is the quality heuristic for a given solution to a sudoku. The most obvious
   + \sum\limits_{k = 1}^9 \left| \sum_{ (i,j) \in B_k}  S_{i,j}  - 45 \right|
   $$
 
-  where \( S_{i,j} \) is the cell \(i\) spaces over from the left and \(j\) spaces down from the top, and  \(B_k\) is all the cells in the kth box.
+  where \( S_{i,j} \) is the cell \( i\) spaces over from the left and \( j\) spaces down from the top, and  \( B_k \) is all the cells in the kth box.
 </div>
-
-The above heuristic gives a more detailed measure of a solutions quality. It works by taking the sum of each row and subtracting 45, which is the sum of the numbers from 1 to 9. If a particular row has two 1s instead of a 1 and a two, the sum of the numbers in the row won't be 45, and \\( Q \\) won't be minimal. A correct solution for a sudoku would have \\( Q = 0 \\). As noted in [1], its important to see that the sum of a row may be 45 even though the numbers in it are not the sought after set from 1 to 9, and just happen to sum to 45, for example \\( sum\\ \\{ 1,2,2,5,5,6,7,8,9 \\} = 45 \\). However, if this case occurs in one row, then the sum for the columns which hold incorrect values, or the sum for one of the boxes containing the row won't be 45, moving the final value of \\( Q \\) away from 0, and thus denoting a sub optimal quality as desired.
+<br/>
+The above heuristic gives a more detailed measure of a solutions quality. It works by taking the sum of each row and subtracting 45, which is the sum of the numbers from 1 to 9. If a particular row has two 1s instead of a 1 and a 2, the sum of the numbers in the row won't be 45, and \\( Q \\) won't be minimal. A correct solution for a sudoku would have \\( Q = 0 \\). As noted in [1], its important to see that the sum of a row may be 45 even though the numbers in it are not exactly the set from 1 to 9. The numbers in a row might just happen to sum to 45, for example \\( sum\\ \\{ 1,2,2,5,5,6,7,8,9 \\} = 45 \\). However, if this case occurs in one row, then the sum for the columns passing through the row, or the sum for one of the boxes containing the row won't be 45, moving the final value of \\( Q \\) away from 0, and thus denoting a sub optimal quality as desired. The only way to get a row, column, and box sum of 45 is to have precisely the set from 1 - 9 in each container.
 
 In summary, the notes for a harmony are the set of values for the unknown cells, and the quality of the harmony is the evaluation of the function \\( Q \\) on the generated sudoku puzzle. With these two decisions made, we can now use harmony search to find a solution (if one exists) to a given sudoku puzzle.
 
 ## Code
 
-The code for the sudoku example is boring and unfortunately long, but you can see it on Github if you'd like. The same `HarmonySearch` class as defined above would be used to search the problem space, and a harmony's quality would be calculated using the \
-\( Q \\) function above. 
+The code for the sudoku example is boring and unfortunately long, but you can see it on Github if you'd like. The same `HarmonySearch` class as defined above would be used to search the problem space, and a harmony's quality would be calculated using the \\( Q \\) function above. 
 
-Also, a quick side note: the `HarmonySearch` class tries to _maximize_ a given quality, whereas \\( Q \\) gets _smaller_ as the input approaches a valid solution. Because of this, I used `135 - Q` instead of just Q to calculate the quality of a harmony. As Q gets smaller, the quality of a harmony approaches `135`, which we then define as the target quality.
+Also, a quick side note: the `HarmonySearch` class tries to _maximize_ a given quality, whereas \\( Q \\) gets _smaller_ as the input approaches a valid solution. Because of this, I used \\( 135 - Q \\) instead of just \\( Q \\) to calculate the quality of a harmony. As \\( Q \\) gets smaller, the quality of a harmony approaches 135, which we then define as the target quality.
 
 ## Discussion
 
@@ -319,7 +320,7 @@ The puzzle in question has 41 unsolved cells, giving a search space with 9^41 di
 
 In any case, adding in this precomputation step got the numbers down as expected because it drastically reduces the size of the search space, but still no where close to Geems. I don't know why this is the case, and I've spent an obscene amount of time trying to figure it out, but alas, I have been unable. If you can figure it out by looking at the code or just based on my (perhaps incorrect) description of the algorithm, do tell me so I can put this to rest.
 
-Lastly, the above issues demonstrate that sudoku isn't really that good an example for a metaheuristic algorithms. We know that there are more efficient algorithms which solve them in itty bitty tiny amount of time, and unfortunately this solver algorithm isn't really that far from the quality heuristic we already have to write for HS. I also included no real strategy for dealing with unsolvable sudokus, which is a whole other class of [problem](http://en.wikipedia.org/wiki/Halting_problem). Shame on me for not dealing with these, but with this class of algorithm in particular its extraordinarily difficult. When using HS, there is no way to know if a solution doesn't exist or not until all possible harmonies have been tried, which would take a very very long time. If our tries count reaches some user-defined ceiling (the stopping condition used now) we don't know if a solution wasn't found because it doesn't exist, or because we just haven't waited long enough. It could really be the 10000001st harmony tried, but we ask the algorithm to stop once its tried 10000000 harmonies, and assume that the solution doesn't exist. 
+Lastly, the above issues demonstrate that sudoku isn't really that good an example for a metaheuristic algorithms. We know that there are more efficient algorithms which solve them in itty bitty tiny amount of time, and unfortunately this solver algorithm isn't really that far from the quality heuristic we already have to write for HS. I also included no real strategy for dealing with unsolvable sudokus, which is a whole other class of [problem](http://en.wikipedia.org/wiki/Halting_problem). Shame on me for not dealing with these, but with this class of algorithm in particular its extraordinarily difficult. When using HS, there is no way to know if a solution exists or not until all possible harmonies have been tried. This brute force search is what we're trying to avoid by using a heuristic search. If our tries count reaches some user-defined ceiling, which is the stopping condition used in these demos, we wont know if a solution wasn't found because it doesn't exist, or because we just haven't waited long enough. Since it's so hard to know, we ask the algorithm to stop once its tried 10000000 harmonies, and assume that the solution doesn't exist, even though the optimal solution could be the 10000001st harmony tried.
 
 # Conclusion
 
@@ -328,9 +329,10 @@ Hopefully this has been an exciting journey through the world of metaheuristic o
  + Metaheuristic optimisation algorithms are useful for finding the optimal solution to some function which describes its arguments' "quality" or "fitness".
  + Harmony search is a neat example of these algorithms which attempts to optimize a solution based on the principles of jazz musicians
  + HS and company are applicable to a very wide range of problems, including solving puzzles like sudoku.
- + Sudoku isn't really a good testbed for these algorithms because its easy enough to write a solving algorithm, and you have to write most of that algorithm to apply HS to sudoku anyways.
+ + Sudoku however isn't really a good testbed for these algorithms because its easy enough to write a solving algorithm, and you have to write most of that algorithm to apply HS to sudoku anyways.
 
-<img src="/images/working.gif" id="status" style="display:none;">
+Thanks for reading!
+
 <script type="text/javascript">
   var Harry = {};
 </script>
@@ -339,7 +341,27 @@ Hopefully this has been an exciting journey through the world of metaheuristic o
 
  1. Geem, Z.W.: Harmony Search Algorithm for Solving Sudoku. Knowledge-Based Intelligent Information and Engineering Systems. <http://dx.doi.org/10.1007/978-3-540-74819-9_46>
 
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { 
+      availableFonts: ["TeX"],
+      webFont: "TeX",
+      imageFont: null
+    },
+    TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+    }
+  });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/1.1-latest/MathJax.js"></script>
 <script src="/js/jquery.hive.js" type="text/javascript"></script>
 <script src="/js/underscore.js" type="text/javascript"></script>
 <script src="/js/protovis-d3.2.js" type="text/javascript"></script>
