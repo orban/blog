@@ -77,9 +77,11 @@
         }
       }
       this.modeSelect.appendTo(this.controls).change(__bind(function(e) {
+        var before_restart;
         this.options.computationMode = SudokuVisualizer.computationModes[this.modeSelect.val()];
-        restartVis();
-        if (this.running) {
+        before_restart = this.running;
+        this.restartVis();
+        if (before_restart) {
           this.start();
         }
         return true;
@@ -92,16 +94,17 @@
         this.puzzleSelect.append("<option " + (puzzle === this.options.puzzle ? "selected" : "") + " value=\"" + puzzle + "\">" + name + "</option>");
       }
       this.puzzleSelect.appendTo(this.controls).change(__bind(function(e) {
+        var before_restart;
         this.options.puzzle = this.puzzleSelect.val();
-        restartVis();
-        if (this.running) {
+        before_restart = this.running;
+        this.restartVis();
+        if (before_restart) {
           this.start();
         }
         return true;
       }, this));
-      this.start();
-      if (!this.options.startOnInit) {
-        this.stop();
+      if (this.options.startOnInit) {
+        this.start();
       }
       true;
     }

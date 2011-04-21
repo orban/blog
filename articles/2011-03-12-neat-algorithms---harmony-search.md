@@ -4,20 +4,27 @@ date: 12/03/2011
 
 Here I'll try and demonstrate a neat optimization algorithm based on the principles of performing jazz musicians by applying it to solve Sudoku puzzles.
 
-Harmony Search (often abbreviated HS) is a [metaheuristic optimization](http://en.wikipedia.org/wiki/Metaheuristic) algorithm. Such algorithms use some sort of strategy to find the optimal input to a problem which minimizes or maximizes some measure of quality. Harmony search has been successfully applied to a vast array of problems suitable for optimization algorithms like it, such as the Travelling Salesman problem, water network design, and actual algorithmic music generation.
-
+Harmony Search (often abbreviated HS) is a [metaheuristic optimization](http://en.wikipedia.org/wiki/Metaheuristic) algorithm pioneered by [Dr Zong Woo Geem](https://sites.google.com/a/hydroteq.com/www/). Metaheuristic algorithms like harmony search attempt to find the optimal input to some objecting measure of quality, or in other words, find the "best" solution to a given problem. Harmony search has been successfully applied to a vast array of such problems, such as the Travelling Salesman problem, water network design, and actual algorithmic music generation.
 
 See the algorithm in action:
 
 <div id="searchVis"></div>
 
+# Table of Contents
+
+ 1. <a href="#searchVis">Demo</a>
+ 2. <a href="#heuristics">Intro to Metaheuristics</a>
+ 3. <a href="#harmony_search">Harmony Search</a>
+ 4. <a href="#exam_example">Exam Mark Demo</a>
+ 5. <a href="#sudoku_example">Sudoku Demo and Analysis</a>
+
 # About this page
 
 This page features interactive demos and code examples, all written in [Coffeescript](http://coffeescript.org/). If you haven't seen it before, it shouldn't be too hard to pick up, but visit that page if you want a quick primer on the syntax. If thats too much to  ask, know that `@` symbols signify instance variables and the last value of a block is the implicit return value, and you should be good. The example code you see in the post is also a distilled, unoptimized, nuance-lacking version which gets rid of the boring stuff for your benefit, so don't make fun if it seems slow.
 
-Also, the computationally intense demos have an intensity setting you can pick. Pick `poutine` mode only if you run Chrome or want to watch your browser get crushed. The first three settings defer to the UI thread often enough to stay responsive, but `poutine` mode uses WebWorkers to their fullest advantage and destroys FF3, FF4, and Opera on my machine faster than you can say "higgitus figgitus". `Poutine` mode is called as such because the browser gobbles up CPU power like I gobble up the aforementioned artery clogger at 3 AM on a Saturday night. Very quickly.
+Also, the computationally intense demo above has an intensity setting you can pick. Pick `poutine` mode only if you run Chrome or want to watch your browser get crushed. The first three settings defer to the UI thread often enough to stay responsive, but `poutine` mode uses web workers to destroy FF3, FF4, and Opera on my machine faster than you can say "higgitus figgitus". `Poutine` mode is called as such because the browser gobbles up CPU power like I gobble up the aforementioned artery clogger at 3 AM on a Saturday night. Very quickly.
 
-# Heuristics and Fitness
+<h1 id="heuristics">Heuristics and Fitness</h1>
 
 Harmony search as well as the above mentioned algorithms are useful for solving a very wide class of problems. Below we'll apply it to one problem in particular, but first lets examine the role of a metaheuristic algorithm.
 
@@ -36,7 +43,7 @@ To the left is a heat map showing where the best marks are earned. You'll find t
 
 The task of an optimization algorithm is to do exactly what we do with our eyes on the heat map, but for non differentiable functions, and for functions for which few assumptions can be made. Also note that the exam example is a tad silly, because every input combination is represented in that heat map, so we could write a brute force program to just try them all and find the max pretty easily and quickly. To make it even worse, the source code for the relatively simple quality function is also in this page, so we could apply some first year calculus to find the global optimum just by fidgeting with the function and its derivatives. For computationally complex functions of many more variables, or non differentiable functions, the brute force and calculus approaches aren't feasible, and we are left to find a better strategy to find an optimal solution.
 
-# Enter Harmony Search
+<h1 id="harmony_search">Enter Harmony Search</h1>
 
 Harmony search is one such strategy for finding an optimal set of inputs to an often complicated quality function, among others like random search, simulated annealing, genetic algorithms, and tabu search. It works by imitating the activity of musicians while improvising. The choice of which note to play next while playing as part of a trio or quartet is something which takes years to learn to do effectively, because its hard to know what notes your accompaniment might play, and its hard to know what notes might sound good or great in tandem with the others. Musicians can be seen as trying to play some set of notes simultaneously to produce a _fantastic harmony_, although this is a somewhat naive take on the whole thing, so don't let me ruin the magic for you.
 
@@ -226,7 +233,7 @@ Below is the core of the search algorithm, which actually executes the whole sea
 
 Thats about it! Feeling ok? Read on for a couple examples to gel all of this.
 
-# Exam Mark Example
+<h1 id="exam_example">Exam Mark Example</h1>
 
 Consider the exam mark problem shown above. Suppose the mysterious exam mark equation has been implemented in a Javascript function called `Exam.mark(timeSleeping, timeStudying)`. 
 
@@ -266,7 +273,7 @@ After this, results should hold the best quality `Harmony` found.
 
 <div id="examsearchVis"></div>
 
-# Sudoku Example
+<h1 id="sudoku_example">Sudoku Example</h1>
 
 Harmony search can be applied to more complex problems than simple functions like the above. Sudoku is a specific case of the graph coloring problem, one of [Karp's 21 NP-complete problems](http://en.wikipedia.org/wiki/Karp%E2%80%99s_21_NP-complete_problems). In other words, its very time consuming to brute force the solution to a sudoku by just trying random numbers and seeing if they work. There are excellent algorithms that often run faster than harmony search or any of its metaheuristic brethren which solve the sudoku using intelligent, problem aware methods and guess when needed. 
 
@@ -340,6 +347,10 @@ Thanks for reading!
 ### References
 
  1. Geem, Z.W.: Harmony Search Algorithm for Solving Sudoku. Knowledge-Based Intelligent Information and Engineering Systems. <http://dx.doi.org/10.1007/978-3-540-74819-9_46>
+
+### Thanks
+
+  Thanks to [Mo](http://fustat.org/) and Tomas for helping edit. Thanks to Dr Geem for creating and publishing so much about the aalgorithm. Thanks to the authors of [Protovis](http://vis.stanford.edu/protovis/) and [Mathjax](http://www.mathjax.org/) for superb code which made the visualizations and formulas on this page look great.
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({

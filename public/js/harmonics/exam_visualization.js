@@ -124,14 +124,8 @@
       this.game.css({
         "padding-top": "10px"
       });
-      this.heatmap = new Harry.HeatmapVisualizer({
-        id: this.options.id + "_game",
-        ratio: 2,
-        labels: false
-      });
-      this.start();
-      if (!this.options.startOnInit) {
-        this.stop();
+      if (this.options.startOnInit) {
+        this.start();
       }
       true;
     }
@@ -148,6 +142,14 @@
     HeatmapSearchVisualizer.prototype.render = function() {
       HeatmapSearchVisualizer.__super__.render.apply(this, arguments);
       return this.heatmap.render();
+    };
+    HeatmapSearchVisualizer.prototype._initializeCreationVisualization = function() {
+      this.heatmap = new Harry.HeatmapVisualizer({
+        id: this.options.id + "_game",
+        ratio: 2,
+        labels: false
+      });
+      return HeatmapSearchVisualizer.__super__._initializeCreationVisualization.apply(this, arguments);
     };
     HeatmapSearchVisualizer.prototype._initializeSearch = function() {
       var fmtquality, i, notes, options;

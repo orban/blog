@@ -3,7 +3,6 @@
   Harry.HarmonySearchVisualizer = (function() {
     HarmonySearchVisualizer.defaults = {};
     function HarmonySearchVisualizer(options) {
-      var restartVis;
       this.options || (this.options = _.extend({}, HarmonySearchVisualizer.defaults, options));
       this.div = $("#" + this.options.id).addClass("sudoku_vis");
       this.visId = this.options.id + "_vis";
@@ -22,7 +21,7 @@
           return this.startstop.html("Pause");
         }
       }, this));
-      restartVis = __bind(function() {
+      this.restartVis = __bind(function() {
         var _ref;
         if (this.running) {
           if ((_ref = this.options.computationMode) != null ? _ref.webworkers : void 0) {
@@ -38,14 +37,20 @@
         this.rows = 0;
         this._initializeSearch();
         this._initializeMemoryVisualization();
-        return this._initializeCreationVisualization();
+        this._initializeCreationVisualization();
+        this.start();
+        return this.stop();
       }, this);
       this.reset = $('<button class="awesome">Reset</button>').appendTo(this.controls).click(__bind(function() {
-        restartVis();
-        return this.start();
+        var before_restart;
+        before_restart = this.running;
+        this.restartVis();
+        if (before_restart) {
+          return this.start();
+        }
       }, this));
       this.activityIndicator = $('<img class="working" src="/images/working.gif">').hide().appendTo(this.controls);
-      restartVis();
+      this.restartVis();
     }
     HarmonySearchVisualizer.prototype.addHarmony = function(harmony) {
       var i, minIndex, minQuality, secondMinIndex, _ref, _ref2;
@@ -101,9 +106,9 @@
     };
     HarmonySearchVisualizer.prototype.showInfo = function(attrs) {
       var s;
-      s = "Try " + attrs.tries + ".";
+      s = "Try " + attrs.tries + ". ";
       if (attrs.best != null) {
-        s += "Best: " + attrs.best._quality + ".";
+        s += "Best: " + attrs.best._quality + ". ";
       }
       if (attrs.worst != null) {
         s += "Worst: " + attrs.worst._quality + ".";

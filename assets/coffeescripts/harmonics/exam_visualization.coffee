@@ -138,15 +138,9 @@ class Harry.HeatmapSearchVisualizer extends Harry.HarmonySearchVisualizer
     super
     @game.css
       "padding-top": "10px"
-    @heatmap = new Harry.HeatmapVisualizer
-      id: @options.id + "_game"
-      ratio: 2
-      labels: false
 
     # Start the algo so the vis shows up, but stop it right after unless asked to start
-    this.start()
-    unless @options.startOnInit
-      this.stop()
+    this.start() if @options.startOnInit
     true
 
   showSolution: (harmony, forceRender = false) ->
@@ -157,6 +151,13 @@ class Harry.HeatmapSearchVisualizer extends Harry.HarmonySearchVisualizer
   render: () ->
     super
     @heatmap.render()
+
+  _initializeCreationVisualization: ->
+    @heatmap = new Harry.HeatmapVisualizer
+      id: @options.id + "_game"
+      ratio: 2
+      labels: false
+    super
 
   _initializeSearch: ->
     # Set up search

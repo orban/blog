@@ -66,8 +66,9 @@ class Harry.SudokuVisualizer extends Harry.HarmonySearchVisualizer
 
     @modeSelect.appendTo(@controls).change (e) =>
       @options.computationMode = SudokuVisualizer.computationModes[@modeSelect.val()]
-      restartVis()
-      this.start() if @running
+      before_restart = @running
+      @restartVis()
+      this.start() if before_restart
       true
 
     # Create puzzle select button and register change event
@@ -78,14 +79,12 @@ class Harry.SudokuVisualizer extends Harry.HarmonySearchVisualizer
 
     @puzzleSelect.appendTo(@controls).change (e) =>
       @options.puzzle = @puzzleSelect.val()
-      restartVis()
-      this.start() if @running
+      before_restart = @running
+      @restartVis()
+      this.start() if before_restart
       true
 
-    # Start the algo so the vis shows up, but stop it right after unless asked to start
-    this.start()
-    unless @options.startOnInit
-      this.stop()
+    this.start() if @options.startOnInit
     true
 
   stop: ->

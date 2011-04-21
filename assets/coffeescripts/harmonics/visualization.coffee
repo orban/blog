@@ -24,7 +24,7 @@ class Harry.HarmonySearchVisualizer
         @startstop.html("Pause")
 
     # Starts and restarts the vis
-    restartVis = () =>
+    @restartVis = () =>
       # Storage for harmonies on display and rows visible
       if @running
         if @options.computationMode?.webworkers
@@ -41,16 +41,21 @@ class Harry.HarmonySearchVisualizer
       this._initializeMemoryVisualization()
       this._initializeCreationVisualization()
 
+      # Start the algo so the vis shows up, but stop it right after
+      this.start()
+      this.stop()
+
     # Create reset button
     @reset = $('<button class="awesome">Reset</button>').appendTo(@controls).click =>
-     restartVis()
-     this.start()
+      before_restart = @running
+      @restartVis()
+      this.start() if before_restart
 
     # Activity Indicator
     @activityIndicator = $('<img class="working" src="/images/working.gif">').hide().appendTo(@controls)
 
     # Init vis
-    restartVis()
+    @restartVis()
 
   # Callback for the search class to add a harmony to the vis
   addHarmony: (harmony) ->
@@ -104,8 +109,8 @@ class Harry.HarmonySearchVisualizer
     throw "Unimplemented"
 
   showInfo: (attrs) ->
-    s = "Try #{attrs.tries}."
-    s += "Best: #{attrs.best._quality}." if attrs.best?
+    s = "Try #{attrs.tries}. "
+    s += "Best: #{attrs.best._quality}. " if attrs.best?
     s += "Worst: #{attrs.worst._quality}." if attrs.worst?
     @info.html(s)
 
