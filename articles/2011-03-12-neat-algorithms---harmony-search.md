@@ -1,4 +1,4 @@
---- 
+---
 title: Neat Algorithms - Harmony Search
 date: 12/03/2011
 
@@ -20,7 +20,7 @@ See the algorithm in action:
 
 # About this page
 
-This page features interactive demos and code examples, all written in [Coffeescript](http://coffeescript.org/). If you haven't seen it before, it shouldn't be too hard to pick up, but visit that page if you want a quick primer on the syntax. If thats too much to  ask, know that `@` symbols signify instance variables and the last value of a block is the implicit return value, and you should be good. The example code you see in the post is also a distilled, unoptimized, nuance-lacking version which gets rid of the boring stuff for your benefit, so don't make fun if it seems slow.
+This page features interactive demos and code examples, all written in [Coffeescript](http://coffeescript.org/). It shouldn't be too hard to pick up if you haven't seen it before, but visit that page if you want a quick primer on the syntax. If thats too much to ask, know that variables prefixed with `@` symbols signify instance variables, and that the last value of a block is the implicit return value, and you should be good. The example code you see in the post is also a distilled, unoptimized, nuance-lacking version which gets rid of the boring stuff for your benefit, so don't make fun if it seems slow.
 
 Also, the computationally intense demo above has an intensity setting you can pick. Pick `poutine` mode only if you run Chrome or want to watch your browser get crushed. The first three settings defer to the UI thread often enough to stay responsive, but `poutine` mode uses web workers to destroy FF3, FF4, and Opera on my machine faster than you can say "higgitus figgitus". `Poutine` mode is called as such because the browser gobbles up CPU power like I gobble up the aforementioned artery clogger at 3 AM on a Saturday night. Very quickly.
 
@@ -32,16 +32,16 @@ The central idea is that when trying to solve some given optimization problem, y
 
 ## A Basic Example
 
-Say I have a killer exam tomorrow, and I have function which represents what mark I'll get depending on how much time I spend studying and how much time I spend sleeping. For the sake of the example, we'll say that I can spend a maximum of 10 hours doing either activity, and any time I don't spend doing either activity will be filled by normal day to day activities. The problem is I'll get burned out if I study too much, but I won't pass if I don't study enough. I'll also be groggy during the exam I sleep too much, or be weary and slow if I don't sleep enough. How do I balance the time before the exam appropriately, given that I have this magical function which predicts the future?
+Say I have a killer exam tomorrow, and I have function which represents what mark I'll get depending on how much time I spend studying and how much time I spend sleeping. For the sake of the example, we'll say that I can spend a maximum of 10 hours doing either activity, and any time I don't spend doing either activity will be filled by normal day to day activities. The problem is I'll get burned out if I study too much, but I won't pass if I don't study enough. I could also be groggy during the exam I sleep too much, or be weary and slow if I don't sleep enough. How do I balance the time before the exam appropriately, given that I have this magical function which predicts the future?
 
 <figure class="big">
   <figcaption>The problem space shown as a heat map.</figcaption>
   <div id="sleepMap"></div>
 </figure>
 
-To the left is a heat map showing where the best marks are earned. You'll find the hours spent studying on the X axis and the hours spent sleeping on the Y axis, and the mark achieved encoded in the color at that point on the map. A white color represents 100%, and a black color represents a failing grade. You can see that around the edges of the map the colors are darker, indicating a worse mark. There also appears to be a hotspot right in the middle at about 5 hours spent studying and 8 hours spent sleeping. This is easy for us to see because the data is laid out in such a way we can see the whole problem space at once, and see the exact range of marks earned just by looking at the colors. Us humans can identify a pattern of increasing marks by watching the colors get closer to white as the inputs approach that sweet spot.
+To the left is a heat map showing where the best marks are earned. You'll find the hours spent studying on the X axis and the hours spent sleeping on the Y axis, and the mark achieved encoded in the color at that point on the map. A white color represents 100%, and a black color represents a failing grade. You can see that around the edges of the map the colors are darker, indicating a poorer mark. There also appears to be a hotspot right in the middle at about 5 hours spent studying and 8 hours spent sleeping. This is easy for us to see because the data is laid out in such a way we can see the whole problem space at once, and see the exact range of marks earned just by looking at the colors. Us humans can identify a pattern of increasing marks by watching the colors get closer to white as the inputs approach that sweet spot.
 
-The task of an optimization algorithm is to do exactly what we do with our eyes on the heat map, but for non differentiable functions, and for functions for which few assumptions can be made. Also note that the exam example is a tad silly, because every input combination is represented in that heat map, so we could write a brute force program to just try them all and find the max pretty easily and quickly. To make it even worse, the source code for the relatively simple quality function is also in this page, so we could apply some first year calculus to find the global optimum just by fidgeting with the function and its derivatives. For computationally complex functions of many more variables, or non differentiable functions, the brute force and calculus approaches aren't feasible, and we are left to find a better strategy to find an optimal solution.
+The task of an optimization algorithm is to do exactly what we do with our eyes on the heat map. It can also search non differentiable functions, or functions which few assumptions can be made. Also note that this exam example is a tad silly, because every input combination is represented in that heat map, so we could write a brute force program to just try them all and find the max pretty easily and quickly. To make it even worse, the source code for the relatively simple and continuous quality function is also in this page, so just applying some first year calculus we can find the global maximum. For computationally complex functions of many more variables, or non differentiable functions, these brute force and calculus approaches aren't feasible, and we are left to find a better strategy.
 
 <h1 id="harmony_search">Enter Harmony Search</h1>
 
@@ -61,7 +61,7 @@ Harmony search continues to use the musician metaphor to iteratively improve its
 
 Each iteration a new harmony is generated, its quality is calculated, and if it makes the cut it's "included" in the musician's memory. This way, iteration by iteration, old, poor quality harmonies are kicked out and replaced by better ones. The average quality of the set of harmonies in this memory as a whole gradually increases as these new harmonies replace poor ones. The brilliance of the algorithm comes from this: the new harmonies that are generated, which you may recall often reference notes from the memory, start to use notes belonging to known high-quality harmonies. Thus, the newly generated harmonies use good notes, and often have higher qualities because of it. This process repeats, where the increasing the quality of individual harmonies generated increases the average quality of the memory, which increases the quality of the individual generated harmonies, and so on and so forth. At some point (it is hoped), the algorithm generates a harmony which meets the "fantastic" quality hoped for.
 
-Thats it! Harmony search isn't too complicated, but its a neat algorithm inspired by some everyday natural phenomena. Read on for the code and an example application. 
+Thats it! Harmony search isn't too complicated, but its a neat algorithm inspired by some everyday natural phenomena. Read on for the code and an example application.
 
 # The Code
 
@@ -77,9 +77,9 @@ First, lets more formally define some terms.
 
 ## Pseudo code for the actual algorithm
 
- 1. Initialize the Parameters for Problem and Algorithm. 
- 2. Initialize the Harmony Memory (HM). 
- 3. Improvise a New Harmony. 
+ 1. Initialize the Parameters for Problem and Algorithm.
+ 2. Initialize the Harmony Memory (HM).
+ 3. Improvise a New Harmony.
  4. Update the Harmony Memory if the new harmony is better than the worst harmony in the memory.
  5. Check the stopping criterion, and if we can continue, go back to 3.
 
@@ -131,7 +131,7 @@ Here's the basic, extendable `Harmony` class:
         for i, info of chord
           @notes[i] = info[0]
           @noteIndicies[i] = info[1]
-     
+
       # Cache the quality calculation
       quality: ->
         @_quality ?= this.calculateQuality()
@@ -162,14 +162,14 @@ This is the first component of the `HarmonySearch` class, responsible for spitti
 
           if Math.random() < @options.harmonyMemoryConsiderationRate
             # Consider HM. Pick a random harmony, and sample the note at this position in the chord
-            harmonyMemoryIndex = Math.floor(Math.random()*@options.harmonyMemorySize) 
+            harmonyMemoryIndex = Math.floor(Math.random()*@options.harmonyMemorySize)
             note = @harmonyMemory[harmonyMemoryIndex].notes[i] # Grab note for this instrument
             noteIndex = @harmonyMemory[harmonyMemoryIndex].noteIndicies[i]
-            
+
             # Do pitch adjustment
             if Math.random() < @options.pitchAdjustmentRate
               # Adjust the pitch up or down one
-              adjustment = if Math.random() > 0.5 then 1 else -1         
+              adjustment = if Math.random() > 0.5 then 1 else -1
               noteIndex = (noteIndex + adjustment + @options.notesLength) % @options.notesLength
               note = @options.notes[noteIndex]
 
@@ -193,7 +193,7 @@ Below is the core of the search algorithm, which actually executes the whole sea
 
     :::coffeescript
     class HarmonySearch
-      
+
       search: (callback) ->
         # Initialize harmony memory
         @running = true
@@ -223,11 +223,11 @@ Below is the core of the search algorithm, which actually executes the whole sea
 
             # Update the worst quality for the next loop iteration
             [worstQuality, worstIndex] = this._getWorst()
-            
+
             # Track the best quality to see if we've met the target quality
             if harmony.quality() > bestQuality
               bestQuality = harmony.quality()
- 
+
         [bestQuality, bestIndex] = this._getBest()
         return @harmonyMemory[bestIndex]
 
@@ -235,7 +235,7 @@ Thats about it! Feeling ok? Read on for a couple examples to gel all of this.
 
 <h1 id="exam_example">Exam Mark Example</h1>
 
-Consider the exam mark problem shown above. Suppose the mysterious exam mark equation has been implemented in a Javascript function called `Exam.mark(timeSleeping, timeStudying)`. 
+Consider the exam mark problem shown above. Suppose the mysterious exam mark equation has been implemented in a Javascript function called `Exam.mark(timeSleeping, timeStudying)`.
 
     :::coffeescript
     $ Exam.mark
@@ -245,9 +245,9 @@ Consider the exam mark problem shown above. Suppose the mysterious exam mark equ
     $ Exam.mark(10,10)
     # => 50
 
-We're trying to find the global optimum to this equation. To model this in harmony search, we ask how many instruments there are, what notes each of them can play, and how to determine the quality of the harmony produced. 
+We're trying to find the global optimum to this equation. To model this in harmony search, we ask how many instruments there are, what notes each of them can play, and how to determine the quality of the harmony produced.
 
-In this case, the `Exam.mark` equation is the one we are trying to optimize. We model its input arguments as notes, and use harmonies composed of different combinations of times. There are two instruments, one for each argument to the function, and each instrument can "play" any number between 0 and 10, which are the bounds as outlined in the problem. A harmony's quality is the mark achieved when the time is spent in it's particular allotment, which we model as the evaluation of the `Exam.mark` function for the twonotes.
+In this case, the `Exam.mark` equation is the one we are trying to optimize. We model its input arguments as notes, and use harmonies composed of different combinations of times. There are two instruments, one for each argument to the function, and each instrument can "play" any number between 0 and 10, which are the bounds as outlined in the problem. A harmony's quality is the mark achieved when the time is spent in it's particular allotment, which we model as the evaluation of the `Exam.mark` function for the two notes.
 
 The harmony class we'd use for this problem would look like this:
 
@@ -273,9 +273,13 @@ After this, results should hold the best quality `Harmony` found.
 
 <div id="examsearchVis"></div>
 
+Harmony Search is run live to power the visualization above, as well as the one at the top of the page. Each wedge in the purple circle represents a harmony in the memory, and so the circle is the whole HM. Each wedge is labeled by its quality, and as harmonies grow closer to the target quality, the color of their wedges grow more purple. The best and worst harmonies are are also highlighted using a green or red border. Feel free to click on a harmony to see it's location on the heat map, and judge how close it is to the optimal point. Also, notice how new harmonies are added at the top of the circle and progress clockwise as new ones are added and poor ones are removed. The best harmonies will travel all the way around the circle but not get bumped out, and end up at the back for a long period of time, contributing good quality notes to the new harmonies being generated.
+
+The grid of numbers to the right represents the selection of the notes in each new harmony. The harmony at the top of the list (with all the lines stemming from it) is the most recent addition to the harmony memory, and each line below is a progressively older harmony in the memory. Each note in the 1st row is generated either by picking a note from the set of those previously chosen in the memory, or by picking one randomly from the set of possible notes. Those chosen from the memory are signified by a grey line pointing towards the harmony from which the note was chosen. If pitch adjustment is applied, the line becomes blue. Otherwise, the note is chosen randomly, which is signified by a purple line pointing upwards into the set of notes possible for each note in the harmony. You'll only notice this in the Sudoku demo above, because there isn't enough room to show all the possibilities with the exam example.
+
 <h1 id="sudoku_example">Sudoku Example</h1>
 
-Harmony search can be applied to more complex problems than simple functions like the above. Sudoku is a specific case of the graph coloring problem, one of [Karp's 21 NP-complete problems](http://en.wikipedia.org/wiki/Karp%E2%80%99s_21_NP-complete_problems). In other words, its very time consuming to brute force the solution to a sudoku by just trying random numbers and seeing if they work. There are excellent algorithms that often run faster than harmony search or any of its metaheuristic brethren which solve the sudoku using intelligent, problem aware methods and guess when needed. 
+Harmony search can be applied to more complex problems than simple functions like the above. Sudoku is a specific case of the graph coloring problem, one of [Karp's 21 NP-complete problems](http://en.wikipedia.org/wiki/Karp%E2%80%99s_21_NP-complete_problems). In other words, its very time consuming to brute force the solution to a sudoku by just trying random numbers and seeing if they work. There are excellent algorithms that often run faster than harmony search or any of its metaheuristic brethren which solve the sudoku using intelligent, problem aware methods and guess when needed.
 
 These "smart" solvers are I'm sure the algorithms employed by true Sudoku software, but they rely on intimate knowledge of the Sudoku solving process and an understanding of the techniques used. We have to encode our knowledge of how to solve sudokus into a program, implementing the guessing feature, the backtracking, and all the methods for eliminating possibilities for a particular cell. Instead of developing an algorithm like this, we can use a search method to find us a solution as long as we have a heuristic to tell the quality of a given solution. By solving them in this way, we don't need to concern ourselves with finding a general method or exploring edge cases or algorithmic nuances, and we let the search algorithm figure these things out on its own. We are able to lift the burden of understanding the relationship between the input variables from our own shoulders, and instead allow the algorithm to explore these relationships itself.
 
@@ -285,7 +289,7 @@ Hopefully you can see the advantage of using a search algorithm for problems whe
 
 Let's solve a particular Sudoku puzzle using harmony search. First, let us identify what the notes of a harmony are, and after, how to calculate the quality of one.
 
-First off, notice that for any solution to be considered as such, each cell must have a value. Some of the values are given by the puzzle, and some must be decided by us. We seek a choice for each cell such that there are no conflicts, or in other words, the optimal solution to a sudoku is one which has all the cells filled in and breaks no rules. 
+First off, notice that for any solution to be considered as such, each cell must have a value. Some of the values are given by the puzzle, and some must be decided by us. We seek a choice for each cell such that there are no conflicts, or in other words, the optimal solution to a sudoku is one which has all the cells filled in and breaks no rules.
 
 We model the value of each one of the unknown cells as one note in a harmony, with the note's value being an integer between 1 and 9. The harmony is the chord struck when we insert each of these choices into the puzzle, and the quality of the solution is how close to a valid filled-in puzzle this solution is. The order the array of notes is entered into the puzzle doesn't really matter all that much, as long as it is consistent the algorithm will work just the same. The number of instruments is the count of unsolved cells.
 
@@ -295,19 +299,20 @@ To the left is an example solution proposed in an early iteration of harmony sea
 
  <ul class="sudoku_legend"><li><span class="good">Green</span> cells don't violate any rules</li><li><span class="violated">Red</span> cells violate either row, column, or block rules</li><li><span class="boring">Grey</span> cells have only one possible value based on the clues</li><li><span class="clue">White</span> cells are given in the puzzle (a "clue" cell)</li></ul>
 
-The green, grey, and red cells represent the choices for all of the unknown cells. 
+The green, grey, and red cells represent the choices for all of the unknown cells.
 
 Next, we decide how to evaluate the quality of a given solution. The most obvious algorithm is just a count of the violations in the puzzle, which is just a count of the red cells in the solution. In my tests this heuristic worked a tad less effectively than a slightly different heuristic proposed by Dr Zong Woo Geem in [1]. The optimal solution is the global minimum of \\( Q\\), where
 
 <div class="math">
-  $$ 
+  $$
   Q = \sum\limits_{i = 1}^9 \left| \sum\limits_{j = 1}^9  S_{i,j}  - 45 \right|
   + \sum\limits_{j = 1}^9 \left| \sum\limits_{i = 1}^9  S_{i,j}  - 45 \right|
   + \sum\limits_{k = 1}^9 \left| \sum_{ (i,j) \in B_k}  S_{i,j}  - 45 \right|
   $$
 
-  where \( S_{i,j} \) is the cell \( i\) spaces over from the left and \( j\) spaces down from the top, and  \( B_k \) is all the cells in the kth box.
+  where \( S_{i,j} \) is the cell \( i\) spaces over from the left and \( j\) spaces down from the top, and  \( B_k \) is all the cells in the k<sup>th</sup> box.
 </div>
+
 <br/>
 The above heuristic gives a more detailed measure of a solutions quality. It works by taking the sum of each row and subtracting 45, which is the sum of the numbers from 1 to 9. If a particular row has two 1s instead of a 1 and a 2, the sum of the numbers in the row won't be 45, and \\( Q \\) won't be minimal. A correct solution for a sudoku would have \\( Q = 0 \\). As noted in [1], its important to see that the sum of a row may be 45 even though the numbers in it are not exactly the set from 1 to 9. The numbers in a row might just happen to sum to 45, for example \\( sum\\ \\{ 1,2,2,5,5,6,7,8,9 \\} = 45 \\). However, if this case occurs in one row, then the sum for the columns passing through the row, or the sum for one of the boxes containing the row won't be 45, moving the final value of \\( Q \\) away from 0, and thus denoting a sub optimal quality as desired. The only way to get a row, column, and box sum of 45 is to have precisely the set from 1 - 9 in each container.
 
@@ -315,7 +320,7 @@ In summary, the notes for a harmony are the set of values for the unknown cells,
 
 ## Code
 
-The code for the sudoku example is boring and unfortunately long, but you can see it on Github if you'd like. The same `HarmonySearch` class as defined above would be used to search the problem space, and a harmony's quality would be calculated using the \\( Q \\) function above. 
+The code for the sudoku example is boring and unfortunately long, but you can see it on Github if you'd like. The same `HarmonySearch` class as defined above would be used to search the problem space, and a harmony's quality would be calculated using the \\( Q \\) function above.
 
 Also, a quick side note: the `HarmonySearch` class tries to _maximize_ a given quality, whereas \\( Q \\) gets _smaller_ as the input approaches a valid solution. Because of this, I used \\( 135 - Q \\) instead of just \\( Q \\) to calculate the quality of a harmony. As \\( Q \\) gets smaller, the quality of a harmony approaches 135, which we then define as the target quality.
 
@@ -350,7 +355,7 @@ Thanks for reading!
 
 ### Thanks
 
-  Thanks to [Mo](http://fustat.org/) and Tomas for helping edit. Thanks to Dr Geem for creating and publishing so much about the aalgorithm. Thanks to the authors of [Protovis](http://vis.stanford.edu/protovis/) and [Mathjax](http://www.mathjax.org/) for superb code which made the visualizations and formulas on this page look great.
+  Thanks to [Mo](http://fustat.org/) and Tomas for helping edit. Thanks to Dr Geem for creating and publishing so much about the algorithm. Thanks to the authors of [Protovis](http://vis.stanford.edu/protovis/) and [Mathjax](http://www.mathjax.org/) for superb code which made the visualizations and formulas on this page look great.
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
@@ -361,7 +366,7 @@ Thanks for reading!
       displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
       processEscapes: true
     },
-    "HTML-CSS": { 
+    "HTML-CSS": {
       availableFonts: ["TeX"],
       webFont: "TeX",
       imageFont: null
@@ -384,4 +389,4 @@ Thanks for reading!
 <script src="/js/harmonics/sudoku_visualization.js" type="text/javascript"></script>
 <script src="/js/harmonics/exam_visualization.js" type="text/javascript"></script>
 <script src="/js/harmonics/sudoku.js" type="text/javascript"></script>
-<link href='/css/harmonics.css' rel='stylesheet' type='text/css' /> 
+<link href='/css/harmonics.css' rel='stylesheet' type='text/css' />
