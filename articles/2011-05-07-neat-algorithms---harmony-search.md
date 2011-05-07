@@ -1,6 +1,6 @@
 ---
 title: Neat Algorithms - Harmony Search
-date: 12/03/2011
+date: 07/05/2011
 
 Here I'll try and demonstrate a neat optimization algorithm based on the principles of performing jazz musicians by applying it to solve Sudoku puzzles.
 
