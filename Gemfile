@@ -5,13 +5,16 @@ gem 'rack-rewrite'
 gem 'compass', '0.10.6'
 gem 'haml', '3.0.25'
 gem 'tilt'
-gem 'newrelic_rpm'
 gem 'rack-codehighlighter', :require => 'rack/codehighlighter'
 
 # Ultraviolet. God what a pain.
 gem 'plist', :git => "git://github.com/spox/plist.git"
 gem 'textpow', :git => "git://github.com/spox/textpow.git"
 gem 'ultraviolet', :git => "git://github.com/hornairs/ultraviolet.git", :require => 'uv'
+
+group :production do
+  gem 'newrelic_rpm'
+end
 
 group :development, :test do 
   gem 'unicorn'

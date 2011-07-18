@@ -44,7 +44,7 @@ toto = Toto::Server.new do
   set :root,        "index"                                   # page to load on /
   set :date,        lambda {|now| now.strftime("%d/%m/%Y") }  # date format for articles
   set :markdown,    :smart                                    # use markdown + smart-mode
-  set :disqus,      "harris)nbrundage"                                     # disqus id, or false
+  set :disqus,      "harrisonbrundage"                        # disqus id, or false
   set :summary,     :max => 150, :delim => /~\n/              # length of article summary and delimiter
   set :ext,         'md'                                      # file extension for articles
   set :cache,       28800                                     # cache site for 8 hours
