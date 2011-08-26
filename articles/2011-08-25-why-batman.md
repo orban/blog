@@ -4,7 +4,7 @@ date: 25/08/2011
 
 [Batman.js](http://batmanjs.org/), the new open source JavaScript framework of [Shopify](http://shopify.com)'s has just been released! I'm absolutely elated to introduce it to the world after spending so much time on it. Find Batman on GitHub [here](https://github.com/Shopify/batman).
 
-Batman emerges into a world populated with extraordinary frameworks being used to great effect. With the incredible stuff being pushed out in Sproutcore 2.0 and the awesome response to DocumentCloud's 39434th awesome open source project Backbone.js, how is a developer to know what to use when? There's only so much time to play with cool new stuff, so I'd like to give a quick tour of what makes Batman different and when you might want to use it instead of the other amazing frameworks available today.
+Batman emerges into a world populated with extraordinary frameworks being used to great effect. With the incredible stuff being pushed out in Sproutcore 2.0 and the awesome response to DocumentCloud's 39434th awesome open source project Backbone.js, how is a developer to know what to use when? There's only so much time to play with cool new stuff, so I'd like to give a quick tour of what makes Batman different and why you might want to use it instead of the other amazing frameworks available today.
 
 ## A super duper runtime
 
@@ -129,7 +129,7 @@ A simplified version of the view for [Alfred](http://batmanjs.org/examples/alfre
       <input class="new-item" placeholder="add a todo item" data-bind="todo.body" />
     </form>
 
-We sacrifice any sort of transpiler layer (no haml or anything), and most logic, so that our views are valid HTML5, rendered by the browser as soon as they have been downloaded. They aren't JavaScript strings, they are valid DOM trees which Batman traverses populates with data, no compilation or string manipulation involved. The best part is that Batman "binds" a node's value using the runtime system so that when the value changes in JavaScript land, the corresponding node(s) bound to it update automatically. The concept of bindings isn't new, as you may have seen it in things like Cocoa, or in [Knockout](http://knockoutjs.com/) or Sproutcore in JavaScript land.
+We sacrifice any sort of transpiler layer (no HAML), and no template layer (no Eco, little logic). Our views are valid HTML5, rendered by the browser as soon as they have been downloaded. They aren't JavaScript strings, they are valid DOM trees which Batman traverses and populates with data, no compilation or string manipulation involved. The best part is that Batman "binds" a node's value using the observation runtime above. When the value changes in JavaScript land, the corresponding node attribute(s) bound to it update automatically. Vice versa remains true: when a user types into an input or checks a checkbox, the string or boolean is set on the bound object in JavaScript. The concept of bindings isn't new, as you may have seen it in things like Cocoa, or in [Knockout](http://knockoutjs.com/) or Sproutcore in JS land.
 
 We chose to use bindings because we don't want to have to re-render a whole template every time one piece of data changes. With mustache or `jQuery.tmpl` and company, thats what I end up doing a lot of the time. It seems wasteful to re-render every element in a loop and pay the penalty for appending all those nodes, when only one key on one element changes. SproutCore's 'SC.TemplateView' and Yehuda Katz' Handlebars.js do a good job of mitigating this, but we still didn't want to do all the string ops in the browser, and so we opted for the surgical precision of binding all the data in the view to exactly the properties we want.
 
@@ -137,6 +137,8 @@ What you end up with is a fast render with no initial loading screen at the expe
 
 ## More?
 
-Batman does more than the fancy deep keypath stuff and the weird HTML views, so I highly encourage you to check out the [source on GitHub](https://github.com/Shopify/batman), the [project website](http://batmanjs.org/), or visit us in [#batmanjs on freenode](irc://freenode.net/batmanjs). Any feedback or patches would be super welcome, and we're always open to suggestions on how we can make Batman better for you.
+Batman does more than this fancy deep keypath stuff and these weird HTML views-but-not-templates. We have a routing system for linking from quasi-page to quasi-page and a `Batman.Model` layer for managing data from a server, and some other handy mixins for use in your own ojects. I highly encourage you to check out the [source on GitHub](https://github.com/Shopify/batman), the [project website](http://batmanjs.org/), or visit us in [#batmanjs on freenode](irc://freenode.net/batmanjs). Any feedback or patches would be super welcome, and we're always open to suggestions on how we can make Batman better for you.
 
 Until next time....
+
+<iframe width="560" height="345" src="http://www.youtube.com/embed/X0UJaprpxrk" frameborder="0" allowfullscreen></iframe>
