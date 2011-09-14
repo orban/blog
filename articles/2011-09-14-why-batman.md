@@ -6,6 +6,10 @@ date: 14/09/2011
 
 Batman emerges into a world populated with extraordinary frameworks being used to great effect. With the incredible stuff being pushed out in projects like [Sproutcore 2.0](http://www.sproutcore.com/about/) and [Backbone.js](http://documentcloud.github.com/backbone/), how is a developer to know what to use when? There's only so much time to play with cool new stuff, so I'd like to give a quick tour of what makes Batman different and why you might want to use it instead of the other amazing frameworks available today.
 
+## Batman makes building apps easy
+
+Batman is a framework for building single page applications. It's not a progressive enhancement or a single purpose DOM or AJAX library. It's built from the ground up to make building awesome single page apps by implementing all the lame parts of development like cross browser compatibility, data transport, validation, custom events, and a whole lot more. We provide handy helpers for development to generate and serve code, a recommended app structure for helping you organize code and call it when necessary, a full MVC stack, and a bunch of extras, all while remaining less than 18k when gzipped. Batman doesn't provide the basics, or the whole kitchen sink, but a fluid API that allows you to write the important code for your app and none of the boilerplate.
+
 ## A super duper runtime
 
 At the heart of Batman is a runtime layer used for manipulating data from objects and subscribing to events objects may emit. Batman's runtime is used similarly to SproutCore's or Backbone's in that all property access and assignment on Batman objects must be done through `someObject.get` and `someObject.set`, instead of using standard dot notation like you might in vanilla JavaScript. Adhering to this property system allows you to:
