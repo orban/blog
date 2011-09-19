@@ -1,6 +1,6 @@
 ---
 title: Why Batman?
-date: 14/09/2011
+date: 19/09/2011
 
 [Batman.js](http://batmanjs.org/) is [Shopify](http://shopify.com)'s new open source CoffeeScript framework, and I'm absolutely elated to introduce it to the world after spending so much time on it. Find Batman on GitHub [here](https://github.com/Shopify/batman).
 
@@ -145,3 +145,6 @@ Batman does more than this fancy deep keypath stuff and these weird HTML views-b
 Until next time....
 
 <iframe width="560" height="345" src="http://www.youtube.com/embed/X0UJaprpxrk" frameborder="0" allowfullscreen></iframe>
+
+<br/>
+_This article has been crossposted to the [Shopify](http://www.shopify.com/) Technology blog [here](http://www.shopify.com/technology/4080092-how-batman-can-help-you-build-app)._
