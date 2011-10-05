@@ -10,6 +10,8 @@ See the algorithm in action:
 
 <div id="searchVis"></div>
 
+_Note: This article is also available in Romanian at [Web Hosting Geeks](http://webhostinggeeks.com/science/harmony-search-rm). Thanks Alexander!_
+
 # Table of Contents
 
  1. <a href="#searchVis">Demo</a>
