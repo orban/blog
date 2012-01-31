@@ -14,11 +14,11 @@ gem 'ultraviolet', :git => "git://github.com/hornairs/ultraviolet.git", :require
 
 group :production do
   gem 'newrelic_rpm'
+  gem 'thin'
 end
 
 group :development, :test do
   gem 'unicorn'
-  gem 'ruby-debug19', :require => "ruby-debug"
   gem 'guard'
   gem 'guard-coffeescript'
   gem 'guard-compass'

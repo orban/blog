@@ -18,6 +18,6 @@ module Toto
       "Couldn't fetch the readme, you can try going to <a href=\"#{homepage}\">the project homepage</a>."
     end
 
-    alias :content readme    
+    alias :content readme
   end
 end

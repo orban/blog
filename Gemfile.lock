@@ -32,7 +32,6 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
-    archive-tar-minitar (0.5.2)
     builder (3.0.0)
     capybara (0.4.1.2)
       celerity (>= 0.7.9)
@@ -50,10 +49,11 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.1.1)
-    columnize (0.3.4)
     compass (0.10.6)
       haml (>= 3.0.4)
     culerity (0.2.15)
+    daemons (1.1.4)
+    eventmachine (0.12.10)
     execjs (1.2.0)
       multi_json (~> 1.0)
     ffi (1.0.9)
@@ -70,8 +70,6 @@ GEM
     json_pure (1.5.3)
     kgio (2.6.0)
     launchy (2.0.3)
-    linecache19 (0.5.12)
-      ruby_core_source (>= 0.1.4)
     mime-types (1.16)
     multi_json (1.0.3)
     newrelic_rpm (3.1.0)
@@ -86,16 +84,6 @@ GEM
       rack (>= 1.0)
     raindrops (0.7.0)
     rdiscount (1.6.8)
-    ruby-debug-base19 (0.11.25)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby_core_source (>= 0.1.4)
-    ruby-debug19 (0.11.6)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby-debug-base19 (>= 0.11.19)
-    ruby_core_source (0.1.5)
-      archive-tar-minitar (>= 0.5.2)
     rubyzip (0.9.4)
     selenium-webdriver (2.1.0)
       childprocess (>= 0.1.9)
@@ -108,6 +96,10 @@ GEM
     spox-plist (3.0.1)
     spox-textpow (0.10.3)
       spox-plist
+    thin (1.3.1)
+      daemons (>= 1.0.9)
+      eventmachine (>= 0.12.6)
+      rack (>= 1.0.0)
     thor (0.14.6)
     tilt (1.3.2)
     toto (0.4.9)
@@ -137,8 +129,8 @@ DEPENDENCIES
   rack-codehighlighter
   rack-nocache
   rack-rewrite
-  ruby-debug19
   textpow!
+  thin
   tilt
   toto (= 0.4.9)
   ultraviolet!
