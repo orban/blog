@@ -6,6 +6,8 @@ gem 'compass', '0.10.6'
 gem 'haml', '3.0.25'
 gem 'tilt'
 gem 'rack-codehighlighter', :require => 'rack/codehighlighter'
+gem "rack-nocache"
+#gem "evergreen", :git => "git@github.com:hornairs/evergreen.git", :submodules => true
 
 # Ultraviolet. God what a pain.
 gem 'plist', :git => "git://github.com/spox/plist.git"
@@ -18,11 +20,8 @@ group :production do
 end
 
 group :development, :test do
-  gem 'unicorn'
   gem 'guard'
   gem 'guard-coffeescript'
   gem 'guard-compass'
   gem 'growl'
-  gem "rack-nocache"
-  gem "evergreen", :git => "git@github.com:hornairs/evergreen.git", :submodules => true
 end

@@ -17,9 +17,9 @@ use Rack::Codehighlighter,
 unless ENV['RACK_ENV'] == 'production'
   use Rack::ShowExceptions
   use Rack::Nocache
-  map "/evergreen" do
-    run Evergreen::Suite.new(File.dirname(__FILE__)).application
-  end
+  #map "/evergreen" do
+    #run Evergreen::Suite.new(File.dirname(__FILE__)).application
+  #end
 else
   use Rack::Rewrite do
     r301 %r{.*}, 'http://harry.me$&', :if => Proc.new {|rack_env|
@@ -36,7 +36,7 @@ toto = Toto::Server.new do
   set :author,      "Harry Brundage"                          # blog author
   set :title,       "Will You Harry Me?"                      # site title
   unless ENV['RACK_ENV'] == 'production'
-    set :url, 'http://localhost:8080'
+    set :url, 'http://localhost:3000'
   else
     set :url, 'http://harry.me'                               # site root URL
   end
