@@ -6,12 +6,12 @@ require './blog.rb'
 # Rack config
 use Rack::Static, :urls => ['/css', '/js', '/images', '/fonts', '/favicon.ico', '/cv.pdf', '/googlec44438f9318443e5.html', '/robots.txt'], :root => 'public'
 use Rack::CommonLogger
-use Rack::Codehighlighter, 
-  :ultraviolet, 
+use Rack::Codehighlighter,
+  :ultraviolet,
   :theme => "sunburst",
-  :markdown => true, 
-  :element => "pre>code", 
-  :pattern => /\A:::(\w+)\s*(\n|&#x000A;)/i, 
+  :markdown => true,
+  :element => "pre>code",
+  :pattern => /\A:::(\w+)\s*(\n|&#x000A;)/i,
   :logging => true
 
 unless ENV['RACK_ENV'] == 'production'
