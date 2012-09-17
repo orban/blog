@@ -33,8 +33,8 @@ end
 # Create and configure a toto instance
 #
 toto = Toto::Server.new do
-  set :author,      "Harry Brundage"                          # blog author
-  set :title,       "Will You Harry Me?"                      # site title
+  set :author,      "Ryan Orban"                          # blog author
+  set :title,       "Turning Coffee into Code"                      # site title
   unless ENV['RACK_ENV'] == 'production'
     set :url, 'http://localhost:3000'
   else
@@ -44,7 +44,7 @@ toto = Toto::Server.new do
   set :root,        "index"                                   # page to load on /
   set :date,        lambda {|now| now.strftime("%d/%m/%Y") }  # date format for articles
   set :markdown,    :smart                                    # use markdown + smart-mode
-  set :disqus,      "harrisonbrundage"                        # disqus id, or false
+  set :disqus,      false                                     # disqus id, or false
   set :summary,     :max => 150, :delim => /~\n/              # length of article summary and delimiter
   set :ext,         'md'                                      # file extension for articles
   set :cache,       28800                                     # cache site for 8 hours
@@ -52,7 +52,7 @@ toto = Toto::Server.new do
 
   # Github username and list of repos
   rs = {"thwart" => "README.rdoc", "titanium_ajax" => "README.mkd"}
-  set :github, {:user => "hornairs", :repos => rs.keys, :files => rs}
+  set :github, {:user => "orban", :repos => rs.keys, :files => rs}
 
   # The HTML for the error page
   set :error do |code|
